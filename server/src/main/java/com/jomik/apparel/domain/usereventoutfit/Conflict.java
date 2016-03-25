@@ -1,7 +1,7 @@
-package main.java.com.apparel.domain.usereventoutfit;
+package com.jomik.apparel.domain.usereventoutfit;
 
-import main.java.com.apparel.domain.Entity;
-import main.java.com.apparel.domain.item.Conflictable;
+import com.jomik.apparel.domain.Entity;
+import com.jomik.apparel.domain.item.Conflictable;
 
 import java.util.List;
 

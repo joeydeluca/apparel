@@ -1,4 +1,4 @@
-package main.java.com.apparel.domain;
+package com.jomik.apparel.domain;
 
 import java.util.Date;
 

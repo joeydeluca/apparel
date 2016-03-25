@@ -1,9 +1,9 @@
-package main.java.com.apparel.domain.usereventoutfit;
+package com.jomik.apparel.domain.usereventoutfit;
 
-import main.java.com.apparel.domain.Entity;
-import main.java.com.apparel.domain.event.Event;
-import main.java.com.apparel.domain.outfit.Outfit;
-import main.java.com.apparel.domain.user.User;
+import com.jomik.apparel.domain.Entity;
+import com.jomik.apparel.domain.event.Event;
+import com.jomik.apparel.domain.outfit.Outfit;
+import com.jomik.apparel.domain.user.User;
 
 import java.util.Date;
 import java.util.List;

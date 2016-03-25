@@ -1,7 +1,7 @@
-package main.java.com.apparel.domain.item;
+package com.jomik.apparel.domain.item;
 
-import main.java.com.apparel.domain.Entity;
-import main.java.com.apparel.domain.photo.Photo;
+import com.jomik.apparel.domain.Entity;
+import com.jomik.apparel.domain.photo.Photo;
 
 /**
  * Created by Joe Deluca on 3/22/2016.
