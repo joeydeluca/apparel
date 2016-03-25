@@ -14,5 +14,6 @@ public class Event extends Entity {
     private String location;
     private Date startDate;
     private Date endDate;
+    private User owner;
     private List<User> attendees;
 }

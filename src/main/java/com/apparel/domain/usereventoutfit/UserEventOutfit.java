@@ -6,6 +6,7 @@ import main.java.com.apparel.domain.outfit.Outfit;
 import main.java.com.apparel.domain.user.User;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by Joe Deluca on 3/22/2016.
@@ -15,5 +16,5 @@ public class UserEventOutfit extends Entity {
     private Event event;
     private Outfit outfit;
     private Date date;
-    private Conflict conflict;
+    private List<Conflict> conflicts;
 }

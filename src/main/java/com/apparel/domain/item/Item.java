@@ -9,7 +9,8 @@ import main.java.com.apparel.domain.photo.Photo;
 public class Item extends Entity {
     private String name;
     private String description;
-    private Colour colour;
-    private Pattern pattern;
+    private ItemColor itemColor;
+    private ItemPattern itemPattern;
+    private ItemCategory itemCategory;
     private Photo photo;
 }
