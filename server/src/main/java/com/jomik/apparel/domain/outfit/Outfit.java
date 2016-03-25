@@ -1,7 +1,7 @@
-package main.java.com.apparel.domain.outfit;
+package com.jomik.apparel.domain.outfit;
 
-import main.java.com.apparel.domain.Entity;
-import main.java.com.apparel.domain.item.Item;
+import com.jomik.apparel.domain.Entity;
+import com.jomik.apparel.domain.item.Item;
 
 import java.util.List;
 
