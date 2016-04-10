@@ -5,9 +5,14 @@
     android:layout_height="match_parent"
     android:layout_width="match_parent">
 
+    <ListView
+        android:id="@+id/listview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"></ListView>
+
     <com.facebook.drawee.view.SimpleDraweeView
         android:id="@+id/my_image_view"
-        android:layout_width="130dp"
+        android:layout_width="wrap_content"
         android:layout_height="130dp"
         fresco:placeholderImage="@drawable/pic"
         />
