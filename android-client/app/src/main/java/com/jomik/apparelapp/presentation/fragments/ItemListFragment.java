@@ -1,6 +1,8 @@
 package com.jomik.apparelapp.presentation.fragments;
 
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,8 +34,19 @@ public class ItemListFragment extends ListFragment implements AdapterView.OnItem
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.item_list_fragment, container, false);
+
+        View view = inflater.inflate(R.layout.item_list_fragment, container, false);
+
+        FloatingActionButton addButton = (FloatingActionButton) view.findViewById(R.id.addButton);
+        addButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Snackbar.make(view, "Replace with your own action fvdfvdf", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            }
+        });
+
+        return view;
     }
 
     @Override
@@ -49,11 +62,16 @@ public class ItemListFragment extends ListFragment implements AdapterView.OnItem
 
         setListAdapter(adapter);
         getListView().setOnItemClickListener(this);
+
     }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position,long id) {
         Toast.makeText(getActivity(), "Item: " + position, Toast.LENGTH_SHORT).show();
+    }
+
+    public void addItem() {
+
     }
 
 }
