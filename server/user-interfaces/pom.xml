@@ -12,12 +12,6 @@
     <artifactId>user-interfaces</artifactId>
 
     <dependencies>
-        <!--Apparel web-->
-        <dependency>
-            <groupId>com.jomik.apparel</groupId>
-            <artifactId>apparel-web</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
         <!--Domain layer-->
         <dependency>
             <groupId>com.jomik.apparel</groupId>

@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.UUID;
 
 /**
+ * An easy way to add some user data.
+ *
  * Created by Mick on 4/16/2016.
  */
 @RestController

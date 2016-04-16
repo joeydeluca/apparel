@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.NoResultException;
+import java.util.Collection;
 
 /**
  * Created by Mick on 4/16/2016.
@@ -29,6 +30,11 @@ public class UserService implements IUserService{
             throw new NoResultException("User does not exist");
         }
         return user;
+    }
+
+    @Override
+    public Collection<User> findAll() {
+        return userRepository.findAll();
     }
 
     @Override

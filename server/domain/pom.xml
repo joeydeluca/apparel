@@ -12,11 +12,21 @@
     <artifactId>domain</artifactId>
 
     <dependencies>
-        <!--Apparel web-->
+        <!--Spring web-->
         <dependency>
-            <groupId>com.jomik.apparel</groupId>
-            <artifactId>apparel-web</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-tomcat</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <!--Undertow-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-undertow</artifactId>
         </dependency>
 
         <dependency>

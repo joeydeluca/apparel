@@ -22,7 +22,6 @@
         <module>user-interfaces</module>
         <module>runner</module>
         <module>test-apparel</module>
-        <module>apparel-web</module>
     </modules>
 
     <properties>

@@ -4,6 +4,8 @@ import com.jomik.apparel.domain.model.ApparelEntity;
 import com.jomik.apparel.domain.model.item.Item;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -16,5 +18,14 @@ import java.util.List;
 public class Wardrobe extends ApparelEntity {
     @ElementCollection
     @CollectionTable(name = "wardrobe_item", joinColumns = @JoinColumn(name = "id"))
-    private List<Item> items;
+    private List<Item> items = new ArrayList<>();
+
+    public List<Item> getItems() {
+        return Collections.unmodifiableList(items);
+    }
+
+    public void setItems(final List<Item> items) {
+        this.items.clear();
+        this.items.addAll(items);
+    }
 }
