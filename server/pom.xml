@@ -22,6 +22,7 @@
         <module>user-interfaces</module>
         <module>runner</module>
         <module>test-apparel</module>
+        <module>apparel-web</module>
     </modules>
 
     <properties>
@@ -35,6 +36,13 @@
                 <groupId>org.reflections</groupId>
                 <artifactId>reflections</artifactId>
                 <version>0.9.10</version>
+            </dependency>
+
+            <!--Undertow-->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-undertow</artifactId>
+                <version>1.3.3.RELEASE</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

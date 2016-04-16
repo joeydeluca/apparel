@@ -17,6 +17,6 @@ public class Photo extends ApparelEntity {
     @Column(name="thumbnail", nullable=false, columnDefinition="mediumblob")
     private byte[] thumbnail;
     @Lob
-    @Column(name="thumbnail", nullable=false, columnDefinition="mediumblob")
+    @Column(name="size_a", nullable=false, columnDefinition="mediumblob")
     private byte[] sizeA;
 }
