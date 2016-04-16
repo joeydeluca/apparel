@@ -5,5 +5,6 @@ package com.jomik.apparel.domain.model.item;
  */
 public enum ItemCategory {
     TOPS,
-    BOTTOMS
+    BOTTOMS,
+    ONE_PIECE
 }

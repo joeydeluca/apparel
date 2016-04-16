@@ -12,7 +12,7 @@ public abstract class ApparelEntity {
     private String id;
 
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "modified_date", nullable = false)
+    @Column(name = "modified_date", nullable = false, insertable = false)
     private Date modifiedDate;
 
     @Temporal(TemporalType.TIMESTAMP)
@@ -25,7 +25,6 @@ public abstract class ApparelEntity {
     @PrePersist
     public void prePersist(){
         this.setCreatedDate(new Date());
-        this.setModifiedDate(new Date());
     }
 
     @PreUpdate

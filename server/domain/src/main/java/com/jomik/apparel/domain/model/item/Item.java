@@ -17,9 +17,11 @@ public class Item extends ApparelEntity {
 
     private String description;
 
-    @Column(name = "item_color")
-    @Enumerated(EnumType.STRING)
-    private ItemColor itemColor;
+    @Column(name = "primary_color", length = 6)
+    private String primaryColor;
+
+    @Column(name = "secondary_color", length = 6)
+    private String secondaryColor;
 
     @Column(name = "item_pattern")
     @Enumerated(EnumType.STRING)
@@ -48,12 +50,20 @@ public class Item extends ApparelEntity {
         this.description = description;
     }
 
-    public ItemColor getItemColor() {
-        return itemColor;
+    public String getPrimaryColor() {
+        return primaryColor;
     }
 
-    public void setItemColor(ItemColor itemColor) {
-        this.itemColor = itemColor;
+    public void setPrimaryColor(String primaryColor) {
+        this.primaryColor = primaryColor;
+    }
+
+    public String getSecondaryColor() {
+        return secondaryColor;
+    }
+
+    public void setSecondaryColor(String secondaryColor) {
+        this.secondaryColor = secondaryColor;
     }
 
     public ItemPattern getItemPattern() {

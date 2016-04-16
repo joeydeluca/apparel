@@ -20,6 +20,7 @@ public class User extends ApparelEntity {
 
     private String password;
 
+    //todo profilePhotoId
     @Column(name = "display_photo_id")
     private String displayPhotoId;
 
@@ -47,4 +48,11 @@ public class User extends ApparelEntity {
         this.password = password;
     }
 
+    public String getDisplayPhotoId() {
+        return displayPhotoId;
+    }
+
+    public void setDisplayPhotoId(String displayPhotoId) {
+        this.displayPhotoId = displayPhotoId;
+    }
 }

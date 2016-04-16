@@ -13,4 +13,6 @@ public interface IUserService {
     User findOne(String id);
 
     Collection<User> findAll();
+
+    User update(User testUser);
 }

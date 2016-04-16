@@ -6,5 +6,7 @@ package com.jomik.apparel.domain.model.item;
 public enum ItemPattern {
     PLAIN,
     STRIPED,
-    POKEDOT
+    POKEDOT,
+    PLAID,
+    LEOPARD
 }
