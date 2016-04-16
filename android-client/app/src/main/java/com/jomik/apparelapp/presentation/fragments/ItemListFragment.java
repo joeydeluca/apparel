@@ -1,8 +1,8 @@
 package com.jomik.apparelapp.presentation.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +15,7 @@ import com.jomik.apparelapp.R;
 import com.jomik.apparelapp.domain.repositories.RepositoryFactory;
 import com.jomik.apparelapp.domain.repositories.item.ItemsRepository;
 import com.jomik.apparelapp.presentation.ItemsAdapter;
+import com.jomik.apparelapp.presentation.activities.EditItemActivity;
 
 import java.util.List;
 
@@ -22,6 +23,8 @@ import java.util.List;
  * Created by Joe Deluca on 4/10/2016.
  */
 public class ItemListFragment extends ListFragment implements AdapterView.OnItemClickListener {
+
+    ArrayAdapter adapter;
 
     public ItemListFragment() {
     }
@@ -41,8 +44,8 @@ public class ItemListFragment extends ListFragment implements AdapterView.OnItem
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action fvdfvdf", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                Intent intent = new Intent(getActivity().getApplicationContext(), EditItemActivity.class);
+                startActivity(intent);
             }
         });
 
@@ -53,12 +56,12 @@ public class ItemListFragment extends ListFragment implements AdapterView.OnItem
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        ItemsRepository itemsRepository = RepositoryFactory.createItemsRepository(RepositoryFactory.Type.IN_MEMORY);
+        ItemsRepository itemsRepository = RepositoryFactory.getItemsRepository(RepositoryFactory.Type.IN_MEMORY);
 
         //ListView listView = (ListView) findViewById(R.id.listview);
         final List values = itemsRepository.findAll();
 
-        final ArrayAdapter adapter = new ItemsAdapter(getActivity().getApplicationContext(), values);
+        adapter = new ItemsAdapter(getActivity().getApplicationContext(), values);
 
         setListAdapter(adapter);
         getListView().setOnItemClickListener(this);
@@ -67,11 +70,16 @@ public class ItemListFragment extends ListFragment implements AdapterView.OnItem
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position,long id) {
-        Toast.makeText(getActivity(), "Item: " + position, Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(getActivity().getApplicationContext(), EditItemActivity.class);
+        intent.putExtra("id", view.getTag().toString());
+        startActivity(intent);
     }
 
-    public void addItem() {
+    @Override
+    public void onResume() {
+        adapter.notifyDataSetChanged();
+        super.onResume();
+
 
     }
-
 }

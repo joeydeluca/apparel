@@ -9,5 +9,7 @@ import java.util.List;
  */
 public interface ItemsRepository {
     List<Item> findAll();
+    void save(Item item);
+    Item findOne(String id);
 }
 

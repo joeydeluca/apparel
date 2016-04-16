@@ -16,7 +16,6 @@ import com.jomik.apparelapp.infrastructure.settings.Setting;
 import com.jomik.apparelapp.infrastructure.settings.SettingsUtil;
 import com.jomik.apparelapp.presentation.ItemsAdapter;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -28,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        itemsRepository = RepositoryFactory.createItemsRepository(RepositoryFactory.Type.IN_MEMORY);
+        itemsRepository = RepositoryFactory.getItemsRepository(RepositoryFactory.Type.IN_MEMORY);
 
         SettingsUtil.getSettingValue(Setting.MODE, getApplicationContext());
 

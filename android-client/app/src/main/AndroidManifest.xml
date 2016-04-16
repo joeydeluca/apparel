@@ -23,9 +23,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".presentation.activities.SettingsActivity"
-            android:label="@string/title_activity_settings" />
-        <activity
             android:name=".presentation.activities.EditItemActivity"
             android:label="@string/title_activity_edit_item"
             android:theme="@style/AppTheme.NoActionBar"></activity>

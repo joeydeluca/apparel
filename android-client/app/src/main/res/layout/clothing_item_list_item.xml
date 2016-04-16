@@ -1,47 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:fresco="http://schemas.android.com/apk/res-auto"
-    android:layout_height="fill_parent"
-    android:layout_width="fill_parent"
-    android:padding="6dip"
     android:orientation="horizontal"
-    >
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF">
 
         <com.facebook.drawee.view.SimpleDraweeView
             android:id="@+id/my_image_view"
             android:layout_width="100dip"
             android:layout_height="100dip"
+            android:layout_marginRight="20dp"
             fresco:placeholderImage="@drawable/pic"
             />
 
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/my_image_view">
+
         <LinearLayout
+            android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+        android:layout_marginTop="15dp">
 
             <TextView xmlns:android="http://schemas.android.com/apk/res/android"
-                android:id="@+id/clothingItemTextName"
+                android:id="@+id/clothing_item_list_item_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceListItemSmall"
-                android:paddingStart="?android:attr/listPreferredItemPaddingStart"
-                android:layout_gravity="start|center_vertical"
-                android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
-                android:textColor="#000000"/>
-
-            <TextView xmlns:android="http://schemas.android.com/apk/res/android"
-                android:id="@+id/clothingItemTextDescription"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_weight="5"
                 android:textAppearance="?android:attr/textAppearanceListItemSmall"
                 android:paddingStart="?android:attr/listPreferredItemPaddingStart"
                 android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
                 android:layout_gravity="right"
                 android:textColor="#000000"/>
-
         </LinearLayout>
 
-</LinearLayout>
+        <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+            <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/clothing_item_list_item_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:textAppearance="?android:attr/textAppearanceListItemSmall"
+            android:paddingStart="?android:attr/listPreferredItemPaddingStart"
+            android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
+            android:layout_gravity="right"
+            android:textColor="#000000"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+</RelativeLayout>
