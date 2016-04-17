@@ -12,7 +12,7 @@ public abstract class ApparelEntity {
     private String id;
 
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "modified_date", nullable = false, insertable = false)
+    @Column(name = "modified_date", insertable = false)
     private Date modifiedDate;
 
     @Temporal(TemporalType.TIMESTAMP)

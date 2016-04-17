@@ -1,7 +1,8 @@
-package com.jomik.apparel.interfaces;
+package com.jomik.apparel.interfaces.users;
 
 import com.jomik.apparel.domain.model.user.User;
 import com.jomik.apparel.domain.service.interfaces.IUserService;
+import com.jomik.apparel.interfaces.users.AbstractUserController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -17,8 +18,7 @@ import java.util.UUID;
  * Created by Mick on 4/16/2016.
  */
 @RestController
-@RequestMapping("/populateTestData")
-public class TestDataController {
+public class TestDataController extends AbstractUserController{
 
     private final IUserService userService;
 
@@ -28,7 +28,7 @@ public class TestDataController {
     }
 
     @RequestMapping(
-            value = "",
+            value = "/test",
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE
     )

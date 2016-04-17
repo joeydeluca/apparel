@@ -1,6 +1,5 @@
 package com.jomik.apparel.interfaces.error;
 
-import com.fasterxml.jackson.annotation.JsonValue;
 import org.springframework.http.HttpStatus;
 
 /**
