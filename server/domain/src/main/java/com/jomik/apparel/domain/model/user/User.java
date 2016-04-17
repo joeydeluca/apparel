@@ -1,12 +1,10 @@
 package com.jomik.apparel.domain.model.user;
 
 import com.jomik.apparel.domain.model.ApparelEntity;
-import com.jomik.apparel.domain.model.photo.Photo;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 /**
  * Created by Joe Deluca on 3/22/2016.
@@ -21,8 +19,8 @@ public class User extends ApparelEntity {
     private String password;
 
     //todo profilePhotoId
-    @Column(name = "display_photo_id")
-    private String displayPhotoId;
+    @Column(name = "profile_photo_id")
+    private String profilePhotoId;
 
     public String getUsername() {
         return username;
@@ -48,11 +46,11 @@ public class User extends ApparelEntity {
         this.password = password;
     }
 
-    public String getDisplayPhotoId() {
-        return displayPhotoId;
+    public String getProfilePhotoId() {
+        return profilePhotoId;
     }
 
-    public void setDisplayPhotoId(String displayPhotoId) {
-        this.displayPhotoId = displayPhotoId;
+    public void setProfilePhotoId(String profilePhotoId) {
+        this.profilePhotoId = profilePhotoId;
     }
 }

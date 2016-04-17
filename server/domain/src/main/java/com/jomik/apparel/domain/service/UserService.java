@@ -2,6 +2,7 @@ package com.jomik.apparel.domain.service;
 
 import com.jomik.apparel.domain.model.user.User;
 import com.jomik.apparel.domain.repository.UserRepository;
+import com.jomik.apparel.domain.service.interfaces.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,7 +15,7 @@ import java.util.Collection;
  */
 @Service
 @Transactional
-public class UserService implements IUserService{
+public class UserService implements IUserService {
 
     private final UserRepository userRepository;
 

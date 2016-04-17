@@ -16,8 +16,11 @@ import java.util.List;
 @Entity
 @Table(name = "wardrobe", catalog = "appareldb")
 public class Wardrobe extends ApparelEntity {
-    @ElementCollection
-    @CollectionTable(name = "wardrobe_item", joinColumns = @JoinColumn(name = "id"))
+
+    private String userId;
+
+    @OneToMany
+    @JoinTable(name = "wardrobe_item", joinColumns = @JoinColumn(name = "id"))
     private List<Item> items = new ArrayList<>();
 
     public List<Item> getItems() {
@@ -27,5 +30,13 @@ public class Wardrobe extends ApparelEntity {
     public void setItems(final List<Item> items) {
         this.items.clear();
         this.items.addAll(items);
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 }

@@ -1,4 +1,4 @@
-package com.jomik.apparel.domain.service;
+package com.jomik.apparel.domain.service.interfaces;
 
 import com.jomik.apparel.domain.model.user.User;
 

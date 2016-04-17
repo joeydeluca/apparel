@@ -19,8 +19,8 @@ public class Outfit extends ApparelEntity {
 
     private String description;
 
-    @ElementCollection
-    @CollectionTable(name = "outfit_item", joinColumns = @JoinColumn(name = "id"))
+    @ManyToMany
+    @JoinTable(name = "outfit_item", joinColumns = @JoinColumn(name = "id"))
     private List<Item> items = new ArrayList<>();
 
     public String getName() {

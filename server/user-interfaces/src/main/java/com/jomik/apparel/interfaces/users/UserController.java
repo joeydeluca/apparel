@@ -1,7 +1,7 @@
-package com.jomik.apparel.interfaces;
+package com.jomik.apparel.interfaces.users;
 
 import com.jomik.apparel.domain.model.user.User;
-import com.jomik.apparel.domain.service.IUserService;
+import com.jomik.apparel.domain.service.interfaces.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -16,8 +16,7 @@ import java.util.Collection;
  * Created by Mick on 4/16/2016.
  */
 @RestController
-@RequestMapping("/users")
-public class UserController {
+public class UserController extends AbstractUserController{
 
     private final IUserService userService;
 
