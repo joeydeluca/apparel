@@ -35,4 +35,9 @@ public class ItemsCloudRepository implements ItemsRepository {
     public Item findOne(String id) {
         return null;
     }
+
+    @Override
+    public void delete(Item item) {
+
+    }
 }

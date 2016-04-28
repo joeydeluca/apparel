@@ -50,4 +50,9 @@ public class ItemsInMemoryRepository implements ItemsRepository {
         }
         return null;
     }
+
+    @Override
+    public void delete(Item item) {
+        items.remove(item);
+    }
 }

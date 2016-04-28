@@ -11,7 +11,6 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".presentation.activities.MainActivity" />
         <activity
             android:name=".presentation.activities.TabbedActivity"
             android:label="@string/title_activity_tabbed"
@@ -25,7 +24,29 @@
         <activity
             android:name=".presentation.activities.EditItemActivity"
             android:label="@string/title_activity_edit_item"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="stateHidden"></activity>
+        <activity
+            android:name=".presentation.activities.EditEventActivity"
+            android:label="Edit Event"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="stateHidden"></activity>
+        <activity
+            android:name=".presentation.activities.EventSearchActivity"
+            android:label="Event Search"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="stateHidden"></activity>
+        <activity
+            android:name=".presentation.activities.EventSearchResultsActivity"
+            android:label="Event Search Results"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="stateHidden"></activity>
+        <activity
+            android:name=".presentation.activities.ViewEventActivity"
+            android:label="View Event"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="stateHidden"></activity>
+
     </application>
 
 </manifest>

@@ -1,4 +1,4 @@
-package com.jomik.apparelapp.presentation;
+package com.jomik.apparelapp.presentation.adapters;
 
 import android.content.Context;
 import android.net.Uri;
@@ -31,7 +31,7 @@ public class ItemsAdapter extends ArrayAdapter<Item> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View rowView = inflater.inflate(R.layout.clothing_item_list_item, parent, false);
+        View rowView = inflater.inflate(R.layout.row_item_list, parent, false);
 
         TextView textView = (TextView) rowView.findViewById(R.id.clothing_item_list_item_name);
         textView.setText(items.get(position).getName());

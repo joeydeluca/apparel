@@ -1,5 +1,8 @@
 package com.jomik.apparelapp.domain.repositories;
 
+import com.jomik.apparelapp.domain.repositories.event.EventsCloudRepository;
+import com.jomik.apparelapp.domain.repositories.event.EventsInMemoryRepository;
+import com.jomik.apparelapp.domain.repositories.event.EventsRepository;
 import com.jomik.apparelapp.domain.repositories.item.ItemsCloudRepository;
 import com.jomik.apparelapp.domain.repositories.item.ItemsInMemoryRepository;
 import com.jomik.apparelapp.domain.repositories.item.ItemsRepository;
@@ -8,8 +11,13 @@ import com.jomik.apparelapp.domain.repositories.item.ItemsRepository;
  * Created by Joe Deluca on 4/7/2016.
  */
 public class RepositoryFactory {
+
     public static ItemsRepository getItemsRepository(Type type) {
         return type == Type.CLOUD ? ItemsCloudRepository.getInstance() : ItemsInMemoryRepository.getInstance();
+    }
+
+    public static EventsRepository getEventsRepository(Type type) {
+        return type == Type.CLOUD ? EventsCloudRepository.getInstance() : EventsInMemoryRepository.getInstance();
     }
 
     public enum Type {

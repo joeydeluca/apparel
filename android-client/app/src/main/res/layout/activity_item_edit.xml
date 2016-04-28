@@ -28,7 +28,6 @@
             fresco:roundingBorderWidth="2dp"
             fresco:roundingBorderColor="#BF3136"
             android:padding="2dp"
-            fresco:roundedCornerRadius="5dp"
             android:layout_margin="5dp"
             fresco:placeholderImage="@drawable/pic"
             />
@@ -213,7 +212,25 @@
 
         </LinearLayout>
 
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
+            <View android:layout_height="match_parent"
+                android:layout_width="0dp"
+                android:layout_weight="1"/>
+
+            <TextView
+                android:id="@+id/edit_item_delete_button"
+                android:gravity="left"
+                android:textColor="#dc0a11"
+                android:layout_marginTop="15dp"
+                android:text="Delete item"
+                android:layout_width="0dp"
+                android:layout_weight="4"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
 
     </LinearLayout>
 

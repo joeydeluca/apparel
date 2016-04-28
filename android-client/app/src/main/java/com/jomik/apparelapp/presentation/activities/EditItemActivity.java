@@ -24,7 +24,7 @@ public class EditItemActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_item_edit);
+        setContentView(R.layout.activity_item_edit);
 
         final TextView btnDone = (TextView) findViewById(R.id.toolbar_done_button);
         final EditText txtItemName = (EditText) findViewById(R.id.edit_item_name);
@@ -33,6 +33,10 @@ public class EditItemActivity extends AppCompatActivity {
         final Spinner spnPattern = (Spinner) findViewById(R.id.edit_item_spinner_pattern);
         final Spinner spnType = (Spinner) findViewById(R.id.edit_item_spinner_type);
         final ImageView imgCancel = (ImageView) findViewById(R.id.toolbar_cancel_button);
+        final TextView btnDelete = (TextView) findViewById(R.id.edit_item_delete_button);
+        final TextView txtToolbarTitle = (TextView) findViewById(R.id.toolbar_title);
+
+        txtToolbarTitle.setText("Edit Item");
 
         final ItemsRepository itemsRepository = RepositoryFactory.getItemsRepository(RepositoryFactory.Type.IN_MEMORY);
 
@@ -61,6 +65,7 @@ public class EditItemActivity extends AppCompatActivity {
             spnType.setSelection(item.getItemCategory().ordinal());
         } else {
             item = new Item();
+            btnDelete.setVisibility(View.INVISIBLE);
         }
 
         btnDone.setOnClickListener(new View.OnClickListener() {
@@ -85,6 +90,17 @@ public class EditItemActivity extends AppCompatActivity {
         imgCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                onBackPressed();
+            }
+        });
+
+        btnDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                itemsRepository.delete(item);
+
+                Toast.makeText(EditItemActivity.this, "Deleted", Toast.LENGTH_SHORT).show();
+
                 onBackPressed();
             }
         });
