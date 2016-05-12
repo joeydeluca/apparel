@@ -2,13 +2,14 @@ package com.jomik.apparelapp.presentation.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.ListFragment;
+import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
+import android.widget.LinearLayout;
 
 import com.jomik.apparelapp.R;
 import com.jomik.apparelapp.domain.repositories.RepositoryFactory;
@@ -18,7 +19,7 @@ import com.jomik.apparelapp.infrastructure.events.FindUserEventsStart;
 import com.jomik.apparelapp.infrastructure.services.AuthenticationManager;
 import com.jomik.apparelapp.presentation.activities.EditEventActivity;
 import com.jomik.apparelapp.presentation.activities.EventSearchActivity;
-import com.jomik.apparelapp.presentation.adapters.EventsAdapter;
+import com.jomik.apparelapp.presentation.adapters.EventsRvAdapter;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -27,7 +28,7 @@ import org.greenrobot.eventbus.ThreadMode;
 /**
  * Created by Joe Deluca on 4/10/2016.
  */
-public class EventListFragment extends ListFragment implements AdapterView.OnItemClickListener {
+public class EventListFragment extends Fragment {
 
     ArrayAdapter adapter;
 
@@ -45,7 +46,7 @@ public class EventListFragment extends ListFragment implements AdapterView.OnIte
 
         View view = inflater.inflate(R.layout.fragment_event_list, container, false);
 
-        Button addButton = (Button) view.findViewById(R.id.btn_create_event);
+        LinearLayout addButton = (LinearLayout) view.findViewById(R.id.btn_create_event);
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -54,7 +55,7 @@ public class EventListFragment extends ListFragment implements AdapterView.OnIte
             }
         });
 
-        Button findButton = (Button) view.findViewById(R.id.btn_find_event);
+        LinearLayout findButton = (LinearLayout) view.findViewById(R.id.btn_find_event);
         findButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -69,7 +70,6 @@ public class EventListFragment extends ListFragment implements AdapterView.OnIte
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        getListView().setOnItemClickListener(this);
     }
 
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
@@ -79,16 +79,14 @@ public class EventListFragment extends ListFragment implements AdapterView.OnIte
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onMessage(FindUserEventsComplete event) {
-        adapter = new EventsAdapter(getActivity().getApplicationContext(), event.getEvents());
-        setListAdapter(adapter);
-    }
+    public void onMessage(FindUserEventsComplete userEvent) {
 
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position,long id) {
-        Intent intent = new Intent(getActivity().getApplicationContext(), EditEventActivity.class);
-        intent.putExtra("id", view.getTag().toString());
-        startActivity(intent);
+        RecyclerView rv = (RecyclerView) getActivity().findViewById(R.id.rv);
+        LinearLayoutManager llm = new LinearLayoutManager(getContext());
+        rv.setLayoutManager(llm);
+
+        EventsRvAdapter adapter = new EventsRvAdapter(userEvent.getEvents());
+        rv.setAdapter(adapter);
     }
 
     @Override

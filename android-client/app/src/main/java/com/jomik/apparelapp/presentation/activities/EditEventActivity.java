@@ -16,6 +16,7 @@ import com.jomik.apparelapp.R;
 import com.jomik.apparelapp.domain.entities.event.Event;
 import com.jomik.apparelapp.domain.repositories.RepositoryFactory;
 import com.jomik.apparelapp.domain.repositories.event.EventsRepository;
+import com.jomik.apparelapp.infrastructure.services.AuthenticationManager;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -73,6 +74,7 @@ public class EditEventActivity extends AppCompatActivity implements View.OnClick
                 event.setTitle(txtEventTitle.getText().toString());
                 event.setLocation(txtEventLocation.getText().toString());
                 event.setPhotoId(123);
+                event.setOwner(AuthenticationManager.getAuthenticatedUser());
                 try {
                     event.setStartDate(dateFormatter.parse(txtFromDate.getText().toString()));
                 } catch (ParseException e) {

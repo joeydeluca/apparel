@@ -17,4 +17,44 @@ public class UserEventOutfit extends Entity {
     private Outfit outfit;
     private Date date;
     private List<Conflict> conflicts;
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public Event getEvent() {
+        return event;
+    }
+
+    public void setEvent(Event event) {
+        this.event = event;
+    }
+
+    public Outfit getOutfit() {
+        return outfit;
+    }
+
+    public void setOutfit(Outfit outfit) {
+        this.outfit = outfit;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
+
+    public List<Conflict> getConflicts() {
+        return conflicts;
+    }
+
+    public void setConflicts(List<Conflict> conflicts) {
+        this.conflicts = conflicts;
+    }
 }

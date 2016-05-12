@@ -2,6 +2,7 @@ package com.jomik.apparelapp.domain.entities.event;
 
 import com.jomik.apparelapp.domain.entities.Entity;
 import com.jomik.apparelapp.domain.entities.user.User;
+import com.jomik.apparelapp.domain.entities.usereventoutfit.UserEventOutfit;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -16,7 +17,7 @@ public class Event extends Entity {
     private Date startDate;
     private Date endDate;
     private User owner;
-    private List<User> attendees = new ArrayList<>();
+    private List<UserEventOutfit> attendees = new ArrayList<>();
     private Integer photoId;
 
     public String getTitle() {
@@ -59,11 +60,11 @@ public class Event extends Entity {
         this.owner = owner;
     }
 
-    public List<User> getAttendees() {
+    public List<UserEventOutfit> getAttendees() {
         return attendees;
     }
 
-    public void setAttendees(List<User> attendees) {
+    public void setAttendees(List<UserEventOutfit> attendees) {
         this.attendees = attendees;
     }
 

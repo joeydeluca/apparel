@@ -6,6 +6,7 @@ import com.jomik.apparelapp.domain.repositories.event.EventsRepository;
 import com.jomik.apparelapp.domain.repositories.item.ItemsCloudRepository;
 import com.jomik.apparelapp.domain.repositories.item.ItemsInMemoryRepository;
 import com.jomik.apparelapp.domain.repositories.item.ItemsRepository;
+import com.jomik.apparelapp.domain.repositories.usereventoutfit.UserEventOutfitInMemoryRepository;
 
 /**
  * Created by Joe Deluca on 4/7/2016.
@@ -18,6 +19,10 @@ public class RepositoryFactory {
 
     public static EventsRepository getEventsRepository(Type type) {
         return type == Type.CLOUD ? EventsCloudRepository.getInstance() : EventsInMemoryRepository.getInstance();
+    }
+
+    public static ApparelRepository getUserEventOutfitRepository(Type type) {
+        return UserEventOutfitInMemoryRepository.getInstance();
     }
 
     public enum Type {

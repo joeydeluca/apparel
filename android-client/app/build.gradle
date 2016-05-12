@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 23
-    buildToolsVersion '21.1.2'
+    buildToolsVersion '22.0.1'
     defaultConfig {
         applicationId "com.jomik.apparelapp"
         minSdkVersion 21
@@ -30,5 +30,20 @@ dependencies {
     //compile 'org.springframework.android:spring-android-rest-template:1.0.1.RELEASE'
     //compile 'com.fasterxml.jackson.core:jackson-databind:2.3.2'
     compile 'org.greenrobot:eventbus:3.0.0'
+
+    //Core card library
+    compile 'com.github.gabrielemariotti.cards:cardslib-core:2.1.0'
+    //Optional for built-in cards
+    compile 'com.github.gabrielemariotti.cards:cardslib-cards:2.1.0'
+    //Optional for RecyclerView
+    compile 'com.github.gabrielemariotti.cards:cardslib-recyclerview:2.1.0'
+    //Optional for staggered grid view support
+    compile 'com.github.gabrielemariotti.cards:cardslib-extra-staggeredgrid:2.1.0'
+    //Optional for drag and drop support
+    compile 'com.github.gabrielemariotti.cards:cardslib-extra-dragdrop:2.1.0'
+
+    compile 'com.android.support:cardview-v7:23.0.+'
+    compile 'com.android.support:recyclerview-v7:23.0.+'
+
 
 }

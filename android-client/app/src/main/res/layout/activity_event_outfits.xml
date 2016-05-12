@@ -3,7 +3,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:id="@+id/fragment_event_list">
+    android:id="@+id/activity_event_outfits">
+
+    <include layout="@layout/item_edit_toolbar"/>
 
     <LinearLayout
         android:orientation="horizontal"
@@ -19,8 +21,7 @@
             android:padding="2dp"
             android:gravity="center"
             android:id="@+id/btn_find_event"
-            android:background="?attr/selectableItemBackground"
-            android:orientation="horizontal">
+            android:background="?attr/selectableItemBackground">
 
             <ImageView
                 android:layout_width="25dp"
@@ -33,37 +34,7 @@
                 android:lines="1"
                 android:gravity="center_vertical"
                 android:textSize="13dp"
-                android:text="Search" />
-
-        </LinearLayout>
-
-        <View
-            android:layout_width="1dp"
-            android:layout_height="30dp"
-            android:layout_gravity="center"
-            android:background="@color/dividerColor"/>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:padding="2dp"
-            android:gravity="center"
-            android:background="?attr/selectableItemBackground"
-            android:id="@+id/btn_create_event">
-
-            <ImageView
-                android:layout_width="25dp"
-                android:layout_height="fill_parent"
-                android:src="@drawable/ic_add"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="fill_parent"
-                android:lines="1"
-                android:gravity="center_vertical"
-                android:textSize="13dp"
-                android:text="Create" />
+                android:text="Jan 1st, 2016" />
 
         </LinearLayout>
 

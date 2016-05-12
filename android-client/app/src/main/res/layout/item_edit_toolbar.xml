@@ -2,10 +2,10 @@
 <android.support.v7.widget.Toolbar
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/data_form_edit_commit_bar"
-    android:background="#BF3136"
+    android:background="@color/colorPrimary"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:theme="@style/AppTheme">
+    android:theme="@style/JoeyStyle">
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">

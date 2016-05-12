@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import com.jomik.apparelapp.R;
 import com.jomik.apparelapp.domain.entities.event.Event;
+import com.jomik.apparelapp.domain.entities.usereventoutfit.UserEventOutfit;
 import com.jomik.apparelapp.domain.repositories.RepositoryFactory;
 import com.jomik.apparelapp.domain.repositories.event.EventsRepository;
 import com.jomik.apparelapp.infrastructure.services.AuthenticationManager;
@@ -66,7 +67,11 @@ public class ViewEventActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Toast.makeText(getApplicationContext(), "You have joined the event", Toast.LENGTH_LONG).show();
-                event.getAttendees().add(AuthenticationManager.getAuthenticatedUser());
+
+                UserEventOutfit userEventOutfit = new UserEventOutfit();
+                userEventOutfit.setUser(AuthenticationManager.getAuthenticatedUser());
+                userEventOutfit.setEvent(event);
+                event.getAttendees().add(userEventOutfit);
                 eventsRepository.save(event);
             }
         });
