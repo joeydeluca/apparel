@@ -10,7 +10,6 @@
     <com.facebook.drawee.view.SimpleDraweeView
         android:layout_width="150dp"
         android:layout_height="200dp"
-        android:layout_marginRight="20dp"
         fresco:roundedCornerRadius="10dp"
         fresco:placeholderImage="@drawable/pic"
         />

@@ -11,6 +11,7 @@ import java.util.List;
 public class Outfit extends Entity {
     private String description;
     private List<Item> items;
+    private String photoId; // This is a single photo of the user wearing their outfit
 
     public String getDescription() {
         return description;
