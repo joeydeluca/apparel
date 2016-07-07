@@ -1,36 +1,37 @@
 package com.jomik.apparelapp.presentation.fragments;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ListFragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.widget.CursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Adapter;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 
 import com.jomik.apparelapp.R;
-import com.jomik.apparelapp.domain.repositories.RepositoryFactory;
-import com.jomik.apparelapp.domain.repositories.item.ItemsRepository;
-import com.jomik.apparelapp.presentation.adapters.ItemsAdapter;
+import com.jomik.apparelapp.infrastructure.providers.ApparelContract;
 import com.jomik.apparelapp.presentation.activities.EditItemActivity;
-
-import java.util.List;
+import com.jomik.apparelapp.presentation.adapters.ItemsCursorAdapter;
 
 /**
  * Created by Joe Deluca on 4/10/2016.
  */
-public class ItemListFragment extends ListFragment implements AdapterView.OnItemClickListener {
+public class ItemListFragment extends ListFragment implements AdapterView.OnItemClickListener,
+        LoaderManager.LoaderCallbacks<Cursor> {
 
-    ArrayAdapter adapter;
-
-    public ItemListFragment() {
-    }
+    private static final int LOADER_ID = 0x02;
+    private CursorAdapter adapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getLoaderManager().initLoader(LOADER_ID, null, this);
     }
 
     @Override
@@ -54,30 +55,30 @@ public class ItemListFragment extends ListFragment implements AdapterView.OnItem
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
-        ItemsRepository itemsRepository = RepositoryFactory.getItemsRepository(RepositoryFactory.Type.IN_MEMORY);
-
-        final List values = itemsRepository.findAll();
-
-        adapter = new ItemsAdapter(getActivity().getApplicationContext(), values);
-
+        adapter = new ItemsCursorAdapter(getActivity().getApplicationContext(), null, Adapter.NO_SELECTION);
         setListAdapter(adapter);
         getListView().setOnItemClickListener(this);
-
     }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position,long id) {
         Intent intent = new Intent(getActivity().getApplicationContext(), EditItemActivity.class);
-        intent.putExtra("id", view.getTag().toString());
+        intent.putExtra("id", Long.parseLong(view.getTag().toString()));
         startActivity(intent);
     }
 
     @Override
-    public void onResume() {
-        adapter.notifyDataSetChanged();
-        super.onResume();
+    public android.support.v4.content.Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        return new CursorLoader(getActivity(), ApparelContract.Items.CONTENT_URI, ApparelContract.Items.PROJECTION_ALL, null, null, null);
+    }
 
+    @Override
+    public void onLoadFinished(android.support.v4.content.Loader<Cursor> loader, Cursor cursor) {
+        adapter.swapCursor(cursor);
+    }
 
+    @Override
+    public void onLoaderReset(android.support.v4.content.Loader<Cursor> loader) {
+        adapter.swapCursor(null);
     }
 }

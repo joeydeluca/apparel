@@ -1,6 +1,10 @@
 package com.jomik.apparelapp.presentation.activities;
 
+import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -16,8 +20,7 @@ import com.jomik.apparelapp.domain.entities.item.Item;
 import com.jomik.apparelapp.domain.entities.item.ItemCategory;
 import com.jomik.apparelapp.domain.entities.item.ItemColor;
 import com.jomik.apparelapp.domain.entities.item.ItemPattern;
-import com.jomik.apparelapp.domain.repositories.RepositoryFactory;
-import com.jomik.apparelapp.domain.repositories.item.ItemsRepository;
+import com.jomik.apparelapp.infrastructure.providers.ApparelContract.*;
 
 public class EditItemActivity extends AppCompatActivity {
 
@@ -38,8 +41,6 @@ public class EditItemActivity extends AppCompatActivity {
 
         txtToolbarTitle.setText("Edit Item");
 
-        final ItemsRepository itemsRepository = RepositoryFactory.getItemsRepository(RepositoryFactory.Type.IN_MEMORY);
-
         final ArrayAdapter spinnerColorAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, ItemColor.values());
         spinnerColorAdapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
         spnColor.setAdapter(spinnerColorAdapter);
@@ -54,32 +55,38 @@ public class EditItemActivity extends AppCompatActivity {
 
         // Populate fields if editing
         Intent intent = getIntent();
-        final String itemId = intent.getStringExtra("id");
-        final Item item;
-        if(itemId != null) {
-            item = itemsRepository.findOne(itemId);
-            txtItemName.setText(item.getName());
-            txtItemDescription.setText(item.getDescription());
-            spnColor.setSelection(item.getItemColor().ordinal());
-            spnPattern.setSelection(item.getItemPattern().ordinal());
-            spnType.setSelection(item.getItemCategory().ordinal());
+        final long id = intent.getLongExtra("id", -1);
+        if(id != -1) {
+            Uri uri = ContentUris.withAppendedId(Items.CONTENT_URI, id);
+            Cursor cursor = getContentResolver().query(uri, Items.PROJECTION_ALL, null, null, null);
+            if (cursor.moveToFirst()) {
+                txtItemName.setText(cursor.getString(cursor.getColumnIndexOrThrow(Items.NAME)));
+                txtItemDescription.setText(cursor.getString(cursor.getColumnIndexOrThrow(Items.DESCRIPTION)));
+                spnColor.setSelection(ItemColor.valueOf(cursor.getString(cursor.getColumnIndexOrThrow(Items.ITEM_COLOR))).ordinal());
+                spnPattern.setSelection(ItemPattern.valueOf(cursor.getString(cursor.getColumnIndexOrThrow(Items.ITEM_PATTERN))).ordinal());
+                spnType.setSelection(ItemCategory.valueOf(cursor.getString(cursor.getColumnIndexOrThrow(Items.ITEM_CATEGORY))).ordinal());
+            }
+            cursor.close();
+
         } else {
-            item = new Item();
             btnDelete.setVisibility(View.INVISIBLE);
         }
 
         btnDone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                item.setName(txtItemName.getText().toString());
-                item.setDescription(txtItemDescription.getText().toString());
-                item.setItemCategory(ItemCategory.BOTTOMS);
-                item.setItemColor((ItemColor) spnColor.getSelectedItem());
-                item.setItemPattern((ItemPattern) spnPattern.getSelectedItem());
-                item.setItemCategory((ItemCategory) spnType.getSelectedItem());
-                item.setPhotoId(123);
+                ContentValues values = new ContentValues();
+                values.put(Items.NAME, txtItemName.getText().toString());
+                values.put(Items.DESCRIPTION, txtItemDescription.getText().toString());
+                values.put(Items.ITEM_COLOR, spnColor.getSelectedItem().toString());
+                values.put(Items.ITEM_PATTERN, spnPattern.getSelectedItem().toString());
+                values.put(Items.ITEM_CATEGORY, spnType.getSelectedItem().toString());
 
-                itemsRepository.save(item);
+                if(id == -1) {
+                    getContentResolver().insert(Items.CONTENT_URI, values);
+                } else {
+                    getContentResolver().update(ContentUris.withAppendedId(Items.CONTENT_URI, id), values, null, null);
+                }
 
                 Toast.makeText(EditItemActivity.this, "Saved", Toast.LENGTH_SHORT).show();
 
@@ -97,7 +104,7 @@ public class EditItemActivity extends AppCompatActivity {
         btnDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                itemsRepository.delete(item);
+                getContentResolver().delete(ContentUris.withAppendedId(Items.CONTENT_URI, id), null, null);
 
                 Toast.makeText(EditItemActivity.this, "Deleted", Toast.LENGTH_SHORT).show();
 

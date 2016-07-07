@@ -6,6 +6,8 @@ package com.jomik.apparelapp;
 
 import android.app.Application;
 
+import com.facebook.FacebookSdk;
+import com.facebook.appevents.AppEventsLogger;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.jomik.apparelapp.domain.entities.event.Event;
 import com.jomik.apparelapp.domain.entities.item.Item;
@@ -31,6 +33,9 @@ public class ApparelApplication extends Application {
     public void onCreate() {
         super.onCreate();
         Fresco.initialize(this);
+
+        FacebookSdk.sdkInitialize(getApplicationContext());
+        AppEventsLogger.activateApp(this);
 
         createTestData();
     }

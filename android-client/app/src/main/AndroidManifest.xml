@@ -4,6 +4,8 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
 
+    <uses-permission android:name="android.permission.USE_CREDENTIALS" />
+
     <application
         android:name=".ApparelApplication"
         android:allowBackup="true"
@@ -13,7 +15,7 @@
         android:theme="@style/JoeyStyle">
         <activity
             android:name=".presentation.activities.TabbedActivity"
-            android:label="@string/title_activity_tabbed"
+            android:label="ApparelApp"
             android:theme="@style/JoeyStyle.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -45,6 +47,34 @@
             android:label="View Event Outfits"
             android:windowSoftInputMode="stateHidden"></activity>
 
+        <provider
+            android:name=".infrastructure.providers.ApparelProvider"
+            android:authorities="com.jomik.apparelapp.provider"
+            android:exported="true"
+            android:grantUriPermissions="true"
+            android:label="ApparelProvider"
+            android:readPermission="com.jomik.apparel.READ"
+            android:writePermission="com.jomik.apparel.WRITE" >
+        </provider>
+
+        <service
+            android:name=".ApparelSyncService"
+            android:enabled="true"
+            android:exported="true"
+            android:process=":sync" >
+            <intent-filter>
+                <action android:name="android.content.SyncAdapter" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.content.SyncAdapter"
+                android:resource="@xml/syncadapter" />
+        </service>
+
+        <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_app_id"/>
+
     </application>
+
+
 
 </manifest>

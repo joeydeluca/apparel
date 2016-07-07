@@ -15,224 +15,236 @@
         android:fillViewport="false"
         android:outlineProvider="background">
 
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <com.facebook.drawee.view.SimpleDraweeView
-            android:id="@+id/my_image_view"
-            android:layout_width="100dip"
-            android:layout_height="100dip"
-            android:layout_gravity="center"
-            fresco:roundingBorderWidth="2dp"
-            fresco:roundingBorderColor="#BF3136"
-            android:padding="2dp"
-            android:layout_margin="5dp"
-            fresco:placeholderImage="@drawable/pic"
-            />
-
-
         <LinearLayout
-            android:orientation="horizontal"
+            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent">
 
-            <View android:layout_height="match_parent"
-                android:layout_width="0dp"
-                android:layout_weight="1"/>
+            <com.facebook.drawee.view.SimpleDraweeView
+                android:id="@+id/my_image_view"
+                android:layout_width="100dip"
+                android:layout_height="100dip"
+                android:layout_gravity="center"
+                fresco:roundingBorderWidth="2dp"
+                fresco:roundingBorderColor="#BF3136"
+                android:padding="2dp"
+                android:layout_margin="5dp"
+                fresco:placeholderImage="@drawable/pic"
+                />
 
-            <TextView
-                android:gravity="left"
-                android:textColor="#B1AFAE"
-                android:layout_marginTop="15dp"
-                android:text="CLOTHING ITEM DETAILS"
-                android:layout_width="0dp"
-                android:layout_weight="4"
-                android:layout_height="wrap_content" />
-        </LinearLayout>
 
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-            <ImageView
-                android:src="@android:drawable/ic_menu_sort_alphabetically"
-                android:scaleType="center"
-                android:layout_gravity="center_vertical|left"
-                android:layout_height="match_parent"
-                android:layout_width="0dp"
-                android:layout_weight="1"/>
+                <View android:layout_height="match_parent"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"/>
 
-            <EditText
-                android:id="@+id/edit_item_name"
-                android:gravity="left"
-                android:layout_marginTop="15dp"
-                android:hint="clothing item name"
-                android:layout_width="0dp"
-                android:layout_weight="4"
+                <TextView
+                    android:gravity="left"
+                    android:textColor="#B1AFAE"
+                    android:layout_marginTop="15dp"
+                    android:text="CLOTHING ITEM DETAILS"
+                    android:layout_width="0dp"
+                    android:layout_weight="4"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:src="@android:drawable/ic_menu_sort_alphabetically"
+                    android:scaleType="center"
+                    android:layout_gravity="center_vertical|left"
+                    android:layout_height="match_parent"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"/>
+
+                <EditText
+                    android:id="@+id/edit_item_name"
+                    android:gravity="left"
+                    android:layout_marginTop="15dp"
+                    android:hint="clothing item name"
+                    android:layout_width="0dp"
+                    android:layout_weight="4"
+                    android:layout_height="wrap_content"
+                    />
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:src="@android:drawable/ic_menu_sort_by_size"
+                    android:scaleType="center"
+                    android:layout_gravity="center_vertical|left"
+                    android:layout_height="match_parent"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"/>
+
+                <EditText
+                    android:id="@+id/edit_item_description"
+                    android:gravity="left"
+                    android:layout_marginTop="15dp"
+                    android:hint="description"
+                    android:layout_width="0dp"
+                    android:layout_weight="4"
+                    android:layout_height="wrap_content"
+                    />
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <View android:layout_height="match_parent"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"/>
+
+                <TextView
+                    android:gravity="left"
+                    android:textColor="#B1AFAE"
+                    android:layout_marginTop="15dp"
+                    android:text="CHOOSE PRIMARY COLOR"
+                    android:layout_width="0dp"
+                    android:layout_weight="4"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:src="@android:drawable/ic_dialog_dialer"
+                    android:scaleType="center"
+                    android:layout_gravity="center_vertical|left"
+                    android:layout_height="match_parent"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"/>
+
+                <Spinner
+                    android:id="@+id/edit_item_spinner_color"
+                    android:gravity="left"
+                    android:layout_marginTop="15dp"
+                    android:layout_width="0dp"
+                    android:layout_weight="4"
+                    android:layout_height="wrap_content"
+                    android:spinnerMode="dropdown" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <View android:layout_height="match_parent"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"/>
+                <TextView
+                    android:gravity="left"
+                    android:textColor="#B1AFAE"
+                    android:layout_marginTop="15dp"
+                    android:text="CHOOSE PRIMARY PATTERN"
+                    android:layout_width="0dp"
+                    android:layout_weight="4"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:src="@android:drawable/ic_dialog_dialer"
+                    android:scaleType="center"
+                    android:layout_gravity="center_vertical|left"
+                    android:layout_height="match_parent"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"/>
+
+                <Spinner
+                    android:id="@+id/edit_item_spinner_pattern"
+                    android:gravity="left"
+                    android:layout_marginTop="15dp"
+                    android:layout_width="0dp"
+                    android:layout_weight="4"
+                    android:layout_height="wrap_content"
+                    android:spinnerMode="dropdown" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <View android:layout_height="match_parent"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"/>
+                <TextView
+                    android:gravity="left"
+                    android:textColor="#B1AFAE"
+                    android:layout_marginTop="15dp"
+                    android:text="CHOOSE CATEGORY"
+                    android:layout_width="0dp"
+                    android:layout_weight="4"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:src="@android:drawable/ic_dialog_dialer"
+                    android:scaleType="center"
+                    android:layout_gravity="center_vertical|left"
+                    android:layout_height="match_parent"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"/>
+
+                <Spinner
+                    android:id="@+id/edit_item_spinner_type"
+                    android:gravity="left"
+                    android:layout_marginTop="15dp"
+                    android:layout_width="0dp"
+                    android:layout_weight="4"
+                    android:layout_height="wrap_content"
+                    android:spinnerMode="dropdown" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:password="false" />
-        </LinearLayout>
+                android:layout_marginTop="10dp">
 
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <ImageView
-                android:src="@android:drawable/ic_menu_sort_by_size"
-                android:scaleType="center"
-                android:layout_gravity="center_vertical|left"
-                android:layout_height="match_parent"
-                android:layout_width="0dp"
-                android:layout_weight="1"/>
-
-            <EditText
-                android:id="@+id/edit_item_description"
-                android:gravity="left"
-                android:layout_marginTop="15dp"
-                android:hint="description"
-                android:layout_width="0dp"
-                android:layout_weight="4"
-                android:layout_height="wrap_content"
-                android:password="false" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <View android:layout_height="match_parent"
-                android:layout_width="0dp"
-                android:layout_weight="1"/>
-
-            <TextView
-                android:gravity="left"
-                android:textColor="#B1AFAE"
-                android:layout_marginTop="15dp"
-                android:text="CHOOSE PRIMARY COLOR"
-                android:layout_width="0dp"
-                android:layout_weight="4"
-                android:layout_height="wrap_content" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <ImageView
-                android:src="@android:drawable/ic_menu_view"
-                android:scaleType="center"
-                android:layout_gravity="center_vertical|left"
-                android:layout_height="match_parent"
-                android:layout_width="0dp"
-                android:layout_weight="1"/>
-
-            <Spinner
-                android:id="@+id/edit_item_spinner_color"
-                android:gravity="left"
-                android:layout_marginTop="15dp"
-                android:layout_width="0dp"
-                android:layout_weight="4"
-                android:layout_height="wrap_content"
-                android:spinnerMode="dropdown" />
+                <TextView
+                    android:id="@+id/edit_item_delete_button"
+                    android:gravity="left"
+                    android:textColor="#dc0a11"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginLeft="10dp"
+                    android:text="Delete item"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
 
         </LinearLayout>
 
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+    </ScrollView>
 
-            <View android:layout_height="match_parent"
-                android:layout_width="0dp"
-                android:layout_weight="1"/>
-
-            <TextView
-                android:gravity="left"
-                android:textColor="#B1AFAE"
-                android:layout_marginTop="15dp"
-                android:text="CHOOSE PRIMARY PATTERN"
-                android:layout_width="0dp"
-                android:layout_weight="4"
-                android:layout_height="wrap_content" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <ImageView
-                android:src="@android:drawable/ic_dialog_dialer"
-                android:scaleType="center"
-                android:layout_gravity="center_vertical|left"
-                android:layout_height="match_parent"
-                android:layout_width="0dp"
-                android:layout_weight="1"/>
-
-            <Spinner
-                android:id="@+id/edit_item_spinner_pattern"
-                android:gravity="left"
-                android:layout_marginTop="15dp"
-                android:layout_width="0dp"
-                android:layout_weight="4"
-                android:layout_height="wrap_content"
-                android:spinnerMode="dropdown" />
-
-        </LinearLayout>
-
-
-
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <ImageView
-                android:src="@android:drawable/ic_dialog_dialer"
-                android:scaleType="center"
-                android:layout_gravity="center_vertical|left"
-                android:layout_height="match_parent"
-                android:layout_width="0dp"
-                android:layout_weight="1"/>
-
-            <Spinner
-                android:id="@+id/edit_item_spinner_type"
-                android:gravity="left"
-                android:layout_marginTop="15dp"
-                android:layout_width="0dp"
-                android:layout_weight="4"
-                android:layout_height="wrap_content"
-                android:spinnerMode="dropdown" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <View android:layout_height="match_parent"
-                android:layout_width="0dp"
-                android:layout_weight="1"/>
-
-            <TextView
-                android:id="@+id/edit_item_delete_button"
-                android:gravity="left"
-                android:textColor="#dc0a11"
-                android:layout_marginTop="15dp"
-                android:text="Delete item"
-                android:layout_width="0dp"
-                android:layout_weight="4"
-                android:layout_height="wrap_content" />
-        </LinearLayout>
-
-    </LinearLayout>
-
-</ScrollView>
 </LinearLayout>
