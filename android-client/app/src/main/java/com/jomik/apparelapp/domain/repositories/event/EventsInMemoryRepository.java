@@ -62,7 +62,7 @@ public class EventsInMemoryRepository implements EventsRepository {
     public List<Event> findAllForUser(User user) {
         List<Event> eventsForUser = new ArrayList<>();
         for (Event event : events) {
-            if((event.getAttendees() != null && event.getAttendees().contains(user)) || event.getOwner().equals(user)) {
+            if((event.getAttendees() != null && event.getAttendees().contains(user)) || event.getOwnerUuid().equals(user)) {
                 eventsForUser.add(event);
             }
         }

@@ -18,15 +18,30 @@ public class ApparelContract {
         public static String LOCATION = "location";
         public static String START_DATE = "start_date";
         public static String END_DATE = "end_date";
-        public static String OWNER = "owner";
+        public static String OWNER_UUID = "owner_uuid";
         public static String PHOTO_ID = "photo_id";
 
         public static final Uri CONTENT_URI = Uri.withAppendedPath(ApparelContract.CONTENT_URI, "events");
         public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/com.jomik.apparel.events";
         public static final String CONTENT_EVENT_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/com.jomik.apparel.events";
 
-        public static final String[] PROJECTION_ALL =  {_ID, TITLE, LOCATION, START_DATE, END_DATE, OWNER, PHOTO_ID};
+        public static final String[] PROJECTION_ALL =  {_ID, TITLE, LOCATION, START_DATE, END_DATE, OWNER_UUID, PHOTO_ID};
         public static final String SORT_ORDER_DEFAULT = TITLE + " ASC";
+    }
+
+    public static final class EventGuests implements CommonColumns {
+        public static String EVENT_ID = "event_id";
+        public static String GUEST_ID = "guest_id";
+
+        public static final Uri CONTENT_URI = Uri.withAppendedPath(ApparelContract.CONTENT_URI, "event_guests");
+        public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/com.jomik.apparel.event_guests";
+        public static final String CONTENT_EVENT_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/com.jomik.apparel.event_guests";
+    }
+
+    public static final class Users implements CommonColumns {
+        public static final Uri CONTENT_URI = Uri.withAppendedPath(ApparelContract.CONTENT_URI, "users");
+        public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/com.jomik.apparel.users";
+        public static final String CONTENT_EVENT_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/com.jomik.apparel.users";
     }
 
     public static final class Items implements CommonColumns {
@@ -42,13 +57,15 @@ public class ApparelContract {
         public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/com.jomik.apparel.items";
 
         public static final String[] PROJECTION_ALL =
-                {_ID, NAME, DESCRIPTION, ITEM_COLOR, ITEM_PATTERN, ITEM_CATEGORY, PHOTO_ID};
+                {_ID, UUID, NAME, DESCRIPTION, ITEM_COLOR, ITEM_PATTERN, ITEM_CATEGORY, PHOTO_ID};
 
         public static final String SORT_ORDER_DEFAULT = NAME + " ASC";
     }
 
     public static final class UserEventOutfits implements CommonColumns { }
 
-    public static interface CommonColumns extends BaseColumns { }
+    public static interface CommonColumns extends BaseColumns {
+        public static String UUID = "uuid";
+    }
 
 }

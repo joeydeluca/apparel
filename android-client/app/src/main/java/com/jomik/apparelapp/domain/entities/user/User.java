@@ -7,8 +7,17 @@ import com.jomik.apparelapp.domain.entities.photo.Photo;
  * Created by Joe Deluca on 3/22/2016.
  */
 public class User extends Entity {
+    private String uuid;
     private String name;
     private Photo photo;
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
 
     public String getName() {
         return name;

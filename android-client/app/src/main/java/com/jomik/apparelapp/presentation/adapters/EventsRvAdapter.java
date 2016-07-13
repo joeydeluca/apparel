@@ -15,11 +15,8 @@ import android.widget.Toast;
 
 import com.jomik.apparelapp.R;
 import com.jomik.apparelapp.domain.entities.event.Event;
-import com.jomik.apparelapp.domain.repositories.RepositoryFactory;
-import com.jomik.apparelapp.domain.repositories.event.EventsRepository;
 import com.jomik.apparelapp.infrastructure.services.AuthenticationManager;
 import com.jomik.apparelapp.presentation.activities.EditEventActivity;
-import com.jomik.apparelapp.presentation.activities.ViewEventActivity;
 import com.jomik.apparelapp.presentation.activities.ViewEventOutfitsActivity;
 
 import java.util.List;
@@ -31,8 +28,6 @@ public class EventsRvAdapter extends RecyclerView.Adapter<EventsRvAdapter.Person
 
     private final List<Event> events;
     private Context context;
-
-    final EventsRepository eventsRepository = RepositoryFactory.getEventsRepository(RepositoryFactory.Type.IN_MEMORY);
 
     public EventsRvAdapter(List<Event> events) {
         this.events = events;
@@ -54,7 +49,7 @@ public class EventsRvAdapter extends RecyclerView.Adapter<EventsRvAdapter.Person
 
         final PopupMenu popup = new PopupMenu(context, holder.btnMenu);
 
-        if(events.get(i).getOwner().equals(AuthenticationManager.getAuthenticatedUser())) {
+        if(events.get(i).getOwnerUuid().equals(AuthenticationManager.getAuthenticatedUser(context).getUuid())) {
             popup.getMenu().add(1, R.id.menu_manage, 1, "Manage");
         }
         popup.getMenu().add(1, R.id.menu_leave, 1, "Leave");
@@ -69,12 +64,12 @@ public class EventsRvAdapter extends RecyclerView.Adapter<EventsRvAdapter.Person
                         context.startActivity(intent);
                         break;
                     case R.id.menu_leave:
-                        if (!events.get(i).getOwner().equals(AuthenticationManager.getAuthenticatedUser())) {
+                        if (!events.get(i).getOwnerUuid().equals(AuthenticationManager.getAuthenticatedUser(context))) {
                             events.remove(events.get(i));
                             notifyItemRemoved(i);
                         }
-                        events.get(i).getAttendees().remove(AuthenticationManager.getAuthenticatedUser());
-                        eventsRepository.save(events.get(i));
+                        events.get(i).getAttendees().remove(AuthenticationManager.getAuthenticatedUser(context));
+                        //eventsRepository.save(events.get(i));
                         Toast.makeText(context, "You have left the event", Toast.LENGTH_LONG).show();
                         break;
                 }

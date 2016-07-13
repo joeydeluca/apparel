@@ -1,7 +1,11 @@
 package com.jomik.apparelapp.presentation.activities;
 
 import android.app.DatePickerDialog;
+import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
@@ -14,8 +18,13 @@ import android.widget.Toast;
 
 import com.jomik.apparelapp.R;
 import com.jomik.apparelapp.domain.entities.event.Event;
+import com.jomik.apparelapp.domain.entities.item.ItemCategory;
+import com.jomik.apparelapp.domain.entities.item.ItemColor;
+import com.jomik.apparelapp.domain.entities.item.ItemPattern;
+import com.jomik.apparelapp.domain.entities.user.User;
 import com.jomik.apparelapp.domain.repositories.RepositoryFactory;
 import com.jomik.apparelapp.domain.repositories.event.EventsRepository;
+import com.jomik.apparelapp.infrastructure.providers.ApparelContract;
 import com.jomik.apparelapp.infrastructure.services.AuthenticationManager;
 
 import java.text.ParseException;
@@ -50,39 +59,40 @@ public class EditEventActivity extends AppCompatActivity implements View.OnClick
 
         txtToolbarTitle.setText("Edit Event");
 
-        final EventsRepository eventsRepository = RepositoryFactory.getEventsRepository(RepositoryFactory.Type.IN_MEMORY);
 
         // Populate fields if editing
         Intent intent = getIntent();
-        final String eventId = intent.getStringExtra("id");
-        final Event event;
-        if(eventId != null) {
-            event = eventsRepository.findOne(eventId);
-            txtEventTitle.setText(event.getTitle());
-            txtEventLocation.setText(event.getLocation());
-            if(event.getStartDate() != null) {
-                txtFromDate.setText(dateFormatter.format(event.getStartDate()));
+        final long id = intent.getLongExtra("id", -1);
+        if(id != -1) {
+            Uri uri = ContentUris.withAppendedId(ApparelContract.Events.CONTENT_URI, id);
+            Cursor cursor = getContentResolver().query(uri, ApparelContract.Events.PROJECTION_ALL, null, null, null);
+            if (cursor.moveToFirst()) {
+                txtEventTitle.setText(cursor.getString(cursor.getColumnIndexOrThrow(ApparelContract.Events.TITLE)));
+                txtEventLocation.setText(cursor.getString(cursor.getColumnIndexOrThrow(ApparelContract.Events.LOCATION)));
+                txtFromDate.setText(cursor.getString(cursor.getColumnIndexOrThrow(ApparelContract.Events.START_DATE)));
             }
+            cursor.close();
         } else {
-            event = new Event();
             btnDelete.setVisibility(View.INVISIBLE);
         }
 
         btnDone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                event.setTitle(txtEventTitle.getText().toString());
-                event.setLocation(txtEventLocation.getText().toString());
-                event.setPhotoId(123);
-                event.setOwner(AuthenticationManager.getAuthenticatedUser());
-                try {
-                    event.setStartDate(dateFormatter.parse(txtFromDate.getText().toString()));
-                } catch (ParseException e) {
-                    e.printStackTrace();
+                String userUuid = AuthenticationManager.getAuthenticatedUser(getApplicationContext()).getUuid();
+
+                ContentValues values = new ContentValues();
+                values.put(ApparelContract.Events.TITLE, txtEventTitle.getText().toString());
+                values.put(ApparelContract.Events.LOCATION, txtEventLocation.getText().toString());
+                values.put(ApparelContract.Events.PHOTO_ID, "123");
+                values.put(ApparelContract.Events.OWNER_UUID, userUuid);
+                values.put(ApparelContract.Events.START_DATE, txtFromDate.getText().toString());
+
+                if(id == -1) {
+                    getContentResolver().insert(ApparelContract.Events.CONTENT_URI, values);
+                } else {
+                    getContentResolver().update(ContentUris.withAppendedId(ApparelContract.Events.CONTENT_URI, id), values, null, null);
                 }
-
-                eventsRepository.save(event);
-
                 Toast.makeText(EditEventActivity.this, "Saved", Toast.LENGTH_SHORT).show();
 
                 onBackPressed();
@@ -99,7 +109,7 @@ public class EditEventActivity extends AppCompatActivity implements View.OnClick
         btnDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                eventsRepository.delete(event);
+                //eventsRepository.delete(event);
 
                 Toast.makeText(EditEventActivity.this, "Deleted", Toast.LENGTH_SHORT).show();
 

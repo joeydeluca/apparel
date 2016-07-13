@@ -16,11 +16,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.jomik.apparelapp.R;
-import com.jomik.apparelapp.domain.entities.item.Item;
 import com.jomik.apparelapp.domain.entities.item.ItemCategory;
 import com.jomik.apparelapp.domain.entities.item.ItemColor;
 import com.jomik.apparelapp.domain.entities.item.ItemPattern;
-import com.jomik.apparelapp.infrastructure.providers.ApparelContract.*;
+import com.jomik.apparelapp.infrastructure.providers.ApparelContract.Items;
 
 public class EditItemActivity extends AppCompatActivity {
 

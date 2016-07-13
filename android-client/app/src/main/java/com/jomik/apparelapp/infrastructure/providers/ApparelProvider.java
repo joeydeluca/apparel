@@ -32,6 +32,8 @@ public class ApparelProvider extends ContentProvider {
     private static final int ITEM_ID = 2;
     private static final int EVENT_LIST = 3;
     private static final int EVENT_ID = 4;
+    private static final int EVENT_GUEST_LIST = 5;
+    private static final int EVENT_GUEST_ID = 6;
 
     private final ThreadLocal<Boolean> isInBatchMode = new ThreadLocal<Boolean>();
     private SqlOpenHelper sqlOpenHelper;
@@ -42,6 +44,8 @@ public class ApparelProvider extends ContentProvider {
         URI_MATCHER.addURI(ApparelContract.AUTHORITY, "items/#", ITEM_ID);
         URI_MATCHER.addURI(ApparelContract.AUTHORITY, "events", EVENT_LIST);
         URI_MATCHER.addURI(ApparelContract.AUTHORITY, "events/#", EVENT_ID);
+        URI_MATCHER.addURI(ApparelContract.AUTHORITY, "event_guests", EVENT_GUEST_LIST);
+        URI_MATCHER.addURI(ApparelContract.AUTHORITY, "event_guests/#", EVENT_GUEST_ID);
     }
 
     @Override
@@ -75,6 +79,14 @@ public class ApparelProvider extends ContentProvider {
                     builder.setTables(DbSchema.TBL_EVENTS);
                     // limit query to one row at most:
                     builder.appendWhere(ApparelContract.Events._ID + " = " + uri.getLastPathSegment());
+                    break;
+                case EVENT_GUEST_LIST:
+                    //builder.setTables(DbSchema.TBL_EVENTS + " join users on users.uuid = events.owner_uuid");
+                    break;
+                case EVENT_GUEST_ID:
+                    //builder.setTables(DbSchema.TBL_EVENTS);
+                    // limit query to one row at most:
+                    builder.appendWhere(ApparelContract.EventGuests._ID + " = " + uri.getLastPathSegment());
                     break;
                 default:
                     throw new IllegalArgumentException("Unsupported URI: " + uri);

@@ -69,7 +69,7 @@ public class ViewEventActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "You have joined the event", Toast.LENGTH_LONG).show();
 
                 UserEventOutfit userEventOutfit = new UserEventOutfit();
-                userEventOutfit.setUser(AuthenticationManager.getAuthenticatedUser());
+                userEventOutfit.setUser(AuthenticationManager.getAuthenticatedUser(getApplicationContext()));
                 userEventOutfit.setEvent(event);
                 event.getAttendees().add(userEventOutfit);
                 eventsRepository.save(event);

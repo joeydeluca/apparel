@@ -7,19 +7,18 @@ import java.util.UUID;
  * Created by Joe Deluca on 3/22/2016.
  */
 public abstract class Entity {
-    private String id;
+    private Long id;
     private Date createdDate;
 
     public Entity() {
-        id = UUID.randomUUID().toString();
         createdDate = new Date();
     }
 
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

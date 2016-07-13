@@ -1,6 +1,8 @@
 package com.jomik.apparelapp.presentation.fragments;
 
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -8,14 +10,15 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 
 import com.jomik.apparelapp.R;
-import com.jomik.apparelapp.domain.repositories.RepositoryFactory;
-import com.jomik.apparelapp.domain.repositories.event.EventsRepository;
+import com.jomik.apparelapp.domain.entities.event.Event;
+import com.jomik.apparelapp.domain.entities.user.User;
 import com.jomik.apparelapp.infrastructure.events.FindUserEventsComplete;
 import com.jomik.apparelapp.infrastructure.events.FindUserEventsStart;
+import com.jomik.apparelapp.infrastructure.providers.ApparelContract;
+import com.jomik.apparelapp.infrastructure.providers.DbSchema;
 import com.jomik.apparelapp.infrastructure.services.AuthenticationManager;
 import com.jomik.apparelapp.presentation.activities.EditEventActivity;
 import com.jomik.apparelapp.presentation.activities.EventSearchActivity;
@@ -25,12 +28,14 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by Joe Deluca on 4/10/2016.
  */
 public class EventListFragment extends Fragment {
-
-    ArrayAdapter adapter;
 
     public EventListFragment() {
     }
@@ -73,9 +78,32 @@ public class EventListFragment extends Fragment {
     }
 
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
-    public void onMessage(FindUserEventsStart event) {
-        EventsRepository eventsRepository = RepositoryFactory.getEventsRepository(RepositoryFactory.Type.IN_MEMORY);
-        EventBus.getDefault().post(new FindUserEventsComplete(eventsRepository.findAllForUser(AuthenticationManager.getAuthenticatedUser())));
+    public void onMessage(FindUserEventsStart findUserEventsStart) throws ParseException {
+
+        User user = AuthenticationManager.getAuthenticatedUser(getContext());
+
+        // Find all owning events
+        Uri uri = ApparelContract.Events.CONTENT_URI ;
+        Cursor cursor = getActivity().getContentResolver().query(uri, ApparelContract.Events.PROJECTION_ALL, ApparelContract.Events.OWNER_UUID + " = ?", new String[] {user.getUuid()}, null);
+        List<Event> events = new ArrayList<>();
+        while(cursor.moveToNext()) {
+            Event event = new Event();
+            event.setId(cursor.getLong(cursor.getColumnIndex(ApparelContract.Events._ID)));
+            event.setTitle(cursor.getString(cursor.getColumnIndex(ApparelContract.Events.TITLE)));
+            event.setStartDate(Event.dateFormat.parse(cursor.getString(cursor.getColumnIndex(ApparelContract.Events.START_DATE))));
+            event.setLocation(cursor.getString(cursor.getColumnIndex(ApparelContract.Events.LOCATION)));
+            event.setOwnerUuid(cursor.getString(cursor.getColumnIndex(ApparelContract.Events.OWNER_UUID)));
+            event.setPhotoUuid(cursor.getString(cursor.getColumnIndex(ApparelContract.Events.PHOTO_ID)));
+            String strEndDate = cursor.getString(cursor.getColumnIndex(ApparelContract.Events.END_DATE));
+            if(strEndDate != null && !strEndDate.trim().isEmpty()) {
+                event.setEndDate(Event.dateFormat.parse(strEndDate));
+            }
+            events.add(event);
+        }
+
+        String a = "";
+
+        EventBus.getDefault().post(new FindUserEventsComplete(events));
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

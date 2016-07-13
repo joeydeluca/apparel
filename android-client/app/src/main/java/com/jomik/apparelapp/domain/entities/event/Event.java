@@ -4,6 +4,8 @@ import com.jomik.apparelapp.domain.entities.Entity;
 import com.jomik.apparelapp.domain.entities.user.User;
 import com.jomik.apparelapp.domain.entities.usereventoutfit.UserEventOutfit;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -16,9 +18,11 @@ public class Event extends Entity {
     private String location;
     private Date startDate;
     private Date endDate;
-    private User owner;
+    private String ownerUuid;
     private List<UserEventOutfit> attendees = new ArrayList<>();
-    private Integer photoId;
+    private String photoUuid;
+
+    public final static DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     public String getTitle() {
         return title;
@@ -52,12 +56,12 @@ public class Event extends Entity {
         this.endDate = endDate;
     }
 
-    public User getOwner() {
-        return owner;
+    public String getOwnerUuid() {
+        return ownerUuid;
     }
 
-    public void setOwner(User owner) {
-        this.owner = owner;
+    public void setOwnerUuid(String ownerUuid) {
+        this.ownerUuid = ownerUuid;
     }
 
     public List<UserEventOutfit> getAttendees() {
@@ -68,11 +72,11 @@ public class Event extends Entity {
         this.attendees = attendees;
     }
 
-    public Integer getPhotoId() {
-        return photoId;
+    public String getPhotoUuid() {
+        return photoUuid;
     }
 
-    public void setPhotoId(Integer photoId) {
-        this.photoId = photoId;
+    public void setPhotoUuid(String photoUuid) {
+        this.photoUuid = photoUuid;
     }
 }

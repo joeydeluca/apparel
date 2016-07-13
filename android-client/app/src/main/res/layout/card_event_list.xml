@@ -60,9 +60,9 @@
                         android:layout_height="wrap_content"
                         android:id="@+id/btnMenu"
                         android:padding="5dp"
+                        android:src="@drawable/ic_more_vert_black_24dp"
                         android:background="?attr/selectableItemBackground"
                         android:gravity="left"/>
-
                 </LinearLayout>
 
 
@@ -85,7 +85,7 @@
                 android:layout_marginTop="10dp"
                 android:elevation="2dp"
                 fresco:placeholderImage="@drawable/leonardo_logo"
-                />
+                android:src="@android:drawable/ic_menu_preferences"/>
 
             <TextView
                 android:id="@+id/title"
