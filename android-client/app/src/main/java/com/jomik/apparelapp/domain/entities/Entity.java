@@ -1,13 +1,15 @@
 package com.jomik.apparelapp.domain.entities;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.UUID;
 
 /**
  * Created by Joe Deluca on 3/22/2016.
  */
-public abstract class Entity {
+public abstract class Entity implements Serializable {
     private Long id;
+    private String uuid;
     private Date createdDate;
 
     public Entity() {
@@ -22,6 +24,14 @@ public abstract class Entity {
         this.id = id;
     }
 
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -29,12 +39,12 @@ public abstract class Entity {
 
         Entity entity = (Entity) o;
 
-        return !(id != null ? !id.equals(entity.id) : entity.id != null);
+        return !(uuid != null ? !uuid.equals(entity.uuid) : entity.uuid != null);
 
     }
 
     @Override
     public int hashCode() {
-        return id != null ? id.hashCode() : 0;
+        return uuid != null ? uuid.hashCode() : 0;
     }
 }

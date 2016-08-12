@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:id="@+id/activity_event_outfits">
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
 
     <include layout="@layout/item_edit_toolbar"/>
 
@@ -41,29 +39,44 @@
 
     </LinearLayout>
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/txtOutfitDescription"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:hint="outfit description"/>
 
         <android.support.v7.widget.RecyclerView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/rv"
+            android:layout_height="fill_parent"
+            android:layout_below="@+id/grid"
+            android:id="@+id/hlist"
+            android:layout_marginBottom="20dp"
             />
 
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/addButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end|bottom"
-            android:layout_margin="@dimen/fab_margin"
-            android:src="@android:drawable/ic_input_add"
-            app:backgroundTint="@color/colorPrimary"
-            android:tint="@android:color/white"/>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_gravity="center"
+            android:background="@color/dividerColor"
+            android:layout_marginBottom="10dp"/>
 
-    </FrameLayout>
+        <GridView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/grid"
+            android:gravity="center"
+            android:columnWidth="100dp"
+            android:stretchMode="columnWidth"
+            android:layout_alignParentTop="true"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:numColumns="auto_fit" />
 
-
+    </LinearLayout>
 
 
 </LinearLayout>
+

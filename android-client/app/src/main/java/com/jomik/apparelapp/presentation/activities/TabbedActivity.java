@@ -1,5 +1,6 @@
 package com.jomik.apparelapp.presentation.activities;
 
+import android.content.Intent;
 import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -12,23 +13,24 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.facebook.login.LoginManager;
 import com.jomik.apparelapp.R;
+import com.jomik.apparelapp.infrastructure.services.AuthenticationManager;
 import com.jomik.apparelapp.presentation.fragments.EventListFragment;
 import com.jomik.apparelapp.presentation.fragments.ItemListFragment;
-import com.jomik.apparelapp.presentation.fragments.OutfitListFragment;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class TabbedActivity extends AppCompatActivity {
 
-    private Toolbar toolbar;
     private TabLayout tabLayout;
     private ViewPager viewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_tabbed);
 
         // Set up the ViewPager with the sections adapter.
@@ -40,11 +42,15 @@ public class TabbedActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
 
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(new ItemListFragment(), "Wardrobe");
-        adapter.addFragment(new OutfitListFragment(), "Outfits");
         adapter.addFragment(new EventListFragment(), "Events");
         viewPager.setAdapter(adapter);
     }
@@ -65,7 +71,13 @@ public class TabbedActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.logout) {
+            AuthenticationManager.logout();
+
+            Intent intent = new Intent(this, FacebookLoginActivity.class);
+            startActivity(intent);
+            finish();
+
             return true;
         }
 

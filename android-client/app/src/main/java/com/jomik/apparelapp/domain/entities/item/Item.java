@@ -12,7 +12,10 @@ public class Item extends Entity {
     private ItemColor itemColor;
     private ItemPattern itemPattern;
     private ItemCategory itemCategory;
-    private Integer photoId;
+    private String photoId;
+    private String photoUuid;
+    private String photoPath;
+    private String photoPathSmall;
 
     public String getName() {
         return name;
@@ -54,11 +57,35 @@ public class Item extends Entity {
         this.itemCategory = itemCategory;
     }
 
-    public Integer getPhotoId() {
+    public String getPhotoId() {
         return photoId;
     }
 
-    public void setPhotoId(Integer photoId) {
+    public void setPhotoId(String photoId) {
         this.photoId = photoId;
+    }
+
+    public String getPhotoUuid() {
+        return photoUuid;
+    }
+
+    public void setPhotoUuid(String photoUuid) {
+        this.photoUuid = photoUuid;
+    }
+
+    public String getPhotoPath() {
+        return photoPath;
+    }
+
+    public void setPhotoPath(String photoPath) {
+        this.photoPath = photoPath;
+    }
+
+    public String getPhotoPathSmall() {
+        return photoPathSmall;
+    }
+
+    public void setPhotoPathSmall(String photoPathSmall) {
+        this.photoPathSmall = photoPathSmall;
     }
 }

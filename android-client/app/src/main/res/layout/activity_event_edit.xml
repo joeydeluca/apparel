@@ -12,7 +12,7 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fillViewport="false"
+        android:fillViewport="true"
         android:outlineProvider="background">
 
     <LinearLayout
@@ -20,17 +20,28 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.facebook.drawee.view.SimpleDraweeView
-            android:id="@+id/my_image_view"
-            android:layout_width="100dip"
-            android:layout_height="100dip"
-            android:layout_gravity="center"
-            fresco:roundingBorderWidth="2dp"
-            fresco:roundingBorderColor="#BF3136"
-            android:padding="2dp"
-            android:layout_margin="5dp"
-            fresco:placeholderImage="@drawable/pic"
-            />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/dividerColorDark"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:elevation="4dp">
+
+            <com.facebook.drawee.view.SimpleDraweeView
+                android:id="@+id/my_image_view"
+                android:layout_width="100dip"
+                android:layout_height="100dip"
+                android:layout_gravity="center"
+                fresco:roundingBorderWidth="2dp"
+                fresco:roundingBorderColor="#BF3136"
+                android:padding="2dp"
+                android:layout_margin="5dp"
+                fresco:placeholderImage="@drawable/camera"
+                android:clickable="true"
+                />
+
+        </LinearLayout>
 
 
         <LinearLayout
@@ -113,7 +124,7 @@
 
             <EditText
                 android:id="@+id/date_from"
-                android:hint="date"
+                android:hint="start date"
                 android:gravity="left"
                 android:layout_marginTop="15dp"
                 android:layout_width="0dp"
@@ -127,6 +138,58 @@
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:scaleType="center"
+                android:layout_gravity="center_vertical|left"
+                android:layout_height="match_parent"
+                android:layout_width="0dp"
+                android:layout_weight="1"/>
+
+            <CheckBox
+                android:id="@+id/chkIsReoccurring"
+                android:hint="Is reoccurring?"
+                android:gravity="left"
+                android:layout_marginTop="15dp"
+                android:layout_marginLeft="75dp"
+                android:textSize="18dp"
+                android:layout_height="match_parent"
+                android:layout_width="match_parent"
+                android:layout_gravity="center_vertical"
+                android:checked="false" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:scaleType="center"
+                android:layout_gravity="center_vertical|left"
+                android:layout_height="match_parent"
+                android:layout_width="0dp"
+                android:layout_weight="1"/>
+
+            <EditText
+                android:id="@+id/date_to"
+                android:hint="end date"
+                android:gravity="left"
+                android:layout_marginTop="15dp"
+                android:layout_width="0dp"
+                android:ems="10"
+                android:layout_weight="4"
+                android:layout_height="wrap_content"
+                android:onClick="showDatePickerDialog"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_gravity="bottom"
             android:layout_height="wrap_content">
 
             <View android:layout_height="match_parent"

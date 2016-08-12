@@ -3,8 +3,8 @@
     package="com.jomik.apparelapp">
 
     <uses-permission android:name="android.permission.INTERNET" />
-
     <uses-permission android:name="android.permission.USE_CREDENTIALS" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:name=".ApparelApplication"
@@ -13,39 +13,41 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/JoeyStyle">
-        <activity
-            android:name=".presentation.activities.TabbedActivity"
-            android:label="ApparelApp"
-            android:theme="@style/JoeyStyle.NoActionBar">
+        <activity android:name=".presentation.activities.SplashScreenActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
+            android:name=".presentation.activities.FacebookLoginActivity"/>
+        <activity
+            android:name=".presentation.activities.TabbedActivity"
+            android:theme="@style/JoeyStyle.NoActionBar"></activity>
+        <activity
             android:name=".presentation.activities.EditItemActivity"
             android:label="@string/title_activity_edit_item"
-            android:windowSoftInputMode="stateHidden"></activity>
+            android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".presentation.activities.EditEventActivity"
             android:label="Edit Event"
-            android:windowSoftInputMode="stateHidden"></activity>
+            android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".presentation.activities.EventSearchActivity"
             android:label="Event Search"
-            android:windowSoftInputMode="stateHidden"></activity>
+            android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".presentation.activities.EventSearchResultsActivity"
             android:label="Event Search Results"
-            android:windowSoftInputMode="stateHidden"></activity>
+            android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".presentation.activities.ViewEventActivity"
             android:label="View Event"
-            android:windowSoftInputMode="stateHidden"></activity>
+            android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".presentation.activities.ViewEventOutfitsActivity"
             android:label="View Event Outfits"
-            android:windowSoftInputMode="stateHidden"></activity>
+            android:windowSoftInputMode="stateHidden" />
 
         <provider
             android:name=".infrastructure.providers.ApparelProvider"
@@ -54,14 +56,13 @@
             android:grantUriPermissions="true"
             android:label="ApparelProvider"
             android:readPermission="com.jomik.apparel.READ"
-            android:writePermission="com.jomik.apparel.WRITE" >
-        </provider>
+            android:writePermission="com.jomik.apparel.WRITE" />
 
         <service
             android:name=".ApparelSyncService"
             android:enabled="true"
             android:exported="true"
-            android:process=":sync" >
+            android:process=":sync">
             <intent-filter>
                 <action android:name="android.content.SyncAdapter" />
             </intent-filter>
@@ -71,10 +72,14 @@
                 android:resource="@xml/syncadapter" />
         </service>
 
-        <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_app_id"/>
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="fb593826874118061" />
+
+        <activity
+            android:name=".presentation.activities.OutfitSelectionActivity"
+            android:windowSoftInputMode="stateHidden" />
 
     </application>
-
-
 
 </manifest>

@@ -1,29 +1,27 @@
 package com.jomik.apparelapp.presentation.activities;
 
-import android.app.DatePickerDialog;
+import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.text.InputType;
 import android.view.View;
 import android.widget.Button;
-import android.widget.DatePicker;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.jomik.apparelapp.R;
-import com.jomik.apparelapp.domain.entities.event.Event;
-import com.jomik.apparelapp.domain.entities.usereventoutfit.UserEventOutfit;
-import com.jomik.apparelapp.domain.repositories.RepositoryFactory;
-import com.jomik.apparelapp.domain.repositories.event.EventsRepository;
+import com.jomik.apparelapp.infrastructure.providers.ApparelContract;
+import com.jomik.apparelapp.infrastructure.providers.DbSchema;
+import com.jomik.apparelapp.infrastructure.providers.SqlHelper;
 import com.jomik.apparelapp.infrastructure.services.AuthenticationManager;
+import com.jomik.apparelapp.infrastructure.services.ImageHelper;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
+import java.util.UUID;
 
 public class ViewEventActivity extends AppCompatActivity {
 
@@ -36,18 +34,34 @@ public class ViewEventActivity extends AppCompatActivity {
         final TextView btnDone = (TextView) findViewById(R.id.toolbar_done_button);
         final ImageView imgCancel = (ImageView) findViewById(R.id.toolbar_cancel_button);
         final Button btnJoin = (Button) findViewById(R.id.join_button);
+        SimpleDraweeView simpleDraweeView = (SimpleDraweeView) findViewById(R.id.my_image_view);
 
         final TextView txtEventTitle = (TextView) findViewById(R.id.title);
 
         txtToolbarTitle.setText("View Event");
 
-        final EventsRepository eventsRepository = RepositoryFactory.getEventsRepository(RepositoryFactory.Type.IN_MEMORY);
-
         // Populate fields if editing
         Intent intent = getIntent();
-        final String eventId = intent.getStringExtra("id");
-        final Event event = eventsRepository.findOne(eventId);
-        txtEventTitle.setText(event.getTitle());
+        final long eventId = intent.getLongExtra("id", -1);
+        String eventUuid = null;
+        String photoUuid = null;
+        String photoPath = null;
+
+        Uri uri = ContentUris.withAppendedId(ApparelContract.Events.CONTENT_URI, eventId);
+        Cursor cursor = getContentResolver().query(uri, ApparelContract.Events.PROJECTION_ALL, null, null, null);
+        if (cursor.moveToFirst()) {
+            txtEventTitle.setText(SqlHelper.getString(cursor, ApparelContract.Events.TITLE, DbSchema.PREFIX_TBL_EVENTS));
+            eventUuid = SqlHelper.getString(cursor, ApparelContract.Events.UUID, DbSchema.PREFIX_TBL_EVENTS);
+            photoUuid = SqlHelper.getString(cursor, ApparelContract.Photos.UUID, DbSchema.PREFIX_TBL_PHOTOS);
+            photoPath = SqlHelper.getString(cursor, ApparelContract.Photos.LOCAL_PATH, DbSchema.PREFIX_TBL_PHOTOS);
+        }
+        cursor.close();
+
+        if(photoUuid != null) {
+            ImageHelper.setImageUri(simpleDraweeView, photoPath, photoUuid);
+        }
+
+        final String finalEventUuid = eventUuid;
 
         btnDone.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -66,13 +80,15 @@ public class ViewEventActivity extends AppCompatActivity {
         btnJoin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                ContentValues values = new ContentValues();
+                values.put(ApparelContract.EventGuests.UUID, UUID.randomUUID().toString());
+                values.put(ApparelContract.EventGuests.EVENT_UUID, finalEventUuid);
+                values.put(ApparelContract.EventGuests.GUEST_UUID, AuthenticationManager.getAuthenticatedUser(getApplicationContext()).getUuid());
+
+                getContentResolver().insert(ApparelContract.EventGuests.CONTENT_URI, values);
+
                 Toast.makeText(getApplicationContext(), "You have joined the event", Toast.LENGTH_LONG).show();
 
-                UserEventOutfit userEventOutfit = new UserEventOutfit();
-                userEventOutfit.setUser(AuthenticationManager.getAuthenticatedUser(getApplicationContext()));
-                userEventOutfit.setEvent(event);
-                event.getAttendees().add(userEventOutfit);
-                eventsRepository.save(event);
             }
         });
 

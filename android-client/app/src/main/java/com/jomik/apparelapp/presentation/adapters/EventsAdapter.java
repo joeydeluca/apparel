@@ -12,6 +12,7 @@ import com.facebook.drawee.view.SimpleDraweeView;
 import com.jomik.apparelapp.R;
 import com.jomik.apparelapp.domain.entities.event.Event;
 import com.jomik.apparelapp.domain.entities.item.Item;
+import com.jomik.apparelapp.infrastructure.services.ImageHelper;
 
 import java.util.List;
 
@@ -34,15 +35,16 @@ public class EventsAdapter extends ArrayAdapter<Event> {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View rowView = inflater.inflate(R.layout.row_event_list, parent, false);
 
+        Event event = events.get(position);
+
         TextView textView = (TextView) rowView.findViewById(R.id.title);
-        textView.setText(events.get(position).getTitle());
+        textView.setText(event.getTitle());
 
         textView = (TextView) rowView.findViewById(R.id.location);
-        textView.setText(events.get(position).getLocation());
+        textView.setText(event.getLocation());
 
-        Uri uri = Uri.parse("asset://pic.png");
         SimpleDraweeView draweeView = (SimpleDraweeView) rowView.findViewById(R.id.my_image_view);
-        draweeView.setImageURI(uri);
+        ImageHelper.setImageUri(draweeView, event.getPhotoPathSmall(), event.getPhotoUuid());
 
         rowView.setTag(events.get(position).getId());
 

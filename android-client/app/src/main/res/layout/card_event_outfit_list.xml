@@ -32,18 +32,19 @@
                     android:layout_height="wrap_content">
 
                     <com.facebook.drawee.view.SimpleDraweeView
+                        android:id="@+id/profileImage"
                         android:layout_width="50dp"
                         android:layout_height="50dip"
                         android:layout_marginRight="20dp"
                         fresco:roundedCornerRadius="10dp"
                         android:layout_marginBottom="10dp"
-                        fresco:placeholderImage="@drawable/pic"
+                        fresco:placeholderImage="@drawable/camera"
                         />
 
                     <TextView
+                        android:id="@+id/txtUsername"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:text="Created by joeydeluca1"
                         android:textSize="13dp"/>
 
                 </LinearLayout>
@@ -94,6 +95,7 @@
 
 
             <TextView
+                android:id="@+id/txtOutfitDescription"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="This is my cool outfit. It is co cool because I love fashion. Notice my cool shoes."

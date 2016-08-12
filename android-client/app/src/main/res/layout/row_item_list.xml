@@ -13,7 +13,7 @@
             android:layout_width="100dip"
             android:layout_height="100dip"
             android:layout_marginRight="20dp"
-            fresco:placeholderImage="@drawable/pic"
+            fresco:placeholderImage="@drawable/camera"
             />
 
     <LinearLayout

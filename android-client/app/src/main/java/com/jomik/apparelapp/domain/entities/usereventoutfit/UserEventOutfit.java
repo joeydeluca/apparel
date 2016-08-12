@@ -2,10 +2,9 @@ package com.jomik.apparelapp.domain.entities.usereventoutfit;
 
 import com.jomik.apparelapp.domain.entities.Entity;
 import com.jomik.apparelapp.domain.entities.event.Event;
-import com.jomik.apparelapp.domain.entities.outfit.Outfit;
+import com.jomik.apparelapp.domain.entities.item.Item;
 import com.jomik.apparelapp.domain.entities.user.User;
 
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -14,9 +13,11 @@ import java.util.List;
 public class UserEventOutfit extends Entity {
     private User user;
     private Event event;
-    private Outfit outfit;
-    private Date date;
+    private String date;
     private List<Conflict> conflicts;
+    private String description;
+    private List<Item> items;
+    private String photoUuid; // This is a single photo of the user wearing their outfit
 
     public User getUser() {
         return user;
@@ -34,19 +35,11 @@ public class UserEventOutfit extends Entity {
         this.event = event;
     }
 
-    public Outfit getOutfit() {
-        return outfit;
-    }
-
-    public void setOutfit(Outfit outfit) {
-        this.outfit = outfit;
-    }
-
-    public Date getDate() {
+    public String getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(String date) {
         this.date = date;
     }
 
@@ -56,5 +49,29 @@ public class UserEventOutfit extends Entity {
 
     public void setConflicts(List<Conflict> conflicts) {
         this.conflicts = conflicts;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public List<Item> getItems() {
+        return items;
+    }
+
+    public void setItems(List<Item> items) {
+        this.items = items;
+    }
+
+    public String getPhotoUuid() {
+        return photoUuid;
+    }
+
+    public void setPhotoUuid(String photoUuid) {
+        this.photoUuid = photoUuid;
     }
 }

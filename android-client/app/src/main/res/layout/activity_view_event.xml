@@ -29,7 +29,7 @@
                 fresco:roundingBorderColor="#BF3136"
                 android:padding="2dp"
                 android:layout_margin="5dp"
-                fresco:placeholderImage="@drawable/pic"
+                fresco:placeholderImage="@drawable/camera"
                 />
 
 

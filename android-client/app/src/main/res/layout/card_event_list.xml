@@ -32,15 +32,17 @@
                     android:layout_height="wrap_content">
 
                     <com.facebook.drawee.view.SimpleDraweeView
+                        android:id="@+id/imgUser"
                         android:layout_width="50dp"
                         android:layout_height="50dip"
                         android:layout_marginRight="20dp"
                         fresco:roundedCornerRadius="10dp"
                         android:layout_marginBottom="10dp"
-                        fresco:placeholderImage="@drawable/pic"
+                        fresco:placeholderImage="@drawable/camera"
                         />
 
                     <TextView
+                        android:id="@+id/txtOwner"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:text="Created by joeydeluca1"

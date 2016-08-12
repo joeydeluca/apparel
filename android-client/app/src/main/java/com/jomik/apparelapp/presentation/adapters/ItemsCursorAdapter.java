@@ -14,6 +14,9 @@ import com.facebook.drawee.view.SimpleDraweeView;
 import com.jomik.apparelapp.R;
 import com.jomik.apparelapp.domain.entities.item.Item;
 import com.jomik.apparelapp.infrastructure.providers.ApparelContract;
+import com.jomik.apparelapp.infrastructure.providers.DbSchema;
+import com.jomik.apparelapp.infrastructure.providers.SqlHelper;
+import com.jomik.apparelapp.infrastructure.services.ImageHelper;
 
 import java.util.List;
 
@@ -34,14 +37,18 @@ public class ItemsCursorAdapter extends CursorAdapter {
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
         TextView textView = (TextView) view.findViewById(R.id.clothing_item_list_item_name);
-        textView.setText(cursor.getString(cursor.getColumnIndexOrThrow(ApparelContract.Items.NAME)));
+        textView.setText(SqlHelper.getString(cursor, ApparelContract.Items.NAME, DbSchema.PREFIX_TBL_ITEMS));
 
         textView = (TextView) view.findViewById(R.id.clothing_item_list_item_description);
-        textView.setText(cursor.getString(cursor.getColumnIndexOrThrow(ApparelContract.Items.DESCRIPTION)));
+        textView.setText(SqlHelper.getString(cursor, ApparelContract.Items.DESCRIPTION, DbSchema.PREFIX_TBL_ITEMS));
 
-        Uri uri = Uri.parse("asset://pic.png");
         SimpleDraweeView draweeView = (SimpleDraweeView) view.findViewById(R.id.my_image_view);
-        draweeView.setImageURI(uri);
+
+        String photoPath = SqlHelper.getString(cursor, ApparelContract.Photos.LOCAL_PATH_SM, DbSchema.PREFIX_TBL_PHOTOS);
+        String photoUuid = SqlHelper.getString(cursor, ApparelContract.Photos.UUID, DbSchema.PREFIX_TBL_PHOTOS);
+        if(photoPath != null) {
+            ImageHelper.setImageUri(draweeView, photoPath, photoUuid);
+        }
 
         view.setTag(cursor.getLong(cursor.getColumnIndexOrThrow(ApparelContract.Items._ID)));
     }

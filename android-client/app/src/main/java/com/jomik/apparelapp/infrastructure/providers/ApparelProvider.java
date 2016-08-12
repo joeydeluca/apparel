@@ -34,18 +34,30 @@ public class ApparelProvider extends ContentProvider {
     private static final int EVENT_ID = 4;
     private static final int EVENT_GUEST_LIST = 5;
     private static final int EVENT_GUEST_ID = 6;
+    private static final int EVENT_GUEST_OUTFIT_LIST = 7;
+    private static final int EVENT_GUEST_OUTFIT_ID = 8;
+    private static final int EVENT_GUEST_OUTFIT_ITEM_LIST = 9;
+    private static final int EVENT_GUEST_OUTFIT_ITEM_ID = 10;
+    private static final int PHOTO_LIST = 11;
+    private static final int PHOTO_ID = 12;
 
     private final ThreadLocal<Boolean> isInBatchMode = new ThreadLocal<Boolean>();
     private SqlOpenHelper sqlOpenHelper;
 
     static {
         URI_MATCHER = new UriMatcher(UriMatcher.NO_MATCH);
+        URI_MATCHER.addURI(ApparelContract.AUTHORITY, "photos", PHOTO_LIST);
+        URI_MATCHER.addURI(ApparelContract.AUTHORITY, "photos/#", PHOTO_ID);
         URI_MATCHER.addURI(ApparelContract.AUTHORITY, "items", ITEM_LIST);
         URI_MATCHER.addURI(ApparelContract.AUTHORITY, "items/#", ITEM_ID);
         URI_MATCHER.addURI(ApparelContract.AUTHORITY, "events", EVENT_LIST);
         URI_MATCHER.addURI(ApparelContract.AUTHORITY, "events/#", EVENT_ID);
         URI_MATCHER.addURI(ApparelContract.AUTHORITY, "event_guests", EVENT_GUEST_LIST);
         URI_MATCHER.addURI(ApparelContract.AUTHORITY, "event_guests/#", EVENT_GUEST_ID);
+        URI_MATCHER.addURI(ApparelContract.AUTHORITY, "event_guest_outfits", EVENT_GUEST_OUTFIT_LIST);
+        URI_MATCHER.addURI(ApparelContract.AUTHORITY, "event_guest_outfits/#", EVENT_GUEST_OUTFIT_ID);
+        URI_MATCHER.addURI(ApparelContract.AUTHORITY, "event_guest_outfit_items", EVENT_GUEST_OUTFIT_ITEM_LIST);
+        URI_MATCHER.addURI(ApparelContract.AUTHORITY, "event_guest_outfit_items/#", EVENT_GUEST_OUTFIT_ITEM_ID);
     }
 
     @Override
@@ -62,31 +74,38 @@ public class ApparelProvider extends ContentProvider {
             boolean useAuthorityUri = false;
             switch (URI_MATCHER.match(uri)) {
                 case ITEM_LIST:
-                    builder.setTables(DbSchema.TBL_ITEMS);
+                    builder.setTables(DbSchema.FROM_ITEMS);
                     if (TextUtils.isEmpty(sortOrder)) {
                         sortOrder = ApparelContract.Items.SORT_ORDER_DEFAULT;
                     }
                     break;
                 case ITEM_ID:
-                    builder.setTables(DbSchema.TBL_ITEMS);
-                    builder.appendWhere(ApparelContract.Items._ID + " = "
+                    builder.setTables(DbSchema.FROM_ITEMS);
+                    builder.appendWhere(DbSchema.PREFIX_TBL_ITEMS + "." + ApparelContract.Items._ID + " = "
                             + uri.getLastPathSegment());
                     break;
                 case EVENT_LIST:
-                    builder.setTables(DbSchema.TBL_EVENTS);
+                    builder.setTables(DbSchema.FROM_EVENTS);
                     break;
                 case EVENT_ID:
-                    builder.setTables(DbSchema.TBL_EVENTS);
+                    builder.setTables(DbSchema.FROM_EVENTS);
                     // limit query to one row at most:
-                    builder.appendWhere(ApparelContract.Events._ID + " = " + uri.getLastPathSegment());
+                    builder.appendWhere(DbSchema.PREFIX_TBL_EVENTS + "." + ApparelContract.Events._ID + " = " + uri.getLastPathSegment());
                     break;
                 case EVENT_GUEST_LIST:
-                    //builder.setTables(DbSchema.TBL_EVENTS + " join users on users.uuid = events.owner_uuid");
+                    //builder.setTables(DbSchema.TBL_EVENT_GUESTS + " g join events e on e.uuid = g.event_uuid join users u on u.uuid = g.guest_uuid left join event_guest_outfits o on o.event_guest_uuid = g.uuid left join event_guest_outfit_items oi on oi.event_guest_outfit_uuid = o.uuid left join items i on i.uuid = oi.item_uuid");
+                    builder.setTables(DbSchema.FROM_EVENT_GUESTS);
                     break;
                 case EVENT_GUEST_ID:
-                    //builder.setTables(DbSchema.TBL_EVENTS);
+                    builder.setTables(DbSchema.TBL_EVENTS);
                     // limit query to one row at most:
                     builder.appendWhere(ApparelContract.EventGuests._ID + " = " + uri.getLastPathSegment());
+                    break;
+                case EVENT_GUEST_OUTFIT_LIST:
+                    builder.setTables(DbSchema.TBL_EVENT_GUEST_OUTFITS);
+                    break;
+                case EVENT_GUEST_OUTFIT_ITEM_LIST:
+                    builder.setTables(DbSchema.TBL_EVENT_GUEST_OUTFIT_ITEMS + " oi join items i on i.uuid = oi.item_uuid");
                     break;
                 default:
                     throw new IllegalArgumentException("Unsupported URI: " + uri);
@@ -124,6 +143,14 @@ public class ApparelProvider extends ContentProvider {
                 return ApparelContract.Events.CONTENT_EVENT_TYPE;
             case EVENT_LIST:
                 return ApparelContract.Events.CONTENT_TYPE;
+            case EVENT_GUEST_OUTFIT_ID:
+                return ApparelContract.EventGuestOutfits.CONTENT_EVENT_TYPE;
+            case EVENT_GUEST_OUTFIT_LIST:
+                return ApparelContract.EventGuestOutfits.CONTENT_TYPE;
+            case EVENT_GUEST_OUTFIT_ITEM_ID:
+                return ApparelContract.EventGuestOutfitItems.CONTENT_EVENT_TYPE;
+            case EVENT_GUEST_OUTFIT_ITEM_LIST:
+                return ApparelContract.EventGuestOutfitItems.CONTENT_TYPE;
             default:
                 throw new IllegalArgumentException("Unsupported URI: " + uri);
         }
@@ -132,17 +159,24 @@ public class ApparelProvider extends ContentProvider {
     @Nullable
     @Override
     public Uri insert(Uri uri, ContentValues values) {
-        if (URI_MATCHER.match(uri) != ITEM_LIST
-                && URI_MATCHER.match(uri) != EVENT_LIST) {
-            throw new IllegalArgumentException(
-                    "Unsupported URI for insertion: " + uri);
-        }
         SQLiteDatabase db = sqlOpenHelper.getWritableDatabase();
-        if (URI_MATCHER.match(uri) == ITEM_LIST) {
+        if (URI_MATCHER.match(uri) == PHOTO_LIST) {
+            long id = db.insert(DbSchema.TBL_PHOTOS, null, values);
+            return getUriForId(id, uri);
+        }else if (URI_MATCHER.match(uri) == ITEM_LIST) {
             long id = db.insert(DbSchema.TBL_ITEMS, null, values);
             return getUriForId(id, uri);
         } else if (URI_MATCHER.match(uri) == EVENT_LIST) {
             long id = db.insert(DbSchema.TBL_EVENTS, null, values);
+            return getUriForId(id, uri);
+        } else if (URI_MATCHER.match(uri) == EVENT_GUEST_LIST) {
+            long id = db.insert(DbSchema.TBL_EVENT_GUESTS, null, values);
+            return getUriForId(id, uri);
+        } else if (URI_MATCHER.match(uri) == EVENT_GUEST_OUTFIT_LIST) {
+            long id = db.insert(DbSchema.TBL_EVENT_GUEST_OUTFITS, null, values);
+            return getUriForId(id, uri);
+        } else if (URI_MATCHER.match(uri) == EVENT_GUEST_OUTFIT_ITEM_LIST) {
+            long id = db.insert(DbSchema.TBL_EVENT_GUEST_OUTFIT_ITEMS, null, values);
             return getUriForId(id, uri);
         }
 
@@ -155,6 +189,12 @@ public class ApparelProvider extends ContentProvider {
         SQLiteDatabase db = sqlOpenHelper.getWritableDatabase();
         int delCount = 0;
         switch (URI_MATCHER.match(uri)) {
+            case PHOTO_LIST:
+                delCount = db.delete(DbSchema.TBL_PHOTOS, selection, selectionArgs);
+                break;
+            case PHOTO_ID:
+                delCount = db.delete(DbSchema.TBL_PHOTOS, getWhereClause(uri, selection), selectionArgs);
+                break;
             case ITEM_LIST:
                 delCount = db.delete(DbSchema.TBL_ITEMS, selection, selectionArgs);
                 break;
@@ -166,6 +206,12 @@ public class ApparelProvider extends ContentProvider {
                 break;
             case EVENT_ID:
                 delCount = db.delete(DbSchema.TBL_EVENTS, getWhereClause(uri, selection), selectionArgs);
+                break;
+            case EVENT_GUEST_OUTFIT_ITEM_LIST:
+                delCount = db.delete(DbSchema.FROM_EVENT_GUEST_OUTFIT_ITEMS, selection, selectionArgs);
+                break;
+            case EVENT_GUEST_OUTFIT_ITEM_ID:
+                delCount = db.delete(DbSchema.TBL_EVENT_GUEST_OUTFIT_ITEMS, getWhereClause(uri, selection), selectionArgs);
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported URI: " + uri);
@@ -194,6 +240,12 @@ public class ApparelProvider extends ContentProvider {
                 break;
             case EVENT_ID:
                 updateCount = db.update(DbSchema.TBL_EVENTS, values, getWhereClause(uri, selection), selectionArgs);
+                break;
+            case EVENT_GUEST_OUTFIT_LIST:
+                updateCount = db.update(DbSchema.TBL_EVENT_GUEST_OUTFITS, values, selection, selectionArgs);
+                break;
+            case EVENT_GUEST_OUTFIT_ID:
+                updateCount = db.update(DbSchema.TBL_EVENT_GUEST_OUTFITS, values, getWhereClause(uri, selection), selectionArgs);
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported URI: " + uri);

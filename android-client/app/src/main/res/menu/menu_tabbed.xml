@@ -3,8 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.jomik.apparelapp.presentation.activities.TabbedActivity">
     <item
-        android:id="@+id/action_settings"
+        android:id="@+id/logout"
         android:orderInCategory="100"
-        android:title="title"
+        android:title="Logout"
         app:showAsAction="never" />
 </menu>

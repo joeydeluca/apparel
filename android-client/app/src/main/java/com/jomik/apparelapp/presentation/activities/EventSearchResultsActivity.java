@@ -66,7 +66,7 @@ public class EventSearchResultsActivity extends ListActivity implements AdapterV
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Intent intent = new Intent(getApplicationContext(), ViewEventActivity.class);
-        intent.putExtra("id", view.getTag().toString());
+        intent.putExtra("id", Long.parseLong(view.getTag().toString()));
         startActivity(intent);
     }
 }

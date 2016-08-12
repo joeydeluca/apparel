@@ -16,13 +16,14 @@ import java.util.List;
 public class Event extends Entity {
     private String title;
     private String location;
-    private Date startDate;
-    private Date endDate;
+    private String startDate;
+    private String endDate;
     private String ownerUuid;
-    private List<UserEventOutfit> attendees = new ArrayList<>();
+    private String ownerFacebookId;
+    private String ownerName;
     private String photoUuid;
-
-    public final static DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    private String photoPath;
+    private String photoPathSmall;
 
     public String getTitle() {
         return title;
@@ -40,19 +41,19 @@ public class Event extends Entity {
         this.location = location;
     }
 
-    public Date getStartDate() {
+    public String getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(Date startDate) {
+    public void setStartDate(String startDate) {
         this.startDate = startDate;
     }
 
-    public Date getEndDate() {
+    public String getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(Date endDate) {
+    public void setEndDate(String endDate) {
         this.endDate = endDate;
     }
 
@@ -64,19 +65,43 @@ public class Event extends Entity {
         this.ownerUuid = ownerUuid;
     }
 
-    public List<UserEventOutfit> getAttendees() {
-        return attendees;
-    }
-
-    public void setAttendees(List<UserEventOutfit> attendees) {
-        this.attendees = attendees;
-    }
-
     public String getPhotoUuid() {
         return photoUuid;
     }
 
     public void setPhotoUuid(String photoUuid) {
         this.photoUuid = photoUuid;
+    }
+
+    public String getPhotoPath() {
+        return photoPath;
+    }
+
+    public void setPhotoPath(String photoPath) {
+        this.photoPath = photoPath;
+    }
+
+    public String getPhotoPathSmall() {
+        return photoPathSmall;
+    }
+
+    public void setPhotoPathSmall(String photoPathSmall) {
+        this.photoPathSmall = photoPathSmall;
+    }
+
+    public String getOwnerFacebookId() {
+        return ownerFacebookId;
+    }
+
+    public void setOwnerFacebookId(String ownerFacebookId) {
+        this.ownerFacebookId = ownerFacebookId;
+    }
+
+    public String getOwnerName() {
+        return ownerName;
+    }
+
+    public void setOwnerName(String ownerName) {
+        this.ownerName = ownerName;
     }
 }
