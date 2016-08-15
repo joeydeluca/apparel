@@ -45,7 +45,6 @@
                         android:id="@+id/txtOwner"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:text="Created by joeydeluca1"
                         android:textSize="13dp"/>
 
                 </LinearLayout>
@@ -93,7 +92,6 @@
                 android:id="@+id/title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="test title"
                 android:textSize="20dp"
                 android:gravity="center"/>
 
@@ -101,14 +99,13 @@
                 android:id="@+id/location"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="test address"
                 android:textSize="15dp"
                 android:gravity="center"/>
 
             <TextView
+                android:id="@+id/description"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="This is the best event in the world."
                 android:textSize="15dp"
                 android:gravity="left"
                 android:layout_marginTop="20dp"
@@ -125,9 +122,9 @@
                 android:layout_height="match_parent">
 
                 <TextView
+                    android:id="@+id/date"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Jan 1st, 2016"
                     android:textSize="15dp"
                     android:gravity="center"
                     android:layout_marginTop="10dp"/>

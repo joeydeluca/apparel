@@ -16,26 +16,37 @@
         android:background="@color/white">
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1"
             android:padding="2dp"
-            android:gravity="center"
             android:id="@+id/btn_find_event"
             android:background="?attr/selectableItemBackground">
 
             <ImageView
-                android:layout_width="25dp"
+                android:id="@+id/btnBack"
+                android:layout_width="30dp"
                 android:layout_height="fill_parent"
-                android:src="@drawable/ic_search"/>
+                android:layout_gravity="left"
+                android:layout_marginLeft="50dp"
+                android:src="@android:drawable/ic_media_rew"/>
 
             <TextView
+                android:id="@+id/date"
                 android:layout_width="wrap_content"
                 android:layout_height="fill_parent"
-                android:lines="1"
-                android:gravity="center_vertical"
-                android:textSize="13dp"
-                android:text="Jan 1st, 2016" />
+                android:layout_weight="1"
+                android:gravity="center"
+                android:layout_marginRight="10dp"
+                android:layout_marginLeft="10dp"
+                android:textSize="13dp"/>
+
+            <ImageView
+                android:id="@+id/btnForward"
+                android:layout_width="30dp"
+                android:layout_height="fill_parent"
+                android:layout_gravity="right"
+                android:layout_marginRight="50dp"
+                android:src="@android:drawable/ic_media_ff"/>
 
         </LinearLayout>
 

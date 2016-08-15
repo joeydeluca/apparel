@@ -46,14 +46,15 @@ public interface DbSchema {
 
     String DDL_CREATE_TBL_EVENTS =
             "CREATE TABLE "+TBL_EVENTS+" (" +
-                    Events._ID+"          INTEGER PRIMARY KEY AUTOINCREMENT, \n" +
-                    Events.UUID+"         TEXT,\n" +
-                    Events.TITLE+"        TEXT,\n" +
-                    Events.LOCATION+"     TEXT,\n" +
-                    Events.START_DATE+"   TEXT,\n" +
-                    Events.END_DATE+"     TEXT,\n" +
-                    Events.OWNER_UUID +"  TEXT,\n" +
-                    Events.PHOTO_UUID +"  TEXT\n" +
+                    Events._ID+"            INTEGER PRIMARY KEY AUTOINCREMENT, \n" +
+                    Events.UUID+"           TEXT,\n" +
+                    Events.TITLE+"          TEXT,\n" +
+                    Events.LOCATION+"       TEXT,\n" +
+                    Events.START_DATE+"     TEXT,\n" +
+                    Events.END_DATE+"       TEXT,\n" +
+                    Events.DESCRIPTION+"    TEXT,\n" +
+                    Events.OWNER_UUID +"    TEXT,\n" +
+                    Events.PHOTO_UUID +"    TEXT\n" +
                     ")";
 
     String DDL_CREATE_TBL_EVENT_GUESTS =
@@ -116,7 +117,7 @@ public interface DbSchema {
                     TBL_EVENT_GUESTS + " " + PREFIX_TBL_EVENT_GUESTS + " " +
                    "JOIN "+TBL_EVENTS+" "+PREFIX_TBL_EVENTS+" on "+PREFIX_TBL_EVENTS+".uuid = "+ PREFIX_TBL_EVENT_GUESTS +".event_uuid " +
                    "LEFT JOIN "+TBL_USERS+" "+PREFIX_TBL_USERS+" on "+PREFIX_TBL_USERS+".uuid = "+ PREFIX_TBL_EVENT_GUESTS +".guest_uuid " +
-                   "LEFT JOIN "+TBL_EVENT_GUEST_OUTFITS+" "+PREFIX_TBL_EVENT_GUEST_OUTFITS+" on "+PREFIX_TBL_EVENT_GUEST_OUTFITS+".event_guest_uuid = "+ PREFIX_TBL_EVENT_GUESTS +".uuid " +
+                   "LEFT JOIN "+TBL_EVENT_GUEST_OUTFITS+" "+PREFIX_TBL_EVENT_GUEST_OUTFITS+" on "+PREFIX_TBL_EVENT_GUEST_OUTFITS+".event_guest_uuid = "+ PREFIX_TBL_EVENT_GUESTS +".uuid and "+PREFIX_TBL_EVENT_GUEST_OUTFITS+".event_date = ?" +
                    "LEFT JOIN "+TBL_EVENT_GUEST_OUTFIT_ITEMS+" "+PREFIX_TBL_EVENT_GUEST_OUTFIT_ITEMS+" on "+PREFIX_TBL_EVENT_GUEST_OUTFIT_ITEMS+".event_guest_outfit_uuid = "+PREFIX_TBL_EVENT_GUEST_OUTFITS+".uuid " +
                    "LEFT JOIN "+TBL_ITEMS+" "+PREFIX_TBL_ITEMS+" on "+PREFIX_TBL_ITEMS+".uuid = "+PREFIX_TBL_EVENT_GUEST_OUTFIT_ITEMS+".item_uuid " +
                    "LEFT JOIN "+TBL_PHOTOS+" "+PREFIX_TBL_PHOTOS+" on "+PREFIX_TBL_PHOTOS+".uuid = "+PREFIX_TBL_ITEMS+".photo_uuid"

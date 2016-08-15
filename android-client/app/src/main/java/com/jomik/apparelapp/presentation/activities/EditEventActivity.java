@@ -19,7 +19,8 @@ import android.widget.Toast;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.jomik.apparelapp.R;
-import com.jomik.apparelapp.infrastructure.providers.ApparelContract.*;
+import com.jomik.apparelapp.infrastructure.providers.ApparelContract.Events;
+import com.jomik.apparelapp.infrastructure.providers.ApparelContract.Photos;
 import com.jomik.apparelapp.infrastructure.providers.DbSchema;
 import com.jomik.apparelapp.infrastructure.providers.SqlHelper;
 import com.jomik.apparelapp.infrastructure.services.AuthenticationManager;
@@ -31,8 +32,9 @@ import com.kbeanie.multipicker.api.Picker;
 import com.kbeanie.multipicker.api.callbacks.ImagePickerCallback;
 import com.kbeanie.multipicker.api.entity.ChosenImage;
 
-import java.text.SimpleDateFormat;
+import java.text.ParseException;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -42,7 +44,6 @@ public class EditEventActivity extends AppCompatActivity implements View.OnClick
     private EditText txtToDate;
     private DatePickerDialog startDatePickerDialog;
     private DatePickerDialog endDatePickerDialog;
-    private SimpleDateFormat dateFormatter;
     private SimpleDraweeView simpleDraweeView;
     private ImagePicker imagePicker = new ImagePicker(EditEventActivity.this);
     private ChosenImage chosenImage = null;
@@ -52,20 +53,22 @@ public class EditEventActivity extends AppCompatActivity implements View.OnClick
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_edit);
 
-        dateFormatter = new SimpleDateFormat("dd-MM-yyyy");
-
         final TextView txtToolbarTitle = (TextView) findViewById(R.id.toolbar_title);
         final TextView btnDone = (TextView) findViewById(R.id.toolbar_done_button);
         final ImageView imgCancel = (ImageView) findViewById(R.id.toolbar_cancel_button);
         final TextView btnDelete = (TextView) findViewById(R.id.delete_button);
         final EditText txtEventTitle = (EditText) findViewById(R.id.title);
         final EditText txtEventLocation = (EditText) findViewById(R.id.location);
+        final EditText txtDescription = (EditText) findViewById(R.id.description);
         txtFromDate = (EditText) findViewById(R.id.date_from);
         txtFromDate.setInputType(InputType.TYPE_NULL);
         txtToDate = (EditText) findViewById(R.id.date_to);
         txtToDate.setInputType(InputType.TYPE_NULL);
 
-        setDateTimeField();
+        startDatePickerDialog = createDatePickerDialog(txtFromDate);
+        endDatePickerDialog = createDatePickerDialog(txtToDate);
+        setupDateField(txtFromDate, startDatePickerDialog);
+        setupDateField(txtToDate, endDatePickerDialog);
 
         txtToolbarTitle.setText("Edit Event");
 
@@ -90,7 +93,9 @@ public class EditEventActivity extends AppCompatActivity implements View.OnClick
             if (cursor.moveToFirst()) {
                 txtEventTitle.setText((SqlHelper.getString(cursor, Events.TITLE, DbSchema.PREFIX_TBL_EVENTS)));
                 txtEventLocation.setText(SqlHelper.getString(cursor, Events.LOCATION, DbSchema.PREFIX_TBL_EVENTS));
-                txtFromDate.setText(SqlHelper.getString(cursor, Events.START_DATE, DbSchema.PREFIX_TBL_EVENTS));
+                txtDescription.setText(SqlHelper.getString(cursor, Events.DESCRIPTION, DbSchema.PREFIX_TBL_EVENTS));
+                txtFromDate.setText(SqlHelper.getDateForDisplay(cursor, Events.START_DATE, DbSchema.PREFIX_TBL_EVENTS));
+                txtToDate.setText(SqlHelper.getDateForDisplay(cursor, Events.END_DATE, DbSchema.PREFIX_TBL_EVENTS));
                 existingPhotoUuid = SqlHelper.getString(cursor, Photos.UUID, DbSchema.PREFIX_TBL_PHOTOS);
                 existingPhotoPath = SqlHelper.getString(cursor, Photos.LOCAL_PATH_SM, DbSchema.PREFIX_TBL_PHOTOS);
             }
@@ -110,9 +115,24 @@ public class EditEventActivity extends AppCompatActivity implements View.OnClick
             @Override
             public void onClick(View v) {
                 // Validate
-                if(!FormValidator.validate(txtEventTitle, txtEventLocation, txtFromDate) ||
+                if(!FormValidator.validate(txtEventTitle, txtEventLocation, txtFromDate, txtDescription) ||
                     (finalExistingPhotoPath == null && !ImageValidator.validate(EditEventActivity.this, chosenImage))) {
                     return;
+                }
+
+                if(txtToDate.getText().toString().length() > 0) {
+                    try {
+                        Date dateFrom = SqlHelper.dateFormatForDisplay.parse(txtFromDate.getText().toString());
+                        Date dateTo = SqlHelper.dateFormatForDisplay.parse(txtToDate.getText().toString());
+                        if(dateFrom.after(dateTo)) {
+                            txtToDate.setError("End Date cannot be before Start Date");
+                            return;
+                        }
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    txtToDate.setText(null);
                 }
 
                 // Save image record
@@ -135,10 +155,11 @@ public class EditEventActivity extends AppCompatActivity implements View.OnClick
                 ContentValues values = new ContentValues();
                 values.put(Events.TITLE, txtEventTitle.getText().toString());
                 values.put(Events.LOCATION, txtEventLocation.getText().toString());
+                values.put(Events.DESCRIPTION, txtDescription.getText().toString());
                 values.put(Events.PHOTO_UUID, photoUuid);
                 values.put(Events.OWNER_UUID, userUuid);
-                values.put(Events.START_DATE, txtFromDate.getText().toString());
-
+                values.put(Events.START_DATE, SqlHelper.getDateForDb(txtFromDate.getText().toString()));
+                values.put(Events.END_DATE, SqlHelper.getDateForDb(txtToDate.getText().toString()));
                 if(id == -1) {
                     values.put(Events.UUID, UUID.randomUUID().toString());
                     getContentResolver().insert(Events.CONTENT_URI, values);
@@ -171,28 +192,38 @@ public class EditEventActivity extends AppCompatActivity implements View.OnClick
 
     }
 
-    private void setDateTimeField(final EditText editTextDate) {
+    private void setupDateField(final EditText editTextDate, final DatePickerDialog datePickerDialog) {
+        editTextDate.setText(SqlHelper.dateFormatForDisplay.format(new Date()));
         editTextDate.setOnClickListener(this);
         editTextDate.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (hasFocus) {
-                    startDatePickerDialog.show();
+                    datePickerDialog.show();
                 }
             }
         });
+    }
 
+    private DatePickerDialog createDatePickerDialog(final EditText editText) {
         Calendar newCalendar = Calendar.getInstance();
-        datePickerDialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
+
+        try {
+            Date displayDate = SqlHelper.dateFormatForDisplay.parse(editText.getText().toString());
+            newCalendar.setTime(displayDate);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
 
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                 Calendar newDate = Calendar.getInstance();
                 newDate.set(year, monthOfYear, dayOfMonth);
-                editTextDate.setText(dateFormatter.format(newDate.getTime()));
+                editText.setText(SqlHelper.dateFormatForDisplay.format(newDate.getTime()));
             }
 
         }, newCalendar.get(Calendar.YEAR), newCalendar.get(Calendar.MONTH), newCalendar.get(Calendar.DAY_OF_MONTH));
-
     }
 
     @Override

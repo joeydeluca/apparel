@@ -22,18 +22,13 @@
             android:id="@+id/btn_find_event"
             android:background="?attr/selectableItemBackground">
 
-            <ImageView
-                android:layout_width="25dp"
-                android:layout_height="fill_parent"
-                android:src="@drawable/ic_search"/>
-
             <TextView
+                android:id="@+id/date"
                 android:layout_width="wrap_content"
                 android:layout_height="fill_parent"
                 android:lines="1"
                 android:gravity="center_vertical"
-                android:textSize="13dp"
-                android:text="Jan 1st, 2016" />
+                android:textSize="13dp"/>
 
         </LinearLayout>
 

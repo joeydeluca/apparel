@@ -1,5 +1,6 @@
 package com.jomik.apparelapp.presentation.activities;
 
+import android.app.DatePickerDialog;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -7,8 +8,13 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
+import android.widget.DatePicker;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.jomik.apparelapp.R;
 import com.jomik.apparelapp.domain.entities.event.Event;
@@ -29,6 +35,8 @@ import com.jomik.apparelapp.infrastructure.services.AuthenticationManager;
 import com.jomik.apparelapp.presentation.adapters.EventOutfitsRvAdapter;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -37,6 +45,12 @@ import java.util.Set;
 
 public class ViewEventOutfitsActivity extends AppCompatActivity {
 
+    TextView txtDate;
+    ImageView btnBack;
+    ImageView btnForward;
+
+    private DatePickerDialog mDatePickerDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,16 +58,46 @@ public class ViewEventOutfitsActivity extends AppCompatActivity {
 
         final TextView txtToolbarTitle = (TextView) findViewById(R.id.toolbar_title);
         txtToolbarTitle.setText("Guest outfits");
+
+        final ImageView imgCancel = (ImageView) findViewById(R.id.toolbar_cancel_button);
+        imgCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
+
+        txtDate = (TextView) findViewById(R.id.date);
+        btnBack = (ImageView) findViewById(R.id.btnBack);
+        btnForward = (ImageView) findViewById(R.id.btnForward);
+
+        txtDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mDatePickerDialog.show();
+            }
+        });
+
+        final String eventId = getIntent().getStringExtra("eventId");
+        final Date startDate = (Date) getIntent().getSerializableExtra("startDate");
+        final Date endDate = (Date) getIntent().getSerializableExtra("endDate");
+        final Date targetDate = (Date) getIntent().getSerializableExtra("targetDate");
+
+        DatePage datePage;
+        if(targetDate != null) {
+            datePage = new DatePage(startDate, endDate, targetDate);
+        } else {
+            datePage = new DatePage(startDate, endDate);
+        }
+
+        setData(eventId, datePage);
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        setData();
-    }
+    private void setData(final String eventId, final DatePage datePage) {
+        txtDate.setText(datePage.getDisplayTargetDate());
 
-    private void setData() {
-        final Event event = (Event) getIntent().getSerializableExtra("event");
+        mDatePickerDialog = createDatePickerDialog(eventId, datePage);
+
         String myEventGuestUuid = null;
         final Set<Item> mySelectedItems = new HashSet<>();
         String myOutfitDescription = null;
@@ -87,8 +131,7 @@ public class ViewEventOutfitsActivity extends AppCompatActivity {
         };
 
         Uri uri = EventGuests.CONTENT_URI;
-        // TODO: get single outfit date
-        Cursor cursor = getContentResolver().query(uri, select, DbSchema.PREFIX_TBL_EVENTS + "._id = ?", new String[]{Long.toString(event.getId())}, null);
+        Cursor cursor = getContentResolver().query(uri, select, DbSchema.PREFIX_TBL_EVENTS + "._id = ? and (" + DbSchema.PREFIX_TBL_EVENT_GUEST_OUTFITS + ".event_date is null or " + DbSchema.PREFIX_TBL_EVENT_GUEST_OUTFITS + ".event_date = ?)", new String[]{SqlHelper.getDateForDb(datePage.getDisplayTargetDate()), eventId, SqlHelper.getDateForDb(datePage.getDisplayTargetDate())}, null);
 
         Map<String, UserEventOutfit> EventOutfitMap = new HashMap<>();
 
@@ -147,10 +190,36 @@ public class ViewEventOutfitsActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 startActivity(
-                        OutfitSelectionActivity.getIntent(getApplicationContext(), finalMyEventGuestUuid, event.getStartDate(), new ArrayList<>(mySelectedItems), finalMyOutfitDescription)
+                        OutfitSelectionActivity.getIntent(getApplicationContext(), eventId, finalMyEventGuestUuid, datePage.getTargetDate(), datePage.getEventStartDate(), datePage.getEventEndDate(), new ArrayList<>(mySelectedItems), finalMyOutfitDescription)
                 );
             }
         });
+
+        final DatePage previousPage = datePage.getPreviousPage();
+        if(previousPage != null) {
+            btnBack.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    setData(eventId, previousPage);
+                }
+            });
+            btnBack.setVisibility(View.VISIBLE);
+        } else {
+            btnBack.setVisibility(View.INVISIBLE);
+        }
+
+        final DatePage nextPage = datePage.getNextPage();
+        if(nextPage != null) {
+            btnForward.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    setData(eventId, nextPage);
+                }
+            });
+            btnForward.setVisibility(View.VISIBLE);
+        } else {
+            btnForward.setVisibility(View.INVISIBLE);
+        }
     }
 
     private User getUser(Cursor cursor) {
@@ -176,6 +245,119 @@ public class ViewEventOutfitsActivity extends AppCompatActivity {
 
 
         return item;
+    }
+
+    private DatePickerDialog createDatePickerDialog(final String eventId, final DatePage datePage) {
+        Calendar newCalendar = Calendar.getInstance();
+        newCalendar.setTime(datePage.getTargetDate());
+
+        DatePickerDialog datePickerDialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
+            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                Calendar calendar = Calendar.getInstance();
+                calendar.set(year, monthOfYear, dayOfMonth);
+                calendar.set(Calendar.HOUR_OF_DAY, 0);
+                calendar.set(Calendar.MINUTE, 0);
+                calendar.set(Calendar.SECOND, 0);
+                calendar.set(Calendar.MILLISECOND, 0);
+                Date selectedDate = calendar.getTime();
+
+                if(selectedDate.before(datePage.getEventStartDate()) || selectedDate.after(datePage.getEventEndDate())) {
+                    Toast.makeText(getApplicationContext(), "Selected date is outside event date", Toast.LENGTH_SHORT).show();
+                } else {
+                    setData(eventId, new DatePage(datePage.getEventStartDate(), datePage.getEventEndDate(), selectedDate));
+                }
+            }
+        }, newCalendar.get(Calendar.YEAR), newCalendar.get(Calendar.MONTH), newCalendar.get(Calendar.DAY_OF_MONTH));
+
+        datePickerDialog.getDatePicker().setMinDate(datePage.eventStartDate.getTime());
+        datePickerDialog.getDatePicker().setMaxDate(datePage.eventEndDate.getTime());
+
+        return datePickerDialog;
+    }
+
+    final class DatePage {
+        private Date eventStartDate;
+        private Date eventEndDate;
+        private Date targetDate;
+        private Date previousDate = null;
+        private Date nextDate = null;
+
+        public DatePage(Date eventStartDate, Date eventEndDate) {
+            this.eventStartDate = eventStartDate;
+            this.eventEndDate = eventEndDate;
+            setTargetDate();
+            setPreviousDate();
+            setNextDate();
+        }
+
+        public DatePage(Date eventStartDate, Date eventEndDate, Date targetDate) {
+            this.eventStartDate = eventStartDate;
+            this.eventEndDate = eventEndDate;
+            this.targetDate = targetDate;
+            setPreviousDate();
+            setNextDate();
+        }
+
+        private void setTargetDate() {
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(new Date());
+            calendar.set(Calendar.HOUR_OF_DAY, 0);
+            calendar.set(Calendar.MINUTE, 0);
+            calendar.set(Calendar.SECOND, 0);
+            calendar.set(Calendar.MILLISECOND, 0);
+            Date today = calendar.getTime();
+
+            if((today.equals(eventStartDate) || today.before(eventEndDate)) &&
+                    (today.equals(eventEndDate) || today.after(eventStartDate))) {
+                this.targetDate = today;
+            } else {
+                this.targetDate = eventStartDate;
+            }
+        }
+
+        private void setPreviousDate() {
+            if(targetDate.after(eventStartDate)) {
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(targetDate);
+                calendar.add(Calendar.DAY_OF_YEAR, -1);
+                this.previousDate = calendar.getTime();
+            }
+        }
+
+        private void setNextDate() {
+            if(targetDate.before(eventEndDate)) {
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(targetDate);
+                calendar.add(Calendar.DAY_OF_YEAR, 1);
+                this.nextDate = calendar.getTime();
+            }
+        }
+
+        public String getDisplayTargetDate() {
+            return SqlHelper.dateFormatForDisplay.format(targetDate);
+        }
+
+        public DatePage getPreviousPage() {
+            if(previousDate == null) return null;
+            return new DatePage(eventStartDate, eventEndDate, previousDate);
+        }
+
+        public DatePage getNextPage() {
+            if(nextDate == null) return null;
+            return new DatePage(eventStartDate, eventEndDate, nextDate);
+        }
+
+        public Date getEventStartDate() {
+            return eventStartDate;
+        }
+
+        public Date getEventEndDate() {
+            return eventEndDate;
+        }
+
+        public Date getTargetDate() {
+            return targetDate;
+        }
     }
 
 }

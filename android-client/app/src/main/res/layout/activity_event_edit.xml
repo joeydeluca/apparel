@@ -20,28 +20,18 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+        <com.facebook.drawee.view.SimpleDraweeView
+            android:id="@+id/my_image_view"
+            android:elevation="4dp"
             android:background="@color/dividerColorDark"
-            android:orientation="vertical"
-            android:gravity="center"
-            android:elevation="4dp">
-
-            <com.facebook.drawee.view.SimpleDraweeView
-                android:id="@+id/my_image_view"
-                android:layout_width="100dip"
-                android:layout_height="100dip"
-                android:layout_gravity="center"
-                fresco:roundingBorderWidth="2dp"
-                fresco:roundingBorderColor="#BF3136"
-                android:padding="2dp"
-                android:layout_margin="5dp"
-                fresco:placeholderImage="@drawable/camera"
-                android:clickable="true"
-                />
-
-        </LinearLayout>
+            android:layout_width="match_parent"
+            android:layout_height="100dip"
+            android:layout_gravity="center"
+            fresco:roundingBorderWidth="2dp"
+            fresco:roundingBorderColor="#BF3136"
+            fresco:placeholderImage="@android:drawable/ic_menu_camera"
+            android:clickable="true"
+            />
 
 
         <LinearLayout
@@ -76,62 +66,26 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"/>
 
-            <EditText
-                android:id="@+id/title"
-                android:gravity="left"
-                android:layout_marginTop="15dp"
-                android:hint="title"
-                android:layout_width="0dp"
-                android:layout_weight="4"
-                android:layout_height="wrap_content"
-                android:password="false" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <ImageView
-                android:scaleType="center"
-                android:layout_gravity="center_vertical|left"
-                android:layout_height="match_parent"
-                android:layout_width="0dp"
-                android:layout_weight="1"/>
-
-            <EditText
-                android:id="@+id/location"
-                android:hint="location"
-                android:gravity="left"
-                android:layout_marginTop="15dp"
-                android:layout_width="0dp"
-                android:layout_weight="4"
-                android:layout_height="wrap_content" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <ImageView
-                android:scaleType="center"
-                android:layout_gravity="center_vertical|left"
-                android:layout_height="match_parent"
-                android:layout_width="0dp"
-                android:layout_weight="1"/>
-
-            <EditText
-                android:id="@+id/date_from"
-                android:hint="start date"
+            <LinearLayout
                 android:gravity="left"
                 android:layout_marginTop="15dp"
                 android:layout_width="0dp"
                 android:ems="10"
                 android:layout_weight="4"
                 android:layout_height="wrap_content"
-                android:onClick="showDatePickerDialog"/>
+                android:orientation="vertical">
+                <TextView
+                    android:layout_marginTop="15dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Title"/>
+
+                <EditText
+                    android:id="@+id/title"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
 
         </LinearLayout>
 
@@ -145,69 +99,136 @@
                 android:layout_gravity="center_vertical|left"
                 android:layout_height="match_parent"
                 android:layout_width="0dp"
-                android:layout_weight="1"/>
+                android:layout_weight="1"
+                android:src="@android:drawable/ic_menu_mapmode" />
 
-            <CheckBox
-                android:id="@+id/chkIsReoccurring"
-                android:hint="Is reoccurring?"
-                android:gravity="left"
-                android:layout_marginTop="15dp"
-                android:layout_marginLeft="75dp"
-                android:textSize="18dp"
-                android:layout_height="match_parent"
-                android:layout_width="match_parent"
-                android:layout_gravity="center_vertical"
-                android:checked="false" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <ImageView
-                android:scaleType="center"
-                android:layout_gravity="center_vertical|left"
-                android:layout_height="match_parent"
-                android:layout_width="0dp"
-                android:layout_weight="1"/>
-
-            <EditText
-                android:id="@+id/date_to"
-                android:hint="end date"
+            <LinearLayout
                 android:gravity="left"
                 android:layout_marginTop="15dp"
                 android:layout_width="0dp"
                 android:ems="10"
                 android:layout_weight="4"
                 android:layout_height="wrap_content"
-                android:onClick="showDatePickerDialog"/>
+                android:orientation="vertical">
+                <TextView
+                    android:layout_marginTop="15dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Location"/>
+
+                <EditText
+                    android:id="@+id/location"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:scaleType="center"
+                android:layout_gravity="center_vertical|left"
+                android:layout_height="match_parent"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:src="@android:drawable/ic_menu_today" />
+
+            <LinearLayout
+                android:gravity="left"
+                android:layout_marginTop="15dp"
+                android:layout_width="0dp"
+                android:ems="10"
+                android:layout_weight="4"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <LinearLayout android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <LinearLayout
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Start Date"/>
+                        <EditText android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:id="@+id/date_from"/>
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="End Date"/>
+                        <EditText android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:id="@+id/date_to"/>
+                    </LinearLayout>
+
+                </LinearLayout>
+            </LinearLayout>
 
         </LinearLayout>
 
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_gravity="bottom"
             android:layout_height="wrap_content">
 
-            <View android:layout_height="match_parent"
+            <ImageView
+                android:scaleType="center"
+                android:layout_gravity="center_vertical|left"
+                android:layout_height="match_parent"
                 android:layout_width="0dp"
-                android:layout_weight="1"/>
+                android:layout_weight="1"
+                android:src="@android:drawable/ic_menu_sort_by_size" />
 
-            <TextView
-                android:id="@+id/delete_button"
+            <LinearLayout
                 android:gravity="left"
-                android:textColor="#dc0a11"
                 android:layout_marginTop="15dp"
-                android:text="Delete event"
                 android:layout_width="0dp"
+                android:ems="10"
                 android:layout_weight="4"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_marginTop="15dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Description"/>
+
+                <EditText
+                    android:id="@+id/description"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/delete_button"
+            android:gravity="left"
+            android:textColor="#dc0a11"
+            android:layout_marginTop="15dp"
+            android:text="Delete event"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"/>
+
 
     </LinearLayout>
+        
 
 </ScrollView>
 </LinearLayout>

@@ -31,6 +31,7 @@ public class ApparelContract {
         public static String LOCATION = "location";
         public static String START_DATE = "start_date";
         public static String END_DATE = "end_date";
+        public static String DESCRIPTION = "description";
         public static String OWNER_UUID = "owner_uuid";
         public static String PHOTO_UUID = "photo_uuid";
 
@@ -45,6 +46,7 @@ public class ApparelContract {
                 SqlHelper.getSelectColumn(Events.LOCATION, DbSchema.PREFIX_TBL_EVENTS),
                 SqlHelper.getSelectColumn(Events.START_DATE, DbSchema.PREFIX_TBL_EVENTS),
                 SqlHelper.getSelectColumn(Events.END_DATE, DbSchema.PREFIX_TBL_EVENTS),
+                SqlHelper.getSelectColumn(Events.DESCRIPTION, DbSchema.PREFIX_TBL_EVENTS),
                 SqlHelper.getSelectColumn(Events.OWNER_UUID, DbSchema.PREFIX_TBL_EVENTS),
                 SqlHelper.getSelectColumn(Photos._ID, DbSchema.PREFIX_TBL_PHOTOS),
                 SqlHelper.getSelectColumn(Photos.UUID, DbSchema.PREFIX_TBL_PHOTOS),

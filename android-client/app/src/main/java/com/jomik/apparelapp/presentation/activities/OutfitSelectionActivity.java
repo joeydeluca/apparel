@@ -28,6 +28,7 @@ import com.jomik.apparelapp.presentation.adapters.ItemSelectionAdapter;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
@@ -35,20 +36,30 @@ import java.util.UUID;
 public class OutfitSelectionActivity extends AppCompatActivity {
 
     private static final String GUEST_EVENT_UUID = "guestEventUuid";
-    private static final String EVENT_START_DATE = "eventStartDate";
     private static final String SELECTED_ITEMS = "selectedItems";
     private static final String OUTFIT_DESCRIPTION = "outfitDescription";
+    private static final String EVENT_ID = "eventId";
+    private static final String EVENT_START_DATE = "eventStartDate";
+    private static final String EVENT_END_DATE = "eventEndDate";
+    private static final String EVENT_TARGET_DATE = "eventTargetDate";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_outfit_selection);
 
+        final String eventId = getIntent().getStringExtra(EVENT_ID);
         final String eventGuestUuid = getIntent().getStringExtra(GUEST_EVENT_UUID);
-        final String eventDate = getIntent().getStringExtra(EVENT_START_DATE);
+        final Date targetDate = (Date) getIntent().getSerializableExtra(EVENT_TARGET_DATE);
+        final Date startDate = (Date) getIntent().getSerializableExtra(EVENT_START_DATE);
+        final Date endDate = (Date) getIntent().getSerializableExtra(EVENT_END_DATE);
         final List<Item> selectedItems = (List<Item>) getIntent().getSerializableExtra(SELECTED_ITEMS);
         final String outfitDescription = getIntent().getStringExtra(OUTFIT_DESCRIPTION);
 
+        final String targetDisplayDate = SqlHelper.dateFormatForDisplay.format(targetDate);
+
+        final TextView txtDate = (android.widget.TextView) findViewById(R.id.date);
+        txtDate.setText(targetDisplayDate);
         final TextView txtToolbarTitle = (android.widget.TextView) findViewById(R.id.toolbar_title);
         txtToolbarTitle.setText("Select outfit");
         final TextView btnDone = (TextView) findViewById(R.id.toolbar_done_button);
@@ -103,9 +114,9 @@ public class OutfitSelectionActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                String guestOutfitUuid = getOrCreateEventGuestOutfitUuid(eventGuestUuid, eventDate);
+                String guestOutfitUuid = getOrCreateEventGuestOutfitUuid(eventGuestUuid, targetDisplayDate);
 
-                deleteExistingOutfit(eventGuestUuid, eventDate);
+                deleteExistingOutfit(eventGuestUuid, targetDisplayDate);
 
                 saveOutfit(guestOutfitUuid, selectedItems);
 
@@ -113,7 +124,13 @@ public class OutfitSelectionActivity extends AppCompatActivity {
 
                 Toast.makeText(OutfitSelectionActivity.this, "Saved", Toast.LENGTH_SHORT).show();
 
-                onBackPressed();
+                Intent intent = new Intent(getApplicationContext(), ViewEventOutfitsActivity.class);
+                intent.putExtra("eventId", eventId);
+                intent.putExtra("targetDate", targetDate);
+                intent.putExtra("startDate", startDate);
+                intent.putExtra("endDate", endDate);
+                startActivity(intent);
+                finish();
             }
         });
 
@@ -141,7 +158,7 @@ public class OutfitSelectionActivity extends AppCompatActivity {
     private String getOrCreateEventGuestOutfitUuid(String eventGuestUuid, String eventDate) {
         String guestOutfitUuid = null;
         Uri uri = ApparelContract.EventGuestOutfits.CONTENT_URI;
-        Cursor cursor = getContentResolver().query(uri, new String[]{"uuid"}, "event_guest_uuid = ? and event_date = ?", new String[]{eventGuestUuid, eventDate}, null);
+        Cursor cursor = getContentResolver().query(uri, new String[]{"uuid"}, "event_guest_uuid = ? and event_date = ?", new String[]{eventGuestUuid, SqlHelper.getDateForDb(eventDate)}, null);
         while (cursor.moveToNext()) {
             guestOutfitUuid = cursor.getString(cursor.getColumnIndex(ApparelContract.EventGuestOutfits.UUID));
         }
@@ -151,7 +168,7 @@ public class OutfitSelectionActivity extends AppCompatActivity {
             guestOutfitUuid = UUID.randomUUID().toString();
             ContentValues values = new ContentValues();
             values.put(ApparelContract.EventGuestOutfits.UUID, guestOutfitUuid);
-            values.put(ApparelContract.EventGuestOutfits.EVENT_DATE, eventDate);
+            values.put(ApparelContract.EventGuestOutfits.EVENT_DATE, SqlHelper.getDateForDb(eventDate));
             values.put(ApparelContract.EventGuestOutfits.EVENT_GUEST_UUID, eventGuestUuid);
             getContentResolver().insert(ApparelContract.EventGuestOutfits.CONTENT_URI, values);
         }
@@ -160,7 +177,7 @@ public class OutfitSelectionActivity extends AppCompatActivity {
     }
 
     private void deleteExistingOutfit(String eventGuestUuid, String eventDate) {
-        getContentResolver().delete(ApparelContract.EventGuestOutfitItems.CONTENT_URI, "event_guest_outfit_uuid in (select ego.uuid from event_guest_outfits ego where ego.event_date = ? and ego.event_guest_uuid = ?)", new String[]{eventDate, eventGuestUuid});
+        getContentResolver().delete(ApparelContract.EventGuestOutfitItems.CONTENT_URI, "event_guest_outfit_uuid in (select ego.uuid from event_guest_outfits ego where ego.event_date = ? and ego.event_guest_uuid = ?)", new String[]{SqlHelper.getDateForDb(eventDate), eventGuestUuid});
     }
 
     private void saveOutfit(String guestOutfitUuid, List<Item> selectedItems) {
@@ -181,10 +198,13 @@ public class OutfitSelectionActivity extends AppCompatActivity {
         }
     }
 
-    public static Intent getIntent(Context context, String eventGuestUuid, String eventStartDate, ArrayList<Item> selectedItems, String outfitDescription) {
+    public static Intent getIntent(Context context, String eventId, String eventGuestUuid, Date targetDate, Date eventStartDate, Date eventEndDate, ArrayList<Item> selectedItems, String outfitDescription) {
         Intent intent = new Intent(context, OutfitSelectionActivity.class);
+        intent.putExtra(EVENT_ID, eventId);
         intent.putExtra(GUEST_EVENT_UUID, eventGuestUuid);
+        intent.putExtra(EVENT_TARGET_DATE, targetDate);
         intent.putExtra(EVENT_START_DATE, eventStartDate);
+        intent.putExtra(EVENT_END_DATE, eventEndDate);
         intent.putExtra(SELECTED_ITEMS, selectedItems);
         intent.putExtra(OUTFIT_DESCRIPTION, outfitDescription);
         return intent;

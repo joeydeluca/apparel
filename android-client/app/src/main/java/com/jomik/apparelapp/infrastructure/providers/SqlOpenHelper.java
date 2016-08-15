@@ -4,6 +4,8 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.facebook.AccessToken;
+
 import java.util.UUID;
 
 /**
@@ -12,7 +14,8 @@ import java.util.UUID;
 public class SqlOpenHelper extends SQLiteOpenHelper {
 
     private static final String NAME = DbSchema.DB_NAME;
-    private static final int VERSION = 29;
+    private static final int VERSION = 34;
+
 
     public SqlOpenHelper(Context context) {
         super(context, NAME, null, VERSION);
@@ -39,6 +42,8 @@ public class SqlOpenHelper extends SQLiteOpenHelper {
         db.execSQL(DbSchema.DDL_DROP_TBL_ITEMS);
         db.execSQL(DbSchema.DDL_DROP_TBL_USERS);
         db.execSQL(DbSchema.DDL_DROP_TBL_PHOTOS);
+
+        AccessToken.setCurrentAccessToken(null);
 
         onCreate(db);
     }

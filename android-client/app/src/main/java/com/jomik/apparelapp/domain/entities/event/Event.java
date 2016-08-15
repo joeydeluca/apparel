@@ -16,6 +16,7 @@ import java.util.List;
 public class Event extends Entity {
     private String title;
     private String location;
+    private String description;
     private String startDate;
     private String endDate;
     private String ownerUuid;
@@ -103,5 +104,13 @@ public class Event extends Entity {
 
     public void setOwnerName(String ownerName) {
         this.ownerName = ownerName;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

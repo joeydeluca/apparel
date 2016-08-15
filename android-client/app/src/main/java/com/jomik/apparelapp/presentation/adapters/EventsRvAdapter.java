@@ -17,6 +17,8 @@ import android.widget.Toast;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.jomik.apparelapp.R;
 import com.jomik.apparelapp.domain.entities.event.Event;
+import com.jomik.apparelapp.infrastructure.providers.DbSchema;
+import com.jomik.apparelapp.infrastructure.providers.SqlHelper;
 import com.jomik.apparelapp.infrastructure.services.AuthenticationManager;
 import com.jomik.apparelapp.infrastructure.services.ImageHelper;
 import com.jomik.apparelapp.presentation.activities.EditEventActivity;
@@ -47,11 +49,18 @@ public class EventsRvAdapter extends RecyclerView.Adapter<EventsRvAdapter.EventV
 
     @Override
     public void onBindViewHolder(EventViewHolder holder, final int i) {
-        Event event = events.get(i);
+        final Event event = events.get(i);
 
         holder.title.setText(event.getTitle());
         holder.location.setText(event.getLocation());
+        holder.description.setText(event.getDescription());
         holder.ownerText.setText("Created by " + event.getOwnerName());
+
+        String displayDate = event.getStartDate();
+        if(event.getEndDate() != null && !event.getEndDate().equals(event.getStartDate())) {
+            displayDate = displayDate + " - " + event.getEndDate();
+        }
+        holder.date.setText(displayDate);
 
         ImageHelper.setImageUri(holder.eventPhoto, event.getPhotoPath(), event.getPhotoUuid());
         ImageHelper.setFacebookProfileImageUri(holder.profilePhoto, event.getOwnerFacebookId());
@@ -95,9 +104,15 @@ public class EventsRvAdapter extends RecyclerView.Adapter<EventsRvAdapter.EventV
         holder.cv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(context, ViewEventOutfitsActivity.class);
-                intent.putExtra("event", events.get(i));
-                context.startActivity(intent);
+                try {
+                    Intent intent = new Intent(context, ViewEventOutfitsActivity.class);
+                    intent.putExtra("eventId", event.getId().toString());
+                    intent.putExtra("startDate", SqlHelper.dateFormatForDisplay.parse(event.getStartDate()));
+                    intent.putExtra("endDate", SqlHelper.dateFormatForDisplay.parse(event.getEndDate()));
+                    context.startActivity(intent);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
     }
@@ -116,6 +131,8 @@ public class EventsRvAdapter extends RecyclerView.Adapter<EventsRvAdapter.EventV
         CardView cv;
         TextView title;
         TextView location;
+        TextView description;
+        TextView date;
         ImageView btnMenu;
         SimpleDraweeView eventPhoto;
         SimpleDraweeView profilePhoto;
@@ -126,10 +143,12 @@ public class EventsRvAdapter extends RecyclerView.Adapter<EventsRvAdapter.EventV
             cv = (CardView)itemView.findViewById(R.id.cv);
             title = (TextView)itemView.findViewById(R.id.title);
             location = (TextView)itemView.findViewById(R.id.location);
+            description = (TextView)itemView.findViewById(R.id.description);
             btnMenu = (ImageView) itemView.findViewById(R.id.btnMenu);
             eventPhoto = (SimpleDraweeView) itemView.findViewById(R.id.my_image_view);
             profilePhoto = (SimpleDraweeView) itemView.findViewById(R.id.imgUser);
             ownerText = (TextView) itemView.findViewById(R.id.txtOwner);
+            date = (TextView) itemView.findViewById(R.id.date);
         }
     }
 }
