@@ -1,8 +1,7 @@
 package com.apparel.controllers;
 
-import com.jomik.apparel.domain.model.user.User;
-import com.jomik.apparel.domain.service.interfaces.IUserService;
-import com.jomik.apparel.interfaces.users.AbstractUserController;
+import com.apparel.domain.model.user.User;
+import com.apparel.domain.service.interfaces.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
