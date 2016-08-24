@@ -4,6 +4,5 @@ target/
 *.war
 *.ear
 *.iml
-application-prod.properties
 .idea
 .settings
