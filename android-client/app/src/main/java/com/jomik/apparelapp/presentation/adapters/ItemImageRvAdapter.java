@@ -1,7 +1,6 @@
 package com.jomik.apparelapp.presentation.adapters;
 
 import android.content.Context;
-import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,7 +8,7 @@ import android.view.ViewGroup;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.jomik.apparelapp.R;
-import com.jomik.apparelapp.domain.entities.item.Item;
+import com.jomik.apparelapp.domain.entities.Item;
 import com.jomik.apparelapp.infrastructure.services.ImageHelper;
 
 import java.util.List;
@@ -38,7 +37,7 @@ public class ItemImageRvAdapter extends RecyclerView.Adapter<ItemImageRvAdapter.
     @Override
     public void onBindViewHolder(ItemImageViewHolder holder, final int i) {
         Item item = items.get(i);
-        ImageHelper.setImageUri(holder.image, item.getPhotoPathSmall(), item.getPhotoUuid());
+        ImageHelper.setImageUri(holder.image, item.getPhotoPathSmall());
     }
 
     @Override

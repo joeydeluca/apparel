@@ -18,15 +18,13 @@ import android.widget.Toast;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.jomik.apparelapp.R;
-import com.jomik.apparelapp.domain.entities.event.Event;
-import com.jomik.apparelapp.domain.entities.item.Item;
+import com.jomik.apparelapp.domain.entities.Item;
 import com.jomik.apparelapp.infrastructure.providers.ApparelContract;
 import com.jomik.apparelapp.infrastructure.providers.DbSchema;
 import com.jomik.apparelapp.infrastructure.providers.SqlHelper;
 import com.jomik.apparelapp.presentation.adapters.ItemImageRvAdapter;
 import com.jomik.apparelapp.presentation.adapters.ItemSelectionAdapter;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -141,18 +139,6 @@ public class OutfitSelectionActivity extends AppCompatActivity {
             }
         });
 
-    }
-
-    private String getEventGuestOutfitUuid(String eventGuestUuid, String eventDate) {
-        String guestOutfitUuid = null;
-        Uri uri = ApparelContract.EventGuestOutfits.CONTENT_URI;
-        Cursor cursor = getContentResolver().query(uri, new String[]{"uuid"}, "event_guest_uuid = ? and event_date = ?", new String[]{eventGuestUuid, eventDate}, null);
-        while (cursor.moveToNext()) {
-            guestOutfitUuid = cursor.getString(cursor.getColumnIndex(ApparelContract.EventGuestOutfits.UUID));
-        }
-        cursor.close();
-
-        return guestOutfitUuid;
     }
 
     private String getOrCreateEventGuestOutfitUuid(String eventGuestUuid, String eventDate) {

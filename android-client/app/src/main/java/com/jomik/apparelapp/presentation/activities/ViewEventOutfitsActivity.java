@@ -8,21 +8,17 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.DatePicker;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.jomik.apparelapp.R;
-import com.jomik.apparelapp.domain.entities.event.Event;
-import com.jomik.apparelapp.domain.entities.item.Item;
-import com.jomik.apparelapp.domain.entities.photo.Photo;
-import com.jomik.apparelapp.domain.entities.user.User;
-import com.jomik.apparelapp.domain.entities.usereventoutfit.UserEventOutfit;
-import com.jomik.apparelapp.infrastructure.providers.ApparelContract;
+import com.jomik.apparelapp.domain.entities.Event;
+import com.jomik.apparelapp.domain.entities.Item;
+import com.jomik.apparelapp.domain.entities.User;
+import com.jomik.apparelapp.domain.entities.EventGuestOutfit;
 import com.jomik.apparelapp.infrastructure.providers.ApparelContract.EventGuestOutfitItems;
 import com.jomik.apparelapp.infrastructure.providers.ApparelContract.EventGuestOutfits;
 import com.jomik.apparelapp.infrastructure.providers.ApparelContract.EventGuests;
@@ -50,6 +46,7 @@ public class ViewEventOutfitsActivity extends AppCompatActivity {
     ImageView btnForward;
 
     private DatePickerDialog mDatePickerDialog;
+    private FloatingActionButton addButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +63,8 @@ public class ViewEventOutfitsActivity extends AppCompatActivity {
                 onBackPressed();
             }
         });
+
+        addButton = (FloatingActionButton) findViewById(R.id.addButton);
 
         txtDate = (TextView) findViewById(R.id.date);
         btnBack = (ImageView) findViewById(R.id.btnBack);
@@ -115,7 +114,6 @@ public class ViewEventOutfitsActivity extends AppCompatActivity {
                 SqlHelper.getSelectColumn(EventGuestOutfits.DESCRIPTION, DbSchema.PREFIX_TBL_EVENT_GUEST_OUTFITS),
                 SqlHelper.getSelectColumn(EventGuestOutfits.EVENT_DATE, DbSchema.PREFIX_TBL_EVENT_GUEST_OUTFITS),
                 SqlHelper.getSelectColumn(EventGuestOutfits.EVENT_GUEST_UUID, DbSchema.PREFIX_TBL_EVENT_GUEST_OUTFITS),
-                SqlHelper.getSelectColumn(EventGuestOutfits.PHOTO_UUID, DbSchema.PREFIX_TBL_EVENT_GUEST_OUTFITS),
 
                 SqlHelper.getSelectColumn(EventGuestOutfitItems.UUID, DbSchema.PREFIX_TBL_EVENT_GUEST_OUTFIT_ITEMS),
                 SqlHelper.getSelectColumn(EventGuestOutfitItems.ITEM_UUID, DbSchema.PREFIX_TBL_EVENT_GUEST_OUTFIT_ITEMS),
@@ -133,7 +131,7 @@ public class ViewEventOutfitsActivity extends AppCompatActivity {
         Uri uri = EventGuests.CONTENT_URI;
         Cursor cursor = getContentResolver().query(uri, select, DbSchema.PREFIX_TBL_EVENTS + "._id = ? and (" + DbSchema.PREFIX_TBL_EVENT_GUEST_OUTFITS + ".event_date is null or " + DbSchema.PREFIX_TBL_EVENT_GUEST_OUTFITS + ".event_date = ?)", new String[]{SqlHelper.getDateForDb(datePage.getDisplayTargetDate()), eventId, SqlHelper.getDateForDb(datePage.getDisplayTargetDate())}, null);
 
-        Map<String, UserEventOutfit> EventOutfitMap = new HashMap<>();
+        Map<String, EventGuestOutfit> EventOutfitMap = new HashMap<>();
 
         while(cursor.moveToNext()) {
             System.out.println("===============================");
@@ -143,10 +141,10 @@ public class ViewEventOutfitsActivity extends AppCompatActivity {
             System.out.println("===============================");
 
             String eventOutfitUuid = SqlHelper.getString(cursor, EventGuestOutfits.UUID, DbSchema.PREFIX_TBL_EVENT_GUEST_OUTFITS);
-            UserEventOutfit eventOutfit = EventOutfitMap.get(eventOutfitUuid);
+            EventGuestOutfit eventOutfit = EventOutfitMap.get(eventOutfitUuid);
 
             if(eventOutfit == null) {
-                eventOutfit = new UserEventOutfit();
+                eventOutfit = new EventGuestOutfit();
                 eventOutfit.setUser(getUser(cursor));
                 eventOutfit.setDate(SqlHelper.getString(cursor, EventGuestOutfits.EVENT_DATE, DbSchema.PREFIX_TBL_EVENT_GUEST_OUTFITS));
                 eventOutfit.setDescription(SqlHelper.getString(cursor, EventGuestOutfits.DESCRIPTION, DbSchema.PREFIX_TBL_EVENT_GUEST_OUTFITS));
@@ -183,17 +181,23 @@ public class ViewEventOutfitsActivity extends AppCompatActivity {
         EventOutfitsRvAdapter adapter = new EventOutfitsRvAdapter(new ArrayList<>(EventOutfitMap.values()));
         rv.setAdapter(adapter);
 
-        FloatingActionButton addButton = (FloatingActionButton) findViewById(R.id.addButton);
-        final String finalMyEventGuestUuid = myEventGuestUuid;
-        final String finalMyOutfitDescription = myOutfitDescription;
-        addButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(
-                        OutfitSelectionActivity.getIntent(getApplicationContext(), eventId, finalMyEventGuestUuid, datePage.getTargetDate(), datePage.getEventStartDate(), datePage.getEventEndDate(), new ArrayList<>(mySelectedItems), finalMyOutfitDescription)
-                );
-            }
-        });
+
+
+        if(myEventGuestUuid != null) {
+            final String finalMyEventGuestUuid = myEventGuestUuid;
+            final String finalMyOutfitDescription = myOutfitDescription;
+            addButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    startActivity(
+                            OutfitSelectionActivity.getIntent(getApplicationContext(), eventId, finalMyEventGuestUuid, datePage.getTargetDate(), datePage.getEventStartDate(), datePage.getEventEndDate(), new ArrayList<>(mySelectedItems), finalMyOutfitDescription)
+                    );
+                }
+            });
+            addButton.setVisibility(View.VISIBLE);
+        } else {
+            addButton.setVisibility(View.INVISIBLE);
+        }
 
         final DatePage previousPage = datePage.getPreviousPage();
         if(previousPage != null) {

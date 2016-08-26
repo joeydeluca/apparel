@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <sync-adapter
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:contentAuthority="com.example.restaurant.provider"
-    android:accountType="com.example.restaurant"
+    android:contentAuthority="com.jomik.apparelapp.provider"
+    android:accountType="com.apparel"
     android:userVisible="false"
     android:supportsUploading="true"
     android:allowParallelSyncs="false"

@@ -11,7 +11,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.jomik.apparelapp.R;
-import com.jomik.apparelapp.domain.entities.event.Event;
+import com.jomik.apparelapp.domain.entities.Event;
 import com.jomik.apparelapp.infrastructure.events.EventSearchComplete;
 import com.jomik.apparelapp.infrastructure.events.EventSearchStart;
 import com.jomik.apparelapp.infrastructure.providers.ApparelContract;

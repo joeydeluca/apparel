@@ -13,8 +13,8 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import com.jomik.apparelapp.R;
-import com.jomik.apparelapp.domain.entities.event.Event;
-import com.jomik.apparelapp.domain.entities.user.User;
+import com.jomik.apparelapp.domain.entities.Event;
+import com.jomik.apparelapp.domain.entities.User;
 import com.jomik.apparelapp.infrastructure.events.FindUserEventsComplete;
 import com.jomik.apparelapp.infrastructure.events.FindUserEventsStart;
 import com.jomik.apparelapp.infrastructure.providers.ApparelContract;

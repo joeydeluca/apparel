@@ -1,12 +1,15 @@
 package com.jomik.apparelapp.presentation.activities;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
@@ -45,8 +48,10 @@ public class EditEventActivity extends AppCompatActivity implements View.OnClick
     private DatePickerDialog startDatePickerDialog;
     private DatePickerDialog endDatePickerDialog;
     private SimpleDraweeView simpleDraweeView;
-    private ImagePicker imagePicker = new ImagePicker(EditEventActivity.this);
-    private ChosenImage chosenImage = null;
+
+    Uri mCropImageUri = null;
+    Uri chosenImageUri = null;
+    String chosenImageUuid = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +61,6 @@ public class EditEventActivity extends AppCompatActivity implements View.OnClick
         final TextView txtToolbarTitle = (TextView) findViewById(R.id.toolbar_title);
         final TextView btnDone = (TextView) findViewById(R.id.toolbar_done_button);
         final ImageView imgCancel = (ImageView) findViewById(R.id.toolbar_cancel_button);
-        final TextView btnDelete = (TextView) findViewById(R.id.delete_button);
         final EditText txtEventTitle = (EditText) findViewById(R.id.title);
         final EditText txtEventLocation = (EditText) findViewById(R.id.location);
         final EditText txtDescription = (EditText) findViewById(R.id.description);
@@ -79,8 +83,7 @@ public class EditEventActivity extends AppCompatActivity implements View.OnClick
         simpleDraweeView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                imagePicker.setImagePickerCallback(getImagePickerCallback());
-                imagePicker.pickImage();
+                startActivityForResult(ImagePickerHelper.getPickImageChooserIntent(getApplicationContext()), 200);
             }
         });
 
@@ -100,12 +103,10 @@ public class EditEventActivity extends AppCompatActivity implements View.OnClick
                 existingPhotoPath = SqlHelper.getString(cursor, Photos.LOCAL_PATH_SM, DbSchema.PREFIX_TBL_PHOTOS);
             }
             cursor.close();
-        } else {
-            btnDelete.setVisibility(View.INVISIBLE);
         }
 
-        if(existingPhotoPath != null) {
-            ImageHelper.setImageUri(simpleDraweeView, existingPhotoPath, existingPhotoUuid);
+        if(existingPhotoPath != null && chosenImageUri == null) {
+            ImageHelper.setImageUri(simpleDraweeView, existingPhotoPath);
         }
 
         final String finalExistingPhotoPath = existingPhotoPath;
@@ -116,7 +117,7 @@ public class EditEventActivity extends AppCompatActivity implements View.OnClick
             public void onClick(View v) {
                 // Validate
                 if(!FormValidator.validate(txtEventTitle, txtEventLocation, txtFromDate, txtDescription) ||
-                    (finalExistingPhotoPath == null && !ImageValidator.validate(EditEventActivity.this, chosenImage))) {
+                    (finalExistingPhotoPath == null && !ImageValidator.validate(EditEventActivity.this, null))) {
                     return;
                 }
 
@@ -137,15 +138,15 @@ public class EditEventActivity extends AppCompatActivity implements View.OnClick
 
                 // Save image record
                 String photoUuid = finalExistingPhotoUuid;
-                if(chosenImage != null) {
+                if(chosenImageUuid != null) {
                     if(photoUuid != null) {
                         getContentResolver().delete(Photos.CONTENT_URI, "uuid = ?", new String[] {photoUuid});
                     }
                     String newPhotoUuid = UUID.randomUUID().toString();
                     ContentValues values = new ContentValues();
                     values.put(Photos.UUID, newPhotoUuid);
-                    values.put(Photos.LOCAL_PATH, chosenImage.getThumbnailPath());
-                    values.put(Photos.LOCAL_PATH_SM, chosenImage.getThumbnailSmallPath());
+                    values.put(Photos.LOCAL_PATH, chosenImageUri.getPath());
+                    values.put(Photos.LOCAL_PATH_SM, chosenImageUri.getPath());
                     getContentResolver().insert(Photos.CONTENT_URI, values);
                     photoUuid = newPhotoUuid;
                 }
@@ -175,17 +176,6 @@ public class EditEventActivity extends AppCompatActivity implements View.OnClick
         imgCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onBackPressed();
-            }
-        });
-
-        btnDelete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getContentResolver().delete(ContentUris.withAppendedId(Events.CONTENT_URI, id), null, null);
-
-                Toast.makeText(EditEventActivity.this, "Deleted", Toast.LENGTH_SHORT).show();
-
                 onBackPressed();
             }
         });
@@ -237,31 +227,47 @@ public class EditEventActivity extends AppCompatActivity implements View.OnClick
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(resultCode == Activity.RESULT_OK) {
-            if(requestCode == Picker.PICK_IMAGE_DEVICE) {
-                if(imagePicker == null) {
-                    imagePicker = new ImagePicker(EditEventActivity.this);
-                    imagePicker.setImagePickerCallback(getImagePickerCallback());
-                }
-
-                imagePicker.submit(data);
+        if(requestCode == 1 && resultCode == Activity.RESULT_OK) {
+            chosenImageUri = data.getParcelableExtra("chosenImageUri");
+            chosenImageUuid = data.getStringExtra("chosenImageUuid");
+            if(chosenImageUri != null) {
+                simpleDraweeView.setImageURI(chosenImageUri);
             }
+        }
+        else if (resultCode == Activity.RESULT_OK) {
+            Uri imageUri = ImagePickerHelper.getPickImageResultUri(data, getApplicationContext());
+
+            // For API >= 23 we need to check specifically that we have permissions to read external storage,
+            // but we don't know if we need to for the URI so the simplest is to try open the stream and see if we get error.
+            boolean requirePermissions = false;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
+                    checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED &&
+                    ImagePickerHelper.isUriRequiresPermissions(imageUri, getApplicationContext())) {
+
+                // request permissions and handle the result in onRequestPermissionsResult()
+                requirePermissions = true;
+                mCropImageUri = imageUri;
+                requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 0);
+            }
+
+            if (!requirePermissions) {
+                Intent intent = new Intent(getApplicationContext(), ImagePickerActivity.class);
+                intent.putExtra("uri", imageUri);
+                startActivityForResult(intent, 1);
+            }
+
         }
     }
 
-    private ImagePickerCallback getImagePickerCallback() {
-        return new ImagePickerCallback(){
-            @Override
-            public void onImagesChosen(List<ChosenImage> images) {
-                chosenImage = images.get(0);
-                ImageHelper.setImageUri(simpleDraweeView, chosenImage.getThumbnailSmallPath());
-            }
-
-            @Override
-            public void onError(String message) {
-                Toast.makeText(getApplicationContext(), "Something went terribly wrong.", Toast.LENGTH_SHORT);
-            }
-        };
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        if (mCropImageUri != null && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            Intent intent = new Intent(getApplicationContext(), ImagePickerActivity.class);
+            intent.putExtra("uri", mCropImageUri);
+            startActivityForResult(intent, 1);
+        } else {
+            Toast.makeText(this, "Required permissions are not granted", Toast.LENGTH_LONG).show();
+        }
     }
 
 }

@@ -1,7 +1,9 @@
-package com.jomik.apparelapp.domain.entities.item;
+package com.jomik.apparelapp.domain.entities;
 
 
-import com.jomik.apparelapp.domain.entities.Entity;
+import android.content.ContentValues;
+
+import com.jomik.apparelapp.infrastructure.providers.ApparelContract;
 
 /**
  * Created by Joe Deluca on 3/22/2016.
@@ -9,11 +11,12 @@ import com.jomik.apparelapp.domain.entities.Entity;
 public class Item extends Entity {
     private String name;
     private String description;
-    private ItemColor itemColor;
-    private ItemPattern itemPattern;
     private ItemCategory itemCategory;
-    private String photoId;
     private String photoUuid;
+    private String userUuid;
+
+    private Photo photo;
+    private String photoId;
     private String photoPath;
     private String photoPathSmall;
 
@@ -33,24 +36,12 @@ public class Item extends Entity {
         this.description = description;
     }
 
-    public ItemColor getItemColor() {
-        return itemColor;
-    }
-
-    public void setItemColor(ItemColor itemColor) {
-        this.itemColor = itemColor;
-    }
-
-    public ItemPattern getItemPattern() {
-        return itemPattern;
-    }
-
-    public void setItemPattern(ItemPattern itemPattern) {
-        this.itemPattern = itemPattern;
-    }
-
     public ItemCategory getItemCategory() {
         return itemCategory;
+    }
+
+    public void setItemCategory(String itemCategory) {
+        this.itemCategory = ItemCategory.getEnumFromDisplayName(itemCategory);
     }
 
     public void setItemCategory(ItemCategory itemCategory) {
@@ -87,5 +78,31 @@ public class Item extends Entity {
 
     public void setPhotoPathSmall(String photoPathSmall) {
         this.photoPathSmall = photoPathSmall;
+    }
+
+    public String getUserUuid() {
+        return userUuid;
+    }
+
+    public void setUserUuid(String userUuid) {
+        this.userUuid = userUuid;
+    }
+
+    public Photo getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(Photo photo) {
+        this.photo = photo;
+    }
+
+    @Override
+    protected ContentValues getExtraContentValues() {
+        ContentValues values = new ContentValues();
+        values.put(ApparelContract.Items.NAME, getName());
+        values.put(ApparelContract.Items.DESCRIPTION, getDescription());
+        values.put(ApparelContract.Items.ITEM_CATEGORY, getItemCategory().name());
+        values.put(ApparelContract.Items.PHOTO_UUID, getPhotoUuid());
+        return values;
     }
 }

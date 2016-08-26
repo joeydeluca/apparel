@@ -1,11 +1,15 @@
 package com.jomik.apparelapp.infrastructure.services;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
 
 import com.facebook.AccessToken;
 import com.facebook.login.LoginManager;
-import com.jomik.apparelapp.domain.entities.user.User;
+import com.jomik.apparelapp.domain.entities.User;
+import com.jomik.apparelapp.infrastructure.providers.ApparelContract;
 import com.jomik.apparelapp.infrastructure.providers.SqlOpenHelper;
 
 /**
@@ -42,8 +46,21 @@ public class AuthenticationManager {
         return user;
     }
 
+    public static Account getSyncAccount(Context context) {
+        return createDummyAccount(context);
+    }
+
     public static void logout() {
         user = null;
         LoginManager.getInstance().logOut();
     }
+
+    private static Account createDummyAccount(Context context) {
+        Account dummyAccount = new Account("dummyaccount", "com.apparel");
+        AccountManager accountManager = (AccountManager) context.getSystemService(context.ACCOUNT_SERVICE);
+        accountManager.addAccountExplicitly(dummyAccount, null, null);
+        ContentResolver.setSyncAutomatically(dummyAccount, ApparelContract.AUTHORITY, true);
+        return dummyAccount;
+    }
+
 }

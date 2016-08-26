@@ -17,7 +17,7 @@ import java.util.UUID;
  * Created by Mick on 4/16/2016.
  */
 @RestController
-public class TestDataController extends AbstractUserController{
+public class TestDataController {
 
     private final IUserService userService;
 

@@ -2,9 +2,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.jomik.apparelapp">
 
+    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.USE_CREDENTIALS" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS" />
+
 
     <application
         android:name=".ApparelApplication"
@@ -16,14 +19,14 @@
         <activity android:name=".presentation.activities.SplashScreenActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".presentation.activities.FacebookLoginActivity"/>
+        <activity android:name=".presentation.activities.FacebookLoginActivity" />
         <activity
             android:name=".presentation.activities.TabbedActivity"
-            android:theme="@style/JoeyStyle.NoActionBar"></activity>
+            android:theme="@style/JoeyStyle.NoActionBar" />
         <activity
             android:name=".presentation.activities.EditItemActivity"
             android:label="@string/title_activity_edit_item"
@@ -48,6 +51,9 @@
             android:name=".presentation.activities.ViewEventOutfitsActivity"
             android:label="View Event Outfits"
             android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".presentation.activities.ImagePickerActivity"
+            android:label="Image Picker"/>
 
         <provider
             android:name=".infrastructure.providers.ApparelProvider"
@@ -59,7 +65,7 @@
             android:writePermission="com.jomik.apparel.WRITE" />
 
         <service
-            android:name=".ApparelSyncService"
+            android:name=".infrastructure.sync.ApparelSyncService"
             android:enabled="true"
             android:exported="true"
             android:process=":sync">
@@ -70,6 +76,18 @@
             <meta-data
                 android:name="android.content.SyncAdapter"
                 android:resource="@xml/syncadapter" />
+        </service>
+
+        <service
+            android:name=".infrastructure.sync.AuthenticatorService"
+            android:enabled="true" >
+            <intent-filter>
+                <action android:name="android.accounts.AccountAuthenticator" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.accounts.AccountAuthenticator"
+                android:resource="@xml/authenticator" />
         </service>
 
         <meta-data

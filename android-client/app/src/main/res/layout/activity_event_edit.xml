@@ -33,7 +33,6 @@
             android:clickable="true"
             />
 
-
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
@@ -215,16 +214,6 @@
 
             </LinearLayout>
         </LinearLayout>
-
-        <TextView
-            android:id="@+id/delete_button"
-            android:gravity="left"
-            android:textColor="#dc0a11"
-            android:layout_marginTop="15dp"
-            android:text="Delete event"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="30dp"/>
 
 
     </LinearLayout>

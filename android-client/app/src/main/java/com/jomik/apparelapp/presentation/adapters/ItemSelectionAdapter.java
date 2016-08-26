@@ -1,7 +1,6 @@
 package com.jomik.apparelapp.presentation.adapters;
 
 import android.content.Context;
-import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,7 +8,7 @@ import android.widget.BaseAdapter;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.jomik.apparelapp.R;
-import com.jomik.apparelapp.domain.entities.item.Item;
+import com.jomik.apparelapp.domain.entities.Item;
 import com.jomik.apparelapp.infrastructure.services.ImageHelper;
 
 import java.util.Set;
@@ -54,7 +53,7 @@ public class ItemSelectionAdapter extends BaseAdapter {
 
             Item item = items[position];
             SimpleDraweeView draweeView = (SimpleDraweeView) gridView.findViewById(R.id.grid_item_image);
-            ImageHelper.setImageUri(draweeView, item.getPhotoPath(), item.getPhotoUuid());
+            ImageHelper.setImageUri(draweeView, item.getPhotoPath());
 
             if(selectedItems.contains(item)) {
                 draweeView.setBackgroundResource(R.drawable.com_facebook_button_like_icon_selected);

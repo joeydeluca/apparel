@@ -58,7 +58,7 @@ public class ViewEventActivity extends AppCompatActivity {
         cursor.close();
 
         if(photoUuid != null) {
-            ImageHelper.setImageUri(simpleDraweeView, photoPath, photoUuid);
+            ImageHelper.setImageUri(simpleDraweeView, photoPath);
         }
 
         final String finalEventUuid = eventUuid;

@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.jomik.apparelapp.R;
-import com.jomik.apparelapp.domain.entities.item.Item;
+import com.jomik.apparelapp.domain.entities.Item;
 import com.jomik.apparelapp.infrastructure.services.ImageHelper;
 
 import java.util.List;
@@ -35,7 +35,7 @@ public class EventOutfitItemsRvAdapter extends RecyclerView.Adapter<EventOutfitI
     @Override
     public void onBindViewHolder(ViewHolder holder, final int i) {
         Item item = items.get(i);
-        ImageHelper.setImageUri(holder.simpleDraweeView, item.getPhotoPath(), item.getPhotoUuid());
+        ImageHelper.setImageUri(holder.simpleDraweeView, item.getPhotoPath());
     }
 
     @Override

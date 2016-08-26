@@ -1,7 +1,8 @@
-package com.jomik.apparelapp.domain.entities.user;
+package com.jomik.apparelapp.domain.entities;
 
-import com.jomik.apparelapp.domain.entities.Entity;
-import com.jomik.apparelapp.domain.entities.photo.Photo;
+import android.content.ContentValues;
+
+import com.jomik.apparelapp.infrastructure.providers.ApparelContract;
 
 /**
  * Created by Joe Deluca on 3/22/2016.
@@ -24,5 +25,13 @@ public class User extends Entity {
 
     public void setFacebookId(String facebookId) {
         this.facebookId = facebookId;
+    }
+
+    @Override
+    protected ContentValues getExtraContentValues() {
+        ContentValues values = new ContentValues();
+        values.put(ApparelContract.Users.NAME, getName());
+        values.put(ApparelContract.Users.FACEBOOK_ID, getFacebookId());
+        return values;
     }
 }

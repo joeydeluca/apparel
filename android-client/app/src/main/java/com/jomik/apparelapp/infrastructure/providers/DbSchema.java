@@ -26,28 +26,29 @@ public interface DbSchema {
 
     String DDL_CREATE_TBL_PHOTOS =
             "CREATE TABLE "+TBL_PHOTOS+" (" +
-                    Photos._ID+"           INTEGER PRIMARY KEY AUTOINCREMENT, \n" +
-                    Photos.UUID+"          TEXT,\n" +
+                    CommonColumns._ID+"    INTEGER PRIMARY KEY AUTOINCREMENT, \n" +
+                    CommonColumns.UUID+"   TEXT,\n" +
+                    CommonColumns.MARKED_FOR_DELETE+" INTEGER,\n" +
                     Photos.LOCAL_PATH+"    TEXT,\n" +
                     Photos.LOCAL_PATH_SM+" TEXT\n" +
                     ")";
 
     String DDL_CREATE_TBL_ITEMS =
             "CREATE TABLE "+TBL_ITEMS+" (" +
-                    Items._ID+"           INTEGER PRIMARY KEY AUTOINCREMENT, \n" +
-                    Items.UUID+"          TEXT,\n" +
+                    CommonColumns._ID+"    INTEGER PRIMARY KEY AUTOINCREMENT, \n" +
+                    CommonColumns.UUID+"   TEXT,\n" +
+                    CommonColumns.MARKED_FOR_DELETE+" INTEGER,\n" +
                     Items.NAME+"          TEXT,\n" +
                     Items.DESCRIPTION+"   TEXT,\n" +
-                    Items.ITEM_COLOR+"    TEXT,\n" +
-                    Items.ITEM_PATTERN+"  TEXT,\n" +
-                    Items.ITEM_CATEGORY+" TEXT,\n" +
-                    Items.PHOTO_UUID+"    TEXT\n" +
+                    Items.PHOTO_UUID+"    TEXT,\n" +
+                    Items.USER_UUID+"     TEXT\n" +
                     ")";
 
     String DDL_CREATE_TBL_EVENTS =
             "CREATE TABLE "+TBL_EVENTS+" (" +
-                    Events._ID+"            INTEGER PRIMARY KEY AUTOINCREMENT, \n" +
-                    Events.UUID+"           TEXT,\n" +
+                    CommonColumns._ID+"    INTEGER PRIMARY KEY AUTOINCREMENT, \n" +
+                    CommonColumns.UUID+"   TEXT,\n" +
+                    CommonColumns.MARKED_FOR_DELETE+" INTEGER,\n" +
                     Events.TITLE+"          TEXT,\n" +
                     Events.LOCATION+"       TEXT,\n" +
                     Events.START_DATE+"     TEXT,\n" +
@@ -59,34 +60,37 @@ public interface DbSchema {
 
     String DDL_CREATE_TBL_EVENT_GUESTS =
             "CREATE TABLE "+TBL_EVENT_GUESTS+" (" +
-                    EventGuests._ID+"               INTEGER PRIMARY KEY AUTOINCREMENT, \n" +
-                    EventGuests.UUID+"              TEXT,\n" +
+                    CommonColumns._ID+"    INTEGER PRIMARY KEY AUTOINCREMENT, \n" +
+                    CommonColumns.UUID+"   TEXT,\n" +
+                    CommonColumns.MARKED_FOR_DELETE+" INTEGER,\n" +
                     EventGuests.EVENT_UUID+"        TEXT,\n" +
                     EventGuests.GUEST_UUID+"        TEXT\n" +
                     ")";
 
     String DDL_CREATE_TBL_EVENT_GUEST_OUTFITS =
             "CREATE TABLE "+TBL_EVENT_GUEST_OUTFITS+" (" +
-                    EventGuestOutfits._ID+"         INTEGER PRIMARY KEY AUTOINCREMENT, \n" +
-                    EventGuestOutfits.UUID+"        TEXT,\n" +
+                    CommonColumns._ID+"    INTEGER PRIMARY KEY AUTOINCREMENT, \n" +
+                    CommonColumns.UUID+"   TEXT,\n" +
+                    CommonColumns.MARKED_FOR_DELETE+" INTEGER,\n" +
                     EventGuestOutfits.DESCRIPTION+" TEXT,\n" +
-                    EventGuestOutfits.PHOTO_UUID+"  TEXT,\n" +
                     EventGuestOutfits.EVENT_DATE+"  TEXT,\n" +
                     EventGuestOutfits.EVENT_GUEST_UUID+"  TEXT\n" +
                     ")";
 
     String DDL_CREATE_TBL_EVENT_GUEST_OUTFIT_ITEMS =
             "CREATE TABLE "+TBL_EVENT_GUEST_OUTFIT_ITEMS+" (" +
-                    EventGuestOutfitItems._ID+"                     INTEGER PRIMARY KEY AUTOINCREMENT, \n" +
-                    EventGuestOutfitItems.UUID+"                    TEXT,\n" +
+                    CommonColumns._ID+"    INTEGER PRIMARY KEY AUTOINCREMENT, \n" +
+                    CommonColumns.UUID+"   TEXT,\n" +
+                    CommonColumns.MARKED_FOR_DELETE+" INTEGER,\n" +
                     EventGuestOutfitItems.EVENT_GUEST_OUTFIT_UUID+" TEXT,\n" +
                     EventGuestOutfitItems.ITEM_UUID+"               TEXT\n" +
                     ")";
 
     String DDL_CREATE_TBL_USERS =
             "CREATE TABLE "+TBL_USERS+" (" +
-                    Users._ID+"        INTEGER PRIMARY KEY AUTOINCREMENT, \n" +
-                    Users.UUID+"       TEXT,\n" +
+                    CommonColumns._ID+"    INTEGER PRIMARY KEY AUTOINCREMENT, \n" +
+                    CommonColumns.UUID+"   TEXT,\n" +
+                    CommonColumns.MARKED_FOR_DELETE+" INTEGER,\n" +
                     Users.NAME+"       TEXT,\n" +
                     Users.FACEBOOK_ID+" TEXT\n" +
                     ")";

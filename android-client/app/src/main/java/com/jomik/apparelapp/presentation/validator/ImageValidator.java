@@ -1,6 +1,7 @@
 package com.jomik.apparelapp.presentation.validator;
 
 import android.content.Context;
+import android.net.Uri;
 import android.widget.Toast;
 
 import com.kbeanie.multipicker.api.entity.ChosenImage;
@@ -10,7 +11,7 @@ import com.kbeanie.multipicker.api.entity.ChosenImage;
  */
 public class ImageValidator {
 
-    public static boolean validate(Context context, ChosenImage chosenImage) {
+    public static boolean validate(Context context, Uri chosenImage) {
         if(chosenImage == null) {
             Toast.makeText(context, "Please select image", Toast.LENGTH_SHORT).show();
             return false;

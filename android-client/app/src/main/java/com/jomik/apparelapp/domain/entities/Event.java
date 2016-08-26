@@ -1,14 +1,9 @@
-package com.jomik.apparelapp.domain.entities.event;
+package com.jomik.apparelapp.domain.entities;
+
+import android.content.ContentValues;
 
 import com.jomik.apparelapp.domain.entities.Entity;
-import com.jomik.apparelapp.domain.entities.user.User;
-import com.jomik.apparelapp.domain.entities.usereventoutfit.UserEventOutfit;
-
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import com.jomik.apparelapp.infrastructure.providers.ApparelContract;
 
 /**
  * Created by Joe Deluca on 3/22/2016.
@@ -112,5 +107,18 @@ public class Event extends Entity {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    @Override
+    protected ContentValues getExtraContentValues() {
+        ContentValues values = new ContentValues();
+        values.put(ApparelContract.Events.TITLE, getTitle());
+        values.put(ApparelContract.Events.LOCATION, getLocation());
+        values.put(ApparelContract.Events.DESCRIPTION, getDescription());
+        values.put(ApparelContract.Events.START_DATE, getStartDate());
+        values.put(ApparelContract.Events.END_DATE, getEndDate());
+        values.put(ApparelContract.Events.OWNER_UUID, getOwnerUuid());
+        values.put(ApparelContract.Events.PHOTO_UUID, getPhotoUuid());
+        return values;
     }
 }

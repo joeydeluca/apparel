@@ -1,5 +1,6 @@
 package com.jomik.apparelapp.presentation.activities;
 
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -15,6 +16,7 @@ import android.view.MenuItem;
 
 import com.facebook.login.LoginManager;
 import com.jomik.apparelapp.R;
+import com.jomik.apparelapp.infrastructure.providers.ApparelContract;
 import com.jomik.apparelapp.infrastructure.services.AuthenticationManager;
 import com.jomik.apparelapp.presentation.fragments.EventListFragment;
 import com.jomik.apparelapp.presentation.fragments.ItemListFragment;
@@ -30,6 +32,9 @@ public class TabbedActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // TESTING !!!!
+        ContentResolver.requestSync(AuthenticationManager.getSyncAccount(this), ApparelContract.AUTHORITY, Bundle.EMPTY);
 
         setContentView(R.layout.activity_tabbed);
 

@@ -1,11 +1,18 @@
 package com.jomik.apparelapp.infrastructure.providers;
 
+import android.content.ContentProvider;
 import android.database.Cursor;
+
+import com.jomik.apparelapp.domain.entities.Entity;
+import com.jomik.apparelapp.domain.entities.Item;
+import com.jomik.apparelapp.domain.entities.Photo;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by Joe Deluca on 8/4/2016.
@@ -25,6 +32,15 @@ public class SqlHelper {
 
     public static String getString(Cursor cursor, String columnName, String prefix) {
         return cursor.getString(getColumnIndex(cursor, columnName, prefix));
+    }
+
+    public static Integer getInt(Cursor cursor, String columnName, String prefix) {
+        return cursor.getInt(getColumnIndex(cursor, columnName, prefix));
+    }
+
+    public static boolean getBoolean(Cursor cursor, String columnName, String prefix) {
+        int ret = getInt(cursor, columnName, prefix);
+        return ret > 0 ? true : false;
     }
 
     public static String getDateForDb(String displayDate) {
@@ -59,6 +75,57 @@ public class SqlHelper {
 
     private static int getColumnIndex(Cursor cursor, String columnName, String prefix) {
         return cursor.getColumnIndexOrThrow(prefix + "_" + columnName);
+    }
+
+    public static List<Photo> getPhotosFromProvider(ContentProvider contentProvider) {
+        Cursor cursor = contentProvider.query(ApparelContract.Photos.CONTENT_URI, ApparelContract.Photos.PROJECTION_ALL, null, null, null);
+        List<Photo> photos = new ArrayList<>();
+
+        while(cursor.moveToNext()) {
+            Photo photo = new Photo();
+            setCommonFieldsFromCursor(cursor, photo, DbSchema.PREFIX_TBL_PHOTOS);
+            photo.setPhotoPath(SqlHelper.getString(cursor, ApparelContract.Photos.LOCAL_PATH, DbSchema.PREFIX_TBL_PHOTOS));
+            photo.setPhotoPathSmall(SqlHelper.getString(cursor, ApparelContract.Photos.LOCAL_PATH_SM, DbSchema.PREFIX_TBL_PHOTOS));
+            photos.add(photo);
+        }
+        cursor.close();
+        return photos;
+    }
+
+    public static List<Item> getItemsFromProvider(ContentProvider contentProvider) {
+        Cursor cursor = contentProvider.query(ApparelContract.Items.CONTENT_URI, ApparelContract.Items.PROJECTION_ALL, null, null, null);
+        List<Item> items = getItemsFromCursor(cursor);
+        cursor.close();
+        return items;
+    }
+
+    public static List<Item> getItemsFromCursor(Cursor cursor) {
+        List<Item> items = new ArrayList<>();
+        while(cursor.moveToNext()) {
+            Item item = new Item();
+            setCommonFieldsFromCursor(cursor, item, DbSchema.PREFIX_TBL_ITEMS);
+            item.setName(SqlHelper.getString(cursor, ApparelContract.Items._ID, DbSchema.PREFIX_TBL_ITEMS));
+            item.setVersion(SqlHelper.getInt(cursor, ApparelContract.Items.VERSION, DbSchema.PREFIX_TBL_ITEMS));
+            item.setItemCategory(SqlHelper.getString(cursor, ApparelContract.Items.ITEM_CATEGORY, DbSchema.PREFIX_TBL_ITEMS));
+            item.setUserUuid(SqlHelper.getString(cursor, ApparelContract.Items.USER_UUID, DbSchema.PREFIX_TBL_ITEMS));
+
+            Photo photo = new Photo();
+            setCommonFieldsFromCursor(cursor, photo, DbSchema.PREFIX_TBL_PHOTOS);
+            photo.setPhotoPath(SqlHelper.getString(cursor, ApparelContract.Photos.LOCAL_PATH, DbSchema.PREFIX_TBL_PHOTOS));
+            photo.setPhotoPathSmall(SqlHelper.getString(cursor, ApparelContract.Photos.LOCAL_PATH_SM, DbSchema.PREFIX_TBL_PHOTOS));
+            item.setPhoto(photo);
+
+            items.add(item);
+        }
+
+        return items;
+    }
+
+    public static void setCommonFieldsFromCursor(Cursor cursor, Entity entity, String prefix) {
+        entity.setId(SqlHelper.getLong(cursor, ApparelContract.CommonColumns._ID, prefix));
+        entity.setUuid(SqlHelper.getString(cursor, ApparelContract.CommonColumns.UUID, prefix));
+        entity.setMarkedForDelete(SqlHelper.getBoolean(cursor, ApparelContract.CommonColumns.MARKED_FOR_DELETE, prefix));
+        entity.setVersion(SqlHelper.getInt(cursor, ApparelContract.CommonColumns.VERSION, prefix));
     }
 
 }

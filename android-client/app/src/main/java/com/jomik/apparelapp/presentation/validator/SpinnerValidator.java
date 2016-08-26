@@ -14,7 +14,7 @@ public class SpinnerValidator implements Validator<Spinner> {
 
     public boolean validate(Spinner spinner) {
         if(PLEASE_CHOOSE.equals(spinner.getSelectedItem().toString())) {
-            spinner.setPrompt("Required");
+
             return false;
         }
 

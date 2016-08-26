@@ -63,4 +63,5 @@ public abstract class ApparelEntity {
     public void setVersion(final Integer version) {
         this.version = version;
     }
+
 }

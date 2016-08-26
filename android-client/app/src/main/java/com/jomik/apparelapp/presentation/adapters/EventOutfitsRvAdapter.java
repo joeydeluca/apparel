@@ -11,8 +11,7 @@ import android.widget.TextView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.jomik.apparelapp.R;
-import com.jomik.apparelapp.domain.entities.item.Item;
-import com.jomik.apparelapp.domain.entities.usereventoutfit.UserEventOutfit;
+import com.jomik.apparelapp.domain.entities.EventGuestOutfit;
 import com.jomik.apparelapp.infrastructure.services.ImageHelper;
 
 import java.util.List;
@@ -22,11 +21,11 @@ import java.util.List;
  */
 public class EventOutfitsRvAdapter extends RecyclerView.Adapter<EventOutfitsRvAdapter.ViewHolder>{
 
-    private final List<UserEventOutfit> userEventOutfits;
+    private final List<EventGuestOutfit> eventGuestOutfits;
     private Context context;
 
-    public EventOutfitsRvAdapter(List<UserEventOutfit> userEventOutfits) {
-        this.userEventOutfits = userEventOutfits;
+    public EventOutfitsRvAdapter(List<EventGuestOutfit> eventGuestOutfits) {
+        this.eventGuestOutfits = eventGuestOutfits;
     }
 
 
@@ -40,22 +39,22 @@ public class EventOutfitsRvAdapter extends RecyclerView.Adapter<EventOutfitsRvAd
 
     @Override
     public void onBindViewHolder(ViewHolder holder, final int i) {
-        UserEventOutfit userEventOutfit = userEventOutfits.get(i);
-        holder.txtOutfitDescription.setText(userEventOutfit.getDescription());
-        holder.txtUsername.setText(userEventOutfit.getUser().getName());
-        ImageHelper.setFacebookProfileImageUri(holder.profileImage, userEventOutfit.getUser().getFacebookId());
+        EventGuestOutfit eventGuestOutfit = eventGuestOutfits.get(i);
+        holder.txtOutfitDescription.setText(eventGuestOutfit.getDescription());
+        holder.txtUsername.setText(eventGuestOutfit.getUser().getName());
+        ImageHelper.setFacebookProfileImageUri(holder.profileImage, eventGuestOutfit.getUser().getFacebookId());
 
         LinearLayoutManager llm = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
         holder.recyclerView.setLayoutManager(llm);
 
-        EventOutfitItemsRvAdapter adapter = new EventOutfitItemsRvAdapter(userEventOutfits.get(i).getItems());
+        EventOutfitItemsRvAdapter adapter = new EventOutfitItemsRvAdapter(eventGuestOutfits.get(i).getItems());
         holder.recyclerView.setAdapter(adapter);
 
     }
 
     @Override
     public int getItemCount() {
-        return userEventOutfits.size();
+        return eventGuestOutfits.size();
     }
 
     @Override

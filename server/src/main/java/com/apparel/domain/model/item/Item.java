@@ -10,26 +10,9 @@ import javax.persistence.*;
  */
 @Entity
 public class Item extends ApparelEntity {
-
     private String name;
-
     private String description;
-
-    @Column(name = "primary_color", length = 6)
-    private String primaryColor;
-
-    @Column(name = "secondary_color", length = 6)
-    private String secondaryColor;
-
-    @Column(name = "item_pattern")
-    @Enumerated(EnumType.STRING)
-    private ItemPattern itemPattern;
-
-    @Column(name = "item_category")
-    @Enumerated(EnumType.STRING)
-    private ItemCategory itemCategory;
-
-    @Column(name = "photo_id")
+    private String userId;
     private String photoId;
 
     public String getName() {
@@ -48,36 +31,12 @@ public class Item extends ApparelEntity {
         this.description = description;
     }
 
-    public String getPrimaryColor() {
-        return primaryColor;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setPrimaryColor(String primaryColor) {
-        this.primaryColor = primaryColor;
-    }
-
-    public String getSecondaryColor() {
-        return secondaryColor;
-    }
-
-    public void setSecondaryColor(String secondaryColor) {
-        this.secondaryColor = secondaryColor;
-    }
-
-    public ItemPattern getItemPattern() {
-        return itemPattern;
-    }
-
-    public void setItemPattern(ItemPattern itemPattern) {
-        this.itemPattern = itemPattern;
-    }
-
-    public ItemCategory getItemCategory() {
-        return itemCategory;
-    }
-
-    public void setItemCategory(ItemCategory itemCategory) {
-        this.itemCategory = itemCategory;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public String getPhotoId() {

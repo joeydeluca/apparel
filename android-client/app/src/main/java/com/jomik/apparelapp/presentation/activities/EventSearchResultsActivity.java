@@ -6,13 +6,11 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.jomik.apparelapp.R;
-import com.jomik.apparelapp.domain.entities.event.Event;
-import com.jomik.apparelapp.infrastructure.events.EventSearchComplete;
+import com.jomik.apparelapp.domain.entities.Event;
 import com.jomik.apparelapp.presentation.adapters.EventsAdapter;
 
 import org.greenrobot.eventbus.EventBus;

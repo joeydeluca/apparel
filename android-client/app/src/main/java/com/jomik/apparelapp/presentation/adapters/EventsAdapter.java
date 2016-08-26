@@ -1,7 +1,6 @@
 package com.jomik.apparelapp.presentation.adapters;
 
 import android.content.Context;
-import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,8 +9,7 @@ import android.widget.TextView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.jomik.apparelapp.R;
-import com.jomik.apparelapp.domain.entities.event.Event;
-import com.jomik.apparelapp.domain.entities.item.Item;
+import com.jomik.apparelapp.domain.entities.Event;
 import com.jomik.apparelapp.infrastructure.services.ImageHelper;
 
 import java.util.List;
@@ -44,7 +42,7 @@ public class EventsAdapter extends ArrayAdapter<Event> {
         textView.setText(event.getLocation());
 
         SimpleDraweeView draweeView = (SimpleDraweeView) rowView.findViewById(R.id.my_image_view);
-        ImageHelper.setImageUri(draweeView, event.getPhotoPathSmall(), event.getPhotoUuid());
+        ImageHelper.setImageUri(draweeView, event.getPhotoPathSmall());
 
         rowView.setTag(events.get(position).getId());
 

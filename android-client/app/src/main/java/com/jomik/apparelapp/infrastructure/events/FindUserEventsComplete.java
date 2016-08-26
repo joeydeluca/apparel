@@ -1,6 +1,6 @@
 package com.jomik.apparelapp.infrastructure.events;
 
-import com.jomik.apparelapp.domain.entities.event.Event;
+import com.jomik.apparelapp.domain.entities.Event;
 
 import java.util.List;
 

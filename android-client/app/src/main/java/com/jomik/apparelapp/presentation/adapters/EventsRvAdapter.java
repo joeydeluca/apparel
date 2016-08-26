@@ -1,8 +1,8 @@
 package com.jomik.apparelapp.presentation.adapters;
 
+import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -16,8 +16,8 @@ import android.widget.Toast;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.jomik.apparelapp.R;
-import com.jomik.apparelapp.domain.entities.event.Event;
-import com.jomik.apparelapp.infrastructure.providers.DbSchema;
+import com.jomik.apparelapp.domain.entities.Event;
+import com.jomik.apparelapp.infrastructure.providers.ApparelContract;
 import com.jomik.apparelapp.infrastructure.providers.SqlHelper;
 import com.jomik.apparelapp.infrastructure.services.AuthenticationManager;
 import com.jomik.apparelapp.infrastructure.services.ImageHelper;
@@ -62,15 +62,16 @@ public class EventsRvAdapter extends RecyclerView.Adapter<EventsRvAdapter.EventV
         }
         holder.date.setText(displayDate);
 
-        ImageHelper.setImageUri(holder.eventPhoto, event.getPhotoPath(), event.getPhotoUuid());
+        ImageHelper.setImageUri(holder.eventPhoto, event.getPhotoPath());
         ImageHelper.setFacebookProfileImageUri(holder.profilePhoto, event.getOwnerFacebookId());
 
         final PopupMenu popup = new PopupMenu(context, holder.btnMenu);
 
         if(events.get(i).getOwnerUuid().equals(AuthenticationManager.getAuthenticatedUser(context).getUuid())) {
             popup.getMenu().add(1, R.id.menu_manage, 1, "Manage");
+            popup.getMenu().add(1, R.id.menu_delete, 10, "Delete");
         }
-        popup.getMenu().add(1, R.id.menu_leave, 1, "Leave");
+        popup.getMenu().add(1, R.id.menu_leave, 2, "Leave");
 
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
@@ -78,17 +79,24 @@ public class EventsRvAdapter extends RecyclerView.Adapter<EventsRvAdapter.EventV
                 switch (item.getItemId()) {
                     case R.id.menu_manage:
                         Intent intent = new Intent(context, EditEventActivity.class);
-                        intent.putExtra("id", events.get(i).getId());
+                        intent.putExtra("id", event.getId());
                         context.startActivity(intent);
                         break;
                     case R.id.menu_leave:
-                        if (!events.get(i).getOwnerUuid().equals(AuthenticationManager.getAuthenticatedUser(context).getUuid())) {
-                            events.remove(events.get(i));
+                        if (!event.getOwnerUuid().equals(AuthenticationManager.getAuthenticatedUser(context).getUuid())) {
+                            events.remove(event);
                             notifyItemRemoved(i);
                         }
                         //events.get(i).getAttendees().remove(AuthenticationManager.getAuthenticatedUser(context));
                         //eventsRepository.save(events.get(i));
                         Toast.makeText(context, "You have left the event", Toast.LENGTH_LONG).show();
+                        break;
+                    case R.id.menu_delete:
+                        // TODO: Are you sure prompt
+                        context.getContentResolver().delete(ContentUris.withAppendedId(ApparelContract.Events.CONTENT_URI, event.getId()), null, null);
+                        events.remove(event);
+                        notifyItemRemoved(i);
+                        Toast.makeText(context, "Event deleted", Toast.LENGTH_LONG).show();
                         break;
                 }
 

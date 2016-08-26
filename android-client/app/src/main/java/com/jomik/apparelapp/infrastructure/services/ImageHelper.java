@@ -12,10 +12,6 @@ import java.io.File;
 public class ImageHelper {
 
     public static void setImageUri(SimpleDraweeView simpleDraweeView, String path) {
-        setImageUri(simpleDraweeView, path, null);
-    }
-
-    public static void setImageUri(SimpleDraweeView simpleDraweeView, String path, String photoUuid) {
         simpleDraweeView.setImageURI(android.net.Uri.parse("file://" + new File(path).toString()));
     }
 
