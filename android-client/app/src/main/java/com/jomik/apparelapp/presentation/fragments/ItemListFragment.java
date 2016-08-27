@@ -1,5 +1,6 @@
 package com.jomik.apparelapp.presentation.fragments;
 
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -16,6 +17,7 @@ import android.widget.AdapterView;
 
 import com.jomik.apparelapp.R;
 import com.jomik.apparelapp.infrastructure.providers.ApparelContract;
+import com.jomik.apparelapp.infrastructure.services.AuthenticationManager;
 import com.jomik.apparelapp.presentation.activities.EditItemActivity;
 import com.jomik.apparelapp.presentation.adapters.ItemsCursorAdapter;
 
@@ -32,6 +34,11 @@ public class ItemListFragment extends ListFragment implements AdapterView.OnItem
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getLoaderManager().initLoader(LOADER_ID, null, this);
+
+        // TESTING !!!!
+        ContentResolver.requestSync(AuthenticationManager.getSyncAccount(getContext()), ApparelContract.AUTHORITY, Bundle.EMPTY);
+
+
     }
 
     @Override

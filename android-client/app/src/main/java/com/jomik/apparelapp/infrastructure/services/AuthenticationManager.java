@@ -56,7 +56,7 @@ public class AuthenticationManager {
     }
 
     private static Account createDummyAccount(Context context) {
-        Account dummyAccount = new Account("dummyaccount", "com.apparel");
+        Account dummyAccount = new Account("ApparelApp", "com.apparel");
         AccountManager accountManager = (AccountManager) context.getSystemService(context.ACCOUNT_SERVICE);
         accountManager.addAccountExplicitly(dummyAccount, null, null);
         ContentResolver.setSyncAutomatically(dummyAccount, ApparelContract.AUTHORITY, true);

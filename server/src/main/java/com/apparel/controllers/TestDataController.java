@@ -1,7 +1,8 @@
 package com.apparel.controllers;
 
-import com.apparel.domain.model.user.User;
-import com.apparel.domain.service.interfaces.IUserService;
+import com.apparel.domain.model.item.Item;
+import com.apparel.domain.model.item.ItemCategory;
+import com.apparel.domain.repository.ItemRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -19,27 +20,28 @@ import java.util.UUID;
 @RestController
 public class TestDataController {
 
-    private final IUserService userService;
+    private final ItemRepository itemRepository;
 
     @Autowired
-    public TestDataController(final IUserService userService) {
-        this.userService = userService;
+    public TestDataController(final ItemRepository itemRepository) {
+        this.itemRepository = itemRepository;
     }
     
 
     @RequestMapping(
-            value = "/test",
+            value = "/addrecord",
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE
     )
     public ResponseEntity<String> populateTestData(){
-        User testUser = new User();
-        testUser.setEmail("mick@mickiscool.com");
-        testUser.setPassword("coolpasswordmick");
-        testUser.setUsername("coolmick");
-        testUser.setId(UUID.randomUUID().toString());
+        Item item = new Item();
+        item.setUuid(UUID.randomUUID().toString());
+        item.setItemCategory(ItemCategory.TOPS);
+        item.setDescription("from server");
+        item.setName("server pants");
+        item.setUserUuid("121221");
 
-        userService.create(testUser);
+        itemRepository.save(item);
 
         return ResponseEntity.ok("ok");
     }

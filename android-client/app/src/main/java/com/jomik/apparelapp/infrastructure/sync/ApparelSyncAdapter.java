@@ -14,16 +14,20 @@ import android.util.Log;
 import com.jomik.apparelapp.domain.entities.Entity;
 import com.jomik.apparelapp.domain.entities.Item;
 import com.jomik.apparelapp.domain.entities.Photo;
+import com.jomik.apparelapp.domain.entities.User;
 import com.jomik.apparelapp.infrastructure.providers.ApparelContract;
 import com.jomik.apparelapp.infrastructure.providers.SqlHelper;
 import com.jomik.apparelapp.infrastructure.rest.RestService;
 import com.jomik.apparelapp.infrastructure.rest.SyncDto;
+import com.jomik.apparelapp.infrastructure.services.AuthenticationManager;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import retrofit2.Retrofit;
+import retrofit2.converter.jackson.JacksonConverterFactory;
 
 /**
  * Created by Joe Deluca of house targaryen, first his name, mother of dragons and breaker of chains on 7/1/2016.
@@ -47,7 +51,8 @@ public class ApparelSyncAdapter extends AbstractThreadedSyncAdapter {
 
     private void init(Context c) {
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://localhost:8080")
+                .baseUrl("https://apparelapp.herokuapp.com")
+                .addConverterFactory(JacksonConverterFactory.create())
                 .build();
         restService = retrofit.create(RestService.class);
         contentResolver = c.getContentResolver();
@@ -58,13 +63,17 @@ public class ApparelSyncAdapter extends AbstractThreadedSyncAdapter {
         Log.i(TAG, "Start Sync Adapter");
 
         try {
-            String appUserUuid = "123";
+
+            User user = AuthenticationManager.getAuthenticatedUser(getContext());
+            String appUserUuid = user.getUuid();
 
             // get data from server
             SyncDto syncDtoResponse = restService.getUserData(appUserUuid).execute().body();
+            if(syncDtoResponse == null) syncDtoResponse = new SyncDto();
+
 
             // Items
-            List<Item> existingLocalItems = SqlHelper.getItemsFromProvider(provider.getLocalContentProvider());
+            List<Item> existingLocalItems = SqlHelper.getItemsFromProvider(provider);
             Set<Item> existingRemoteItems = syncDtoResponse.getItems();
             Set<Item> newLocalItems = getNewLocalEntities(existingLocalItems, existingRemoteItems);
             Set<Item> newRemoteItems = getNewRemoteEntities(existingLocalItems, existingRemoteItems);
@@ -72,7 +81,7 @@ public class ApparelSyncAdapter extends AbstractThreadedSyncAdapter {
             saveToDb(newLocalItems, ApparelContract.Items.CONTENT_URI);
 
             // Photos
-            List<Photo> existingLocalPhotos = SqlHelper.getPhotosFromProvider(provider.getLocalContentProvider());
+            List<Photo> existingLocalPhotos = getPhotosFromItems(existingLocalItems);
             Set<Photo> existingRemotePhotos = syncDtoResponse.getPhotos();
             Set<Photo> newLocalPhotos = getNewLocalEntities(existingLocalPhotos, existingRemotePhotos);
             Set<Photo> newRemotePhotos = getNewRemoteEntities(existingLocalPhotos, existingRemotePhotos);
@@ -88,7 +97,8 @@ public class ApparelSyncAdapter extends AbstractThreadedSyncAdapter {
             contentResolver.notifyChange(ApparelContract.CONTENT_URI, null);
 
         } catch(Exception e) {
-
+            Log.e(TAG, e.getMessage());
+            e.printStackTrace();
         }
 
         Log.i(TAG, "End Sync Adapter");
@@ -139,7 +149,7 @@ public class ApparelSyncAdapter extends AbstractThreadedSyncAdapter {
     private void saveToDb(Set<? extends Entity> entities, Uri contentUri) {
         for(Entity entity : entities) {
             ContentValues values = entity.getContentValues();
-            int rowsUpdated = contentResolver.update(contentUri, values, "uuid = ?", new String[] {entity.getUuid()});
+            int rowsUpdated = contentResolver.update(contentUri, values, "uuid = ?", new String[]{entity.getUuid()});
             if(rowsUpdated == 0) {
                 contentResolver.insert(ApparelContract.Items.CONTENT_URI, values);
             }
@@ -148,5 +158,13 @@ public class ApparelSyncAdapter extends AbstractThreadedSyncAdapter {
 
     private void saveRemoteItems(SyncDto syncDto) {
 
+    }
+
+    private List<Photo> getPhotosFromItems(List<Item> items) {
+        List<Photo> photos = new ArrayList<>();
+        for(Item item : items) {
+            photos.add(item.getPhoto());
+        }
+        return photos;
     }
 }

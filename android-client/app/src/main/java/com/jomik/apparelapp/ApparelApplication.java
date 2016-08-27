@@ -5,10 +5,13 @@ package com.jomik.apparelapp;
  */
 
 import android.app.Application;
+import android.content.ContentResolver;
 
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
 import com.facebook.drawee.backends.pipeline.Fresco;
+import com.jomik.apparelapp.infrastructure.providers.ApparelContract;
+import com.jomik.apparelapp.infrastructure.services.AuthenticationManager;
 
 public class ApparelApplication extends Application {
     @Override
@@ -19,6 +22,5 @@ public class ApparelApplication extends Application {
         FacebookSdk.sdkInitialize(getApplicationContext());
 
         AppEventsLogger.activateApp(this);
-
     }
 }

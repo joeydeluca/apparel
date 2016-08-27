@@ -34,6 +34,8 @@ dependencies {
     compile 'com.kbeanie:multipicker:1.1.1@aar'
     compile 'com.theartofdev.edmodo:android-image-cropper:2.3.+'
     compile 'com.squareup.retrofit2:retrofit:2.1.0'
+    compile 'com.squareup.retrofit2:converter-jackson:2.1.0'
+
 
 
 }

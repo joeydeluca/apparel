@@ -33,9 +33,6 @@ public class TabbedActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // TESTING !!!!
-        ContentResolver.requestSync(AuthenticationManager.getSyncAccount(this), ApparelContract.AUTHORITY, Bundle.EMPTY);
-
         setContentView(R.layout.activity_tabbed);
 
         // Set up the ViewPager with the sections adapter.

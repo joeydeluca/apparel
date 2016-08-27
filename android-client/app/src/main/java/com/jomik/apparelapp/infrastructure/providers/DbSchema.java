@@ -29,6 +29,7 @@ public interface DbSchema {
                     CommonColumns._ID+"    INTEGER PRIMARY KEY AUTOINCREMENT, \n" +
                     CommonColumns.UUID+"   TEXT,\n" +
                     CommonColumns.MARKED_FOR_DELETE+" INTEGER,\n" +
+                    CommonColumns.VERSION+" INTEGER,\n" +
                     Photos.LOCAL_PATH+"    TEXT,\n" +
                     Photos.LOCAL_PATH_SM+" TEXT\n" +
                     ")";
@@ -38,8 +39,10 @@ public interface DbSchema {
                     CommonColumns._ID+"    INTEGER PRIMARY KEY AUTOINCREMENT, \n" +
                     CommonColumns.UUID+"   TEXT,\n" +
                     CommonColumns.MARKED_FOR_DELETE+" INTEGER,\n" +
+                    CommonColumns.VERSION+" INTEGER,\n" +
                     Items.NAME+"          TEXT,\n" +
                     Items.DESCRIPTION+"   TEXT,\n" +
+                    Items.ITEM_CATEGORY+" TEXT,\n" +
                     Items.PHOTO_UUID+"    TEXT,\n" +
                     Items.USER_UUID+"     TEXT\n" +
                     ")";
@@ -49,6 +52,7 @@ public interface DbSchema {
                     CommonColumns._ID+"    INTEGER PRIMARY KEY AUTOINCREMENT, \n" +
                     CommonColumns.UUID+"   TEXT,\n" +
                     CommonColumns.MARKED_FOR_DELETE+" INTEGER,\n" +
+                    CommonColumns.VERSION+" INTEGER,\n" +
                     Events.TITLE+"          TEXT,\n" +
                     Events.LOCATION+"       TEXT,\n" +
                     Events.START_DATE+"     TEXT,\n" +
@@ -63,6 +67,7 @@ public interface DbSchema {
                     CommonColumns._ID+"    INTEGER PRIMARY KEY AUTOINCREMENT, \n" +
                     CommonColumns.UUID+"   TEXT,\n" +
                     CommonColumns.MARKED_FOR_DELETE+" INTEGER,\n" +
+                    CommonColumns.VERSION+" INTEGER,\n" +
                     EventGuests.EVENT_UUID+"        TEXT,\n" +
                     EventGuests.GUEST_UUID+"        TEXT\n" +
                     ")";
@@ -72,6 +77,7 @@ public interface DbSchema {
                     CommonColumns._ID+"    INTEGER PRIMARY KEY AUTOINCREMENT, \n" +
                     CommonColumns.UUID+"   TEXT,\n" +
                     CommonColumns.MARKED_FOR_DELETE+" INTEGER,\n" +
+                    CommonColumns.VERSION+" INTEGER,\n" +
                     EventGuestOutfits.DESCRIPTION+" TEXT,\n" +
                     EventGuestOutfits.EVENT_DATE+"  TEXT,\n" +
                     EventGuestOutfits.EVENT_GUEST_UUID+"  TEXT\n" +
@@ -82,6 +88,7 @@ public interface DbSchema {
                     CommonColumns._ID+"    INTEGER PRIMARY KEY AUTOINCREMENT, \n" +
                     CommonColumns.UUID+"   TEXT,\n" +
                     CommonColumns.MARKED_FOR_DELETE+" INTEGER,\n" +
+                    CommonColumns.VERSION+" INTEGER,\n" +
                     EventGuestOutfitItems.EVENT_GUEST_OUTFIT_UUID+" TEXT,\n" +
                     EventGuestOutfitItems.ITEM_UUID+"               TEXT\n" +
                     ")";
@@ -91,6 +98,7 @@ public interface DbSchema {
                     CommonColumns._ID+"    INTEGER PRIMARY KEY AUTOINCREMENT, \n" +
                     CommonColumns.UUID+"   TEXT,\n" +
                     CommonColumns.MARKED_FOR_DELETE+" INTEGER,\n" +
+                    CommonColumns.VERSION+" INTEGER,\n" +
                     Users.NAME+"       TEXT,\n" +
                     Users.FACEBOOK_ID+" TEXT\n" +
                     ")";

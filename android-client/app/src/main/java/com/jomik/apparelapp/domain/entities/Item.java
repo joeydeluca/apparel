@@ -40,10 +40,6 @@ public class Item extends Entity {
         return itemCategory;
     }
 
-    public void setItemCategory(String itemCategory) {
-        this.itemCategory = ItemCategory.getEnumFromDisplayName(itemCategory);
-    }
-
     public void setItemCategory(ItemCategory itemCategory) {
         this.itemCategory = itemCategory;
     }

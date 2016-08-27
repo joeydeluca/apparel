@@ -20,7 +20,7 @@ public abstract class ApparelEntity {
     private Date createdDate;
 
     @Version
-    private Integer version;
+    private int version;
 
     private boolean markedForDelete;
 
@@ -50,11 +50,11 @@ public abstract class ApparelEntity {
         this.createdDate = createdDate;
     }
 
-    public Integer getVersion() {
+    public int getVersion() {
         return version;
     }
 
-    public void setVersion(final Integer version) {
+    public void setVersion(final int version) {
         this.version = version;
     }
 

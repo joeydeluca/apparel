@@ -1,10 +1,13 @@
 package com.jomik.apparelapp.infrastructure.providers;
 
 import android.content.ContentProvider;
+import android.content.ContentProviderClient;
 import android.database.Cursor;
+import android.os.RemoteException;
 
 import com.jomik.apparelapp.domain.entities.Entity;
 import com.jomik.apparelapp.domain.entities.Item;
+import com.jomik.apparelapp.domain.entities.ItemCategory;
 import com.jomik.apparelapp.domain.entities.Photo;
 
 import java.text.DateFormat;
@@ -77,7 +80,7 @@ public class SqlHelper {
         return cursor.getColumnIndexOrThrow(prefix + "_" + columnName);
     }
 
-    public static List<Photo> getPhotosFromProvider(ContentProvider contentProvider) {
+    public static List<Photo> getPhotosFromProvider(ContentProviderClient contentProvider) throws RemoteException {
         Cursor cursor = contentProvider.query(ApparelContract.Photos.CONTENT_URI, ApparelContract.Photos.PROJECTION_ALL, null, null, null);
         List<Photo> photos = new ArrayList<>();
 
@@ -92,7 +95,7 @@ public class SqlHelper {
         return photos;
     }
 
-    public static List<Item> getItemsFromProvider(ContentProvider contentProvider) {
+    public static List<Item> getItemsFromProvider(ContentProviderClient contentProvider) throws RemoteException {
         Cursor cursor = contentProvider.query(ApparelContract.Items.CONTENT_URI, ApparelContract.Items.PROJECTION_ALL, null, null, null);
         List<Item> items = getItemsFromCursor(cursor);
         cursor.close();
@@ -104,9 +107,10 @@ public class SqlHelper {
         while(cursor.moveToNext()) {
             Item item = new Item();
             setCommonFieldsFromCursor(cursor, item, DbSchema.PREFIX_TBL_ITEMS);
-            item.setName(SqlHelper.getString(cursor, ApparelContract.Items._ID, DbSchema.PREFIX_TBL_ITEMS));
-            item.setVersion(SqlHelper.getInt(cursor, ApparelContract.Items.VERSION, DbSchema.PREFIX_TBL_ITEMS));
-            item.setItemCategory(SqlHelper.getString(cursor, ApparelContract.Items.ITEM_CATEGORY, DbSchema.PREFIX_TBL_ITEMS));
+            item.setName(SqlHelper.getString(cursor, ApparelContract.Items.NAME, DbSchema.PREFIX_TBL_ITEMS));
+            item.setDescription(SqlHelper.getString(cursor, ApparelContract.Items.DESCRIPTION, DbSchema.PREFIX_TBL_ITEMS));
+            item.setItemCategory(ItemCategory.valueOf(SqlHelper.getString(cursor, ApparelContract.Items.ITEM_CATEGORY, DbSchema.PREFIX_TBL_ITEMS)));
+            item.setPhotoUuid(SqlHelper.getString(cursor, ApparelContract.Items.PHOTO_UUID, DbSchema.PREFIX_TBL_ITEMS));
             item.setUserUuid(SqlHelper.getString(cursor, ApparelContract.Items.USER_UUID, DbSchema.PREFIX_TBL_ITEMS));
 
             Photo photo = new Photo();

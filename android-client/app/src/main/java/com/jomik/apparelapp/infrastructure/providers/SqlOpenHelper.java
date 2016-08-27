@@ -14,7 +14,7 @@ import java.util.UUID;
 public class SqlOpenHelper extends SQLiteOpenHelper {
 
     private static final String NAME = DbSchema.DB_NAME;
-    private static final int VERSION = 34;
+    private static final int VERSION = 37;
 
 
     public SqlOpenHelper(Context context) {

@@ -39,8 +39,10 @@ public class ApparelContract {
         public static final String CONTENT_EVENT_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/com.jomik.apparel.events";
 
         public static final String[] PROJECTION_ALL = new String[] {
-                SqlHelper.getSelectColumn(Events._ID, DbSchema.PREFIX_TBL_EVENTS),
-                SqlHelper.getSelectColumn(Events.UUID, DbSchema.PREFIX_TBL_EVENTS),
+                SqlHelper.getSelectColumn(CommonColumns._ID, DbSchema.PREFIX_TBL_EVENTS),
+                SqlHelper.getSelectColumn(CommonColumns.UUID, DbSchema.PREFIX_TBL_EVENTS),
+                SqlHelper.getSelectColumn(CommonColumns.VERSION, DbSchema.PREFIX_TBL_EVENTS),
+                SqlHelper.getSelectColumn(CommonColumns.MARKED_FOR_DELETE, DbSchema.PREFIX_TBL_EVENTS),
                 SqlHelper.getSelectColumn(Events.TITLE, DbSchema.PREFIX_TBL_EVENTS),
                 SqlHelper.getSelectColumn(Events.LOCATION, DbSchema.PREFIX_TBL_EVENTS),
                 SqlHelper.getSelectColumn(Events.START_DATE, DbSchema.PREFIX_TBL_EVENTS),
@@ -78,13 +80,18 @@ public class ApparelContract {
 
         public static final String[] PROJECTION_ALL = new String[] {
                 DbSchema.PREFIX_TBL_ITEMS + "." + Items._ID, // needed for cursor adapter
-                SqlHelper.getSelectColumn(Items._ID, DbSchema.PREFIX_TBL_ITEMS),
-                SqlHelper.getSelectColumn(Items.UUID, DbSchema.PREFIX_TBL_ITEMS),
+                SqlHelper.getSelectColumn(CommonColumns._ID, DbSchema.PREFIX_TBL_ITEMS),
+                SqlHelper.getSelectColumn(CommonColumns.UUID, DbSchema.PREFIX_TBL_ITEMS),
+                SqlHelper.getSelectColumn(CommonColumns.VERSION, DbSchema.PREFIX_TBL_ITEMS),
+                SqlHelper.getSelectColumn(CommonColumns.MARKED_FOR_DELETE, DbSchema.PREFIX_TBL_ITEMS),
                 SqlHelper.getSelectColumn(Items.NAME, DbSchema.PREFIX_TBL_ITEMS),
                 SqlHelper.getSelectColumn(Items.DESCRIPTION, DbSchema.PREFIX_TBL_ITEMS),
                 SqlHelper.getSelectColumn(Items.ITEM_CATEGORY, DbSchema.PREFIX_TBL_ITEMS),
-                SqlHelper.getSelectColumn(Photos._ID, DbSchema.PREFIX_TBL_PHOTOS),
-                SqlHelper.getSelectColumn(Photos.UUID, DbSchema.PREFIX_TBL_PHOTOS),
+                SqlHelper.getSelectColumn(Items.USER_UUID, DbSchema.PREFIX_TBL_ITEMS),
+                SqlHelper.getSelectColumn(CommonColumns._ID, DbSchema.PREFIX_TBL_PHOTOS),
+                SqlHelper.getSelectColumn(CommonColumns.UUID, DbSchema.PREFIX_TBL_PHOTOS),
+                SqlHelper.getSelectColumn(CommonColumns.VERSION, DbSchema.PREFIX_TBL_PHOTOS),
+                SqlHelper.getSelectColumn(CommonColumns.MARKED_FOR_DELETE, DbSchema.PREFIX_TBL_PHOTOS),
                 SqlHelper.getSelectColumn(Photos.LOCAL_PATH, DbSchema.PREFIX_TBL_PHOTOS),
                 SqlHelper.getSelectColumn(Photos.LOCAL_PATH_SM, DbSchema.PREFIX_TBL_PHOTOS),
         };

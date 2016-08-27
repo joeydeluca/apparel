@@ -13,7 +13,7 @@ import java.util.UUID;
 public abstract class Entity implements Serializable {
     private Long id;
     private String uuid;
-    boolean markedForDelete;
+    private boolean markedForDelete;
     private Integer version;
 
     public Entity() {

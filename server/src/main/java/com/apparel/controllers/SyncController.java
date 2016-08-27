@@ -52,6 +52,7 @@ public class SyncController {
     public ResponseEntity<Void> setUserData(@PathVariable("id") String userId, @RequestBody SyncDto syncDto) {
 
         // Save
+        itemRepository.save(syncDto.getItems());
 
         return ResponseEntity.ok(null);
     }
