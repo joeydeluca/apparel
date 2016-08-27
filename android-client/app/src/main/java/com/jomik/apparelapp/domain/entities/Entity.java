@@ -2,6 +2,8 @@ package com.jomik.apparelapp.domain.entities;
 
 import android.content.ContentValues;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jomik.apparelapp.infrastructure.providers.ApparelContract;
 
 import java.io.Serializable;
@@ -10,6 +12,7 @@ import java.util.UUID;
 /**
  * Created by Joe Deluca on 3/22/2016.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public abstract class Entity implements Serializable {
     private Long id;
     private String uuid;
@@ -22,6 +25,7 @@ public abstract class Entity implements Serializable {
         uuid = UUID.randomUUID().toString();
     }
 
+    @JsonIgnore
     public ContentValues getContentValues() {
         ContentValues values = new ContentValues();
         if(getId() != null) {
@@ -35,6 +39,7 @@ public abstract class Entity implements Serializable {
         return values;
     }
 
+    @JsonIgnore
     protected abstract ContentValues getExtraContentValues();
 
     public Long getId() {

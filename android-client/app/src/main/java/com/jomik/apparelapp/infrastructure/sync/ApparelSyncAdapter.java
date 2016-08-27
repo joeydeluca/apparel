@@ -21,11 +21,13 @@ import com.jomik.apparelapp.infrastructure.rest.RestService;
 import com.jomik.apparelapp.infrastructure.rest.SyncDto;
 import com.jomik.apparelapp.infrastructure.services.AuthenticationManager;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 
@@ -156,8 +158,11 @@ public class ApparelSyncAdapter extends AbstractThreadedSyncAdapter {
         }
     }
 
-    private void saveRemoteItems(User user, SyncDto syncDto) {
-        restService.saveUserData(user.getUuid(), syncDto);
+    private void saveRemoteItems(User user, SyncDto syncDto) throws IOException {
+        if(syncDto.getItems().size() > 0) {
+            Response response = restService.saveUserData(user.getUuid(), syncDto).execute();
+            Log.i(TAG, response.toString());
+        }
     }
 
     private List<Photo> getPhotosFromItems(List<Item> items) {

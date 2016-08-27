@@ -19,10 +19,9 @@ public abstract class ApparelEntity {
     @Column(name = "created_date", updatable = false, nullable = false)
     private Date createdDate;
 
-    @Version
-    private int version;
+    private int version = 0;
 
-    private boolean markedForDelete;
+    private boolean markedForDelete = false;
 
     @PrePersist
     public void prePersist(){

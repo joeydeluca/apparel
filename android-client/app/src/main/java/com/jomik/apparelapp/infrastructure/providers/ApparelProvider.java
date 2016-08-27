@@ -226,6 +226,11 @@ public class ApparelProvider extends ContentProvider {
 
     @Override
     public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
+        Integer currentVersion = values.getAsInteger(ApparelContract.CommonColumns.VERSION);
+        if(currentVersion == null) currentVersion = 0;
+        int newVersion = currentVersion + 1;
+        values.put(ApparelContract.CommonColumns.VERSION, newVersion);
+
         SQLiteDatabase db = sqlOpenHelper.getWritableDatabase();
         int updateCount = 0;
         switch (URI_MATCHER.match(uri)) {

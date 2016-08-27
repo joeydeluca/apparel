@@ -2,6 +2,7 @@ package com.jomik.apparelapp.domain.entities;
 
 import android.content.ContentValues;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.jomik.apparelapp.infrastructure.providers.ApparelContract;
 
 /**
@@ -27,6 +28,7 @@ public class Photo extends Entity {
         this.photoPathSmall = photoPathSmall;
     }
 
+    @JsonIgnore
     @Override
     protected ContentValues getExtraContentValues() {
         ContentValues values = new ContentValues();

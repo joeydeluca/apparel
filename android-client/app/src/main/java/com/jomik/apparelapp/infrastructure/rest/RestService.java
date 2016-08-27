@@ -15,5 +15,5 @@ public interface RestService {
     Call<SyncDto> getUserData(@Path("uuid") String userUuid);
 
     @POST("users/{uuid}")
-    Call saveUserData(@Path("uuid") String userUuid, @Body SyncDto syncDto);
+    Call<Object> saveUserData(@Path("uuid") String userUuid, @Body SyncDto syncDto);
 }

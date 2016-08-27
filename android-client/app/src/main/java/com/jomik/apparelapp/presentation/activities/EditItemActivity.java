@@ -21,6 +21,7 @@ import android.widget.Toast;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.jomik.apparelapp.R;
+import com.jomik.apparelapp.domain.entities.Item;
 import com.jomik.apparelapp.domain.entities.ItemCategory;
 import com.jomik.apparelapp.domain.entities.User;
 import com.jomik.apparelapp.infrastructure.providers.ApparelContract.Items;
@@ -76,6 +77,8 @@ public class EditItemActivity extends AppCompatActivity {
         Intent intent = getIntent();
         // Populate fields if editing
 
+        int version = 0;
+
         final long id = intent.getLongExtra("id", -1);
         if(id != -1) {
             Uri uri = ContentUris.withAppendedId(Items.CONTENT_URI, id);
@@ -86,6 +89,7 @@ public class EditItemActivity extends AppCompatActivity {
                 spnType.setSelection(ItemCategory.valueOf(SqlHelper.getString(cursor, Items.ITEM_CATEGORY, DbSchema.PREFIX_TBL_ITEMS)).ordinal());
                 existingPhotoUuid = SqlHelper.getString(cursor, Photos.UUID, DbSchema.PREFIX_TBL_PHOTOS);
                 existingPhotoPath = SqlHelper.getString(cursor, Photos.LOCAL_PATH_SM, DbSchema.PREFIX_TBL_PHOTOS);
+                version = SqlHelper.getInt(cursor, Items.VERSION, DbSchema.PREFIX_TBL_ITEMS);
             }
             cursor.close();
 
@@ -97,6 +101,7 @@ public class EditItemActivity extends AppCompatActivity {
 
         final String finalExistingPhotoPath = existingPhotoPath;
         final String finalExistingPhotoUuid = existingPhotoUuid;
+        final int finalVersion = version;
         btnDone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -133,6 +138,7 @@ public class EditItemActivity extends AppCompatActivity {
                 values.put(Items.DESCRIPTION, txtItemDescription.getText().toString());
                 values.put(Items.ITEM_CATEGORY, dbItemCategory);
                 values.put(Items.PHOTO_UUID, photoUuid);
+                values.put(Items.VERSION, finalVersion);
 
                 if(id == -1) {
                     values.put(Items.UUID, UUID.randomUUID().toString());
