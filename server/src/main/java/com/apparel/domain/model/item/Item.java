@@ -3,7 +3,7 @@ package com.apparel.domain.model.item;
 
 import com.apparel.domain.model.ApparelEntity;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
 
 /**
  * Created by Joe Deluca on 3/22/2016.
@@ -12,8 +12,9 @@ import javax.persistence.*;
 public class Item extends ApparelEntity {
     private String name;
     private String description;
-    private String userId;
-    private String photoId;
+    private ItemCategory itemCategory;
+    private String photoUuid;
+    private String userUuid;
 
     public String getName() {
         return name;
@@ -31,19 +32,27 @@ public class Item extends ApparelEntity {
         this.description = description;
     }
 
-    public String getUserId() {
-        return userId;
+    public ItemCategory getItemCategory() {
+        return itemCategory;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setItemCategory(ItemCategory itemCategory) {
+        this.itemCategory = itemCategory;
     }
 
-    public String getPhotoId() {
-        return photoId;
+    public String getPhotoUuid() {
+        return photoUuid;
     }
 
-    public void setPhotoId(String photoId) {
-        this.photoId = photoId;
+    public void setPhotoUuid(String photoUuid) {
+        this.photoUuid = photoUuid;
+    }
+
+    public String getUserUuid() {
+        return userUuid;
+    }
+
+    public void setUserUuid(String userUuid) {
+        this.userUuid = userUuid;
     }
 }

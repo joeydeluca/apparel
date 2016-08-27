@@ -9,8 +9,8 @@ import java.util.Set;
  * Created by Joe Deluca on 8/24/2016.
  */
 public class SyncDto {
-    Set<Item> items = new HashSet<>();
-
+    private Set<Item> items = new HashSet<>();
+    
     public Set<Item> getItems() {
         return items;
     }

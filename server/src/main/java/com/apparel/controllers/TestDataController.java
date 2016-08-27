@@ -25,6 +25,7 @@ public class TestDataController {
     public TestDataController(final IUserService userService) {
         this.userService = userService;
     }
+    
 
     @RequestMapping(
             value = "/test",

@@ -10,6 +10,6 @@ import java.util.Set;
  */
 public interface ItemRepository extends JpaRepository<Item, String> {
 
-    Set<Item> findByUserId(String userId);
+    Set<Item> findByUserUuid(String uuid);
 
 }

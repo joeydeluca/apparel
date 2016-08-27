@@ -33,11 +33,12 @@ public class SyncController {
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE
     )
-    public ResponseEntity<SyncDto> getUserData(@PathVariable("id") String userId) {
+    public ResponseEntity<SyncDto> getUserData(@PathVariable("id") String uuid) {
 
         SyncDto dto = new SyncDto();
 
-        Set<Item> items = itemRepository.findByUserId(userId);
+        Set<Item> items = itemRepository.findByUserUuid(uuid);
+
         dto.setItems(items);
 
         return ResponseEntity.ok(dto);

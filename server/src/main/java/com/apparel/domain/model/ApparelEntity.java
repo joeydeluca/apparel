@@ -9,7 +9,7 @@ import java.util.Date;
 @MappedSuperclass
 public abstract class ApparelEntity {
     @Id
-    private String id;
+    private String uuid;
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "modified_date", insertable = false)
@@ -22,6 +22,8 @@ public abstract class ApparelEntity {
     @Version
     private Integer version;
 
+    private boolean markedForDelete;
+
     @PrePersist
     public void prePersist(){
         this.setCreatedDate(new Date());
@@ -30,14 +32,6 @@ public abstract class ApparelEntity {
     @PreUpdate
     public void preUpdate(){
         this.setModifiedDate(new Date());
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(final String id) {
-        this.id = id;
     }
 
     public Date getModifiedDate() {
@@ -64,4 +58,19 @@ public abstract class ApparelEntity {
         this.version = version;
     }
 
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
+
+    public boolean isMarkedForDelete() {
+        return markedForDelete;
+    }
+
+    public void setMarkedForDelete(boolean markedForDelete) {
+        this.markedForDelete = markedForDelete;
+    }
 }
