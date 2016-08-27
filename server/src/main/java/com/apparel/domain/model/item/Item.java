@@ -12,7 +12,7 @@ import javax.persistence.Entity;
 public class Item extends ApparelEntity {
     private String name;
     private String description;
-    private ItemCategory itemCategory;
+    private String itemCategory;
     private String photoUuid;
     private String userUuid;
 
@@ -32,11 +32,11 @@ public class Item extends ApparelEntity {
         this.description = description;
     }
 
-    public ItemCategory getItemCategory() {
+    public String getItemCategory() {
         return itemCategory;
     }
 
-    public void setItemCategory(ItemCategory itemCategory) {
+    public void setItemCategory(String itemCategory) {
         this.itemCategory = itemCategory;
     }
 

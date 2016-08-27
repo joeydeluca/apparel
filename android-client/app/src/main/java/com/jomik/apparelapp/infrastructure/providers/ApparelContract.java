@@ -88,6 +88,7 @@ public class ApparelContract {
                 SqlHelper.getSelectColumn(Items.DESCRIPTION, DbSchema.PREFIX_TBL_ITEMS),
                 SqlHelper.getSelectColumn(Items.ITEM_CATEGORY, DbSchema.PREFIX_TBL_ITEMS),
                 SqlHelper.getSelectColumn(Items.USER_UUID, DbSchema.PREFIX_TBL_ITEMS),
+                SqlHelper.getSelectColumn(Items.PHOTO_UUID, DbSchema.PREFIX_TBL_ITEMS),
                 SqlHelper.getSelectColumn(CommonColumns._ID, DbSchema.PREFIX_TBL_PHOTOS),
                 SqlHelper.getSelectColumn(CommonColumns.UUID, DbSchema.PREFIX_TBL_PHOTOS),
                 SqlHelper.getSelectColumn(CommonColumns.VERSION, DbSchema.PREFIX_TBL_PHOTOS),

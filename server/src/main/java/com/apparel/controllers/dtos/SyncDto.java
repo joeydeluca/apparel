@@ -1,6 +1,7 @@
 package com.apparel.controllers.dtos;
 
 import com.apparel.domain.model.item.Item;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -8,6 +9,7 @@ import java.util.Set;
 /**
  * Created by Joe Deluca on 8/24/2016.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class SyncDto {
     private Set<Item> items = new HashSet<>();
     

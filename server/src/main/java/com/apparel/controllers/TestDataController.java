@@ -33,7 +33,7 @@ public class TestDataController {
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE
     )
-    public ResponseEntity<String> populateTestData(){
+    public ResponseEntity<Item> populateTestData(){
         Item item = new Item();
         item.setUuid(UUID.randomUUID().toString());
         item.setItemCategory(ItemCategory.TOPS);
@@ -41,8 +41,8 @@ public class TestDataController {
         item.setName("server pants");
         item.setUserUuid("121221");
 
-        itemRepository.save(item);
+        item = itemRepository.save(item);
 
-        return ResponseEntity.ok("ok");
+        return ResponseEntity.ok(item);
     }
 }

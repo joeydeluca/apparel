@@ -22,10 +22,12 @@ import android.widget.Toast;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.jomik.apparelapp.R;
 import com.jomik.apparelapp.domain.entities.ItemCategory;
+import com.jomik.apparelapp.domain.entities.User;
 import com.jomik.apparelapp.infrastructure.providers.ApparelContract.Items;
 import com.jomik.apparelapp.infrastructure.providers.ApparelContract.Photos;
 import com.jomik.apparelapp.infrastructure.providers.DbSchema;
 import com.jomik.apparelapp.infrastructure.providers.SqlHelper;
+import com.jomik.apparelapp.infrastructure.services.AuthenticationManager;
 import com.jomik.apparelapp.infrastructure.services.ImageHelper;
 import com.jomik.apparelapp.presentation.validator.FormValidator;
 import com.jomik.apparelapp.presentation.validator.ImageValidator;
@@ -68,6 +70,8 @@ public class EditItemActivity extends AppCompatActivity {
                 startActivityForResult(ImagePickerHelper.getPickImageChooserIntent(getApplicationContext()), 200);
             }
         });
+
+        final User user = AuthenticationManager.getAuthenticatedUser(getApplicationContext());
 
         Intent intent = getIntent();
         // Populate fields if editing
@@ -132,6 +136,7 @@ public class EditItemActivity extends AppCompatActivity {
 
                 if(id == -1) {
                     values.put(Items.UUID, UUID.randomUUID().toString());
+                    values.put(Items.USER_UUID, user.getUuid());
                     getContentResolver().insert(Items.CONTENT_URI, values);
                 } else {
                     getContentResolver().update(ContentUris.withAppendedId(Items.CONTENT_URI, id), values, null, null);

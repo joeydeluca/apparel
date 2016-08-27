@@ -92,7 +92,7 @@ public class ApparelSyncAdapter extends AbstractThreadedSyncAdapter {
             syncDtoRequest.setItems(newRemoteItems);
             syncDtoRequest.setPhotos(newRemotePhotos);
 
-            //String authToken = accountManager.blockingGetAuthToken(account, AccountGeneral.AUTHTOKEN_TYPE_FULL_ACCESS, true);
+            saveRemoteItems(user, syncDtoRequest);
 
             contentResolver.notifyChange(ApparelContract.CONTENT_URI, null);
 
@@ -156,8 +156,8 @@ public class ApparelSyncAdapter extends AbstractThreadedSyncAdapter {
         }
     }
 
-    private void saveRemoteItems(SyncDto syncDto) {
-
+    private void saveRemoteItems(User user, SyncDto syncDto) {
+        restService.saveUserData(user.getUuid(), syncDto);
     }
 
     private List<Photo> getPhotosFromItems(List<Item> items) {

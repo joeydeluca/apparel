@@ -1,7 +1,9 @@
 package com.jomik.apparelapp.infrastructure.rest;
 
 import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.POST;
 import retrofit2.http.Path;
 
 /**
@@ -12,5 +14,6 @@ public interface RestService {
     @GET("users/{uuid}")
     Call<SyncDto> getUserData(@Path("uuid") String userUuid);
 
-
+    @POST("users/{uuid}")
+    Call saveUserData(@Path("uuid") String userUuid, @Body SyncDto syncDto);
 }
