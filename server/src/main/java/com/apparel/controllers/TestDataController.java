@@ -36,7 +36,7 @@ public class TestDataController {
     public ResponseEntity<Item> populateTestData(){
         Item item = new Item();
         item.setUuid(UUID.randomUUID().toString());
-        item.setItemCategory(ItemCategory.TOPS);
+        item.setItemCategory("TOPS");
         item.setDescription("from server");
         item.setName("server pants");
         item.setUserUuid("121221");
