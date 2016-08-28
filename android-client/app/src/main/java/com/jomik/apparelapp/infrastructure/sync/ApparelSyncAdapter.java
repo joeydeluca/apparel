@@ -73,6 +73,7 @@ public class ApparelSyncAdapter extends AbstractThreadedSyncAdapter {
             // get data from server
             SyncDto syncDtoResponse = restService.getUserData(appUserUuid).execute().body();
             if(syncDtoResponse == null) syncDtoResponse = new SyncDto();
+            SyncDto syncDtoRequest = new SyncDto();
 
             // Items
             List<Item> existingLocalItems = SqlHelper.getItemsFromProvider(provider);
@@ -81,6 +82,7 @@ public class ApparelSyncAdapter extends AbstractThreadedSyncAdapter {
             Set<Item> newRemoteItems = getNewRemoteEntities(existingLocalItems, existingRemoteItems);
             mergeEntitiesWithDuplicateUuids(existingLocalItems, existingRemoteItems, newLocalItems, newRemoteItems);
             saveToDb(newLocalItems, ApparelContract.Items.CONTENT_URI);
+            syncDtoRequest.setItems(newRemoteItems);
 
             // Events
             List<Event> existingLocalEvents = SqlHelper.getEventsFromProvider(provider);
@@ -89,6 +91,7 @@ public class ApparelSyncAdapter extends AbstractThreadedSyncAdapter {
             Set<Event> newRemoteEvents = getNewRemoteEntities(existingLocalEvents, existingRemoteEvents);
             mergeEntitiesWithDuplicateUuids(existingLocalEvents, existingRemoteEvents, newLocalEvents, newRemoteEvents);
             saveToDb(newLocalEvents, ApparelContract.Events.CONTENT_URI);
+            syncDtoRequest.setEvents(newRemoteEvents);
 
             // Photos
             List<Photo> existingLocalPhotos = getPhotosFromItems(existingLocalItems);
@@ -97,9 +100,6 @@ public class ApparelSyncAdapter extends AbstractThreadedSyncAdapter {
             Set<Photo> newRemotePhotos = getNewRemoteEntities(existingLocalPhotos, existingRemotePhotos);
             mergeEntitiesWithDuplicateUuids(existingLocalPhotos, existingRemotePhotos, newLocalPhotos, newRemotePhotos);
             saveToDb(newLocalPhotos, ApparelContract.Photos.CONTENT_URI);
-
-            SyncDto syncDtoRequest = new SyncDto();
-            syncDtoRequest.setItems(newRemoteItems);
             syncDtoRequest.setPhotos(newRemotePhotos);
 
             saveRemoteItems(user, syncDtoRequest);

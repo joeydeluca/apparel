@@ -1,15 +1,12 @@
 package com.apparel.controllers;
 
 import com.apparel.controllers.dtos.SyncDto;
-import com.apparel.domain.model.item.Item;
 import com.apparel.domain.repository.EventRepository;
 import com.apparel.domain.repository.ItemRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Set;
 
 /**
  * Created by Joe Deluca on 8/24/2016.
@@ -55,7 +52,7 @@ public class SyncController {
         itemRepository.save(syncDto.getItems());
         eventRepository.save(syncDto.getEvents());
 
-        return ResponseEntity.ok(null);
+        return ResponseEntity.ok().build();
     }
 
 }
