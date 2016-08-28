@@ -21,7 +21,7 @@ public abstract class ApparelEntity {
 
     private int version = 0;
 
-    private Boolean markedForDelete = false;
+    private boolean markedForDelete = false;
 
     @PrePersist
     public void prePersist(){

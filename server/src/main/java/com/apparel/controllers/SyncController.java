@@ -1,12 +1,16 @@
 package com.apparel.controllers;
 
 import com.apparel.controllers.dtos.SyncDto;
+import com.apparel.domain.model.photo.Photo;
 import com.apparel.domain.repository.EventRepository;
 import com.apparel.domain.repository.ItemRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Joe Deluca on 8/24/2016.
@@ -34,6 +38,7 @@ public class SyncController {
 
         SyncDto dto = new SyncDto();
 
+        // Get items i own and items that are part of events that i am attending
         dto.setItems(itemRepository.findByUserUuid(uuid));
 
         dto.setEvents(eventRepository.findByOwnerUuid(uuid));

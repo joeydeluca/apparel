@@ -18,10 +18,10 @@ public class Event extends Entity {
     private String ownerUuid;
     private String photoUuid;
 
+    private Photo photo;
+
     @JsonIgnore
     private User owner;
-    @JsonIgnore
-    private Photo photo;
 
     public String getTitle() {
         return title;

@@ -2,9 +2,9 @@ package com.apparel.controllers.dtos;
 
 import com.apparel.domain.model.event.Event;
 import com.apparel.domain.model.item.Item;
+import com.apparel.domain.model.photo.Photo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-import javax.lang.model.element.ElementVisitor;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -15,7 +15,8 @@ import java.util.Set;
 public class SyncDto {
     private Set<Item> items = new HashSet<>();
     private Set<Event> events = new HashSet<>();
-    
+    private Set<Photo> photos = new HashSet<>();
+
     public Set<Item> getItems() {
         return items;
     }
@@ -30,5 +31,13 @@ public class SyncDto {
 
     public void setEvents(Set<Event> events) {
         this.events = events;
+    }
+
+    public Set<Photo> getPhotos() {
+        return photos;
+    }
+
+    public void setPhotos(Set<Photo> photos) {
+        this.photos = photos;
     }
 }

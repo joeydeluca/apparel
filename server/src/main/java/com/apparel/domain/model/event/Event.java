@@ -2,12 +2,13 @@ package com.apparel.domain.model.event;
 
 
 import com.apparel.domain.model.ApparelEntity;
-import com.apparel.domain.model.user.User;
+import com.apparel.domain.model.photo.Photo;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.Entity;
-import javax.persistence.Transient;
+import javax.persistence.OneToOne;
 import java.util.Date;
-import java.util.List;
 
 /**
  * Created by Joe Deluca on 3/22/2016.
@@ -17,10 +18,15 @@ public class Event extends ApparelEntity {
     private String title;
     private String location;
     private String description;
-    private String startDate;
-    private String endDate;
+    @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="dd-MM-yyyy")
+    private Date startDate;
+    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="dd-MM-yyyy")
+    private Date endDate;
     private String ownerUuid;
     private String photoUuid;
+
+    @OneToOne(optional=false, mappedBy="photoUuid")
+    private Photo photo;
 
     public String getTitle() {
         return title;
@@ -46,19 +52,19 @@ public class Event extends ApparelEntity {
         this.description = description;
     }
 
-    public String getStartDate() {
+    public Date getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(String startDate) {
+    public void setStartDate(Date startDate) {
         this.startDate = startDate;
     }
 
-    public String getEndDate() {
+    public Date getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(String endDate) {
+    public void setEndDate(Date endDate) {
         this.endDate = endDate;
     }
 

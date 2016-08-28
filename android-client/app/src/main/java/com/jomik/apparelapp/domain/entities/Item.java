@@ -16,7 +16,6 @@ public class Item extends Entity {
     private String photoUuid;
     private String userUuid;
 
-    @JsonIgnore
     private Photo photo;
 
     public String getName() {

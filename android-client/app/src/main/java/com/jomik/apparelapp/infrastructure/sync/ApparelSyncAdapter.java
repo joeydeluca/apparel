@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.SyncResult;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.ArraySet;
 import android.util.Log;
 
 import com.jomik.apparelapp.domain.entities.Entity;
@@ -24,6 +25,7 @@ import com.jomik.apparelapp.infrastructure.services.AuthenticationManager;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -94,8 +96,14 @@ public class ApparelSyncAdapter extends AbstractThreadedSyncAdapter {
             syncDtoRequest.setEvents(newRemoteEvents);
 
             // Photos
-            List<Photo> existingLocalPhotos = getPhotosFromItems(existingLocalItems);
-            Set<Photo> existingRemotePhotos = syncDtoResponse.getPhotos();
+            List<Photo> existingLocalPhotos = new ArrayList<>();
+            existingLocalPhotos.addAll(getPhotosFromItems(existingLocalItems));
+            existingLocalPhotos.addAll(getPhotosFromEvents(existingLocalEvents));
+
+            Set<Photo> existingRemotePhotos = new HashSet<>();
+            existingRemotePhotos.addAll(getPhotosFromItems(existingRemoteItems));
+            existingRemotePhotos.addAll(getPhotosFromEvents(existingRemoteEvents));
+
             Set<Photo> newLocalPhotos = getNewLocalEntities(existingLocalPhotos, existingRemotePhotos);
             Set<Photo> newRemotePhotos = getNewRemoteEntities(existingLocalPhotos, existingRemotePhotos);
             mergeEntitiesWithDuplicateUuids(existingLocalPhotos, existingRemotePhotos, newLocalPhotos, newRemotePhotos);
@@ -173,10 +181,18 @@ public class ApparelSyncAdapter extends AbstractThreadedSyncAdapter {
         }
     }
 
-    private List<Photo> getPhotosFromItems(List<Item> items) {
+    private List<Photo> getPhotosFromItems(Collection<Item> items) {
         List<Photo> photos = new ArrayList<>();
         for(Item item : items) {
             photos.add(item.getPhoto());
+        }
+        return photos;
+    }
+
+    private List<Photo> getPhotosFromEvents(Collection<Event> events) {
+        List<Photo> photos = new ArrayList<>();
+        for(Event event : events) {
+            photos.add(event.getPhoto());
         }
         return photos;
     }
