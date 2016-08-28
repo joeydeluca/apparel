@@ -43,8 +43,7 @@ public class SyncController {
 
     @RequestMapping(
             value = "/{id}",
-            method = RequestMethod.POST,
-            produces = MediaType.APPLICATION_JSON_UTF8_VALUE
+            method = RequestMethod.POST
     )
     public ResponseEntity<Void> setUserData(@PathVariable("id") String userId, @RequestBody SyncDto syncDto) {
 
