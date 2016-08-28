@@ -43,15 +43,16 @@ public class SyncController {
 
     @RequestMapping(
             value = "/{id}",
-            method = RequestMethod.POST
+            method = RequestMethod.POST,
+            produces = MediaType.APPLICATION_JSON_UTF8_VALUE
     )
-    public ResponseEntity<Void> setUserData(@PathVariable("id") String userId, @RequestBody SyncDto syncDto) {
+    public ResponseEntity<String> setUserData(@PathVariable("id") String userId, @RequestBody SyncDto syncDto) {
 
         // Save
         itemRepository.save(syncDto.getItems());
         eventRepository.save(syncDto.getEvents());
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok("{\"status\":\"OK\"}");
     }
 
 }
