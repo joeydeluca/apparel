@@ -1,6 +1,5 @@
 package com.jomik.apparelapp.infrastructure.providers;
 
-import android.content.ContentProvider;
 import android.content.ContentProviderClient;
 import android.database.Cursor;
 import android.os.RemoteException;
@@ -24,8 +23,10 @@ import java.util.List;
  */
 public class SqlHelper {
 
-    public static DateFormat dateFormatForDisplay = new SimpleDateFormat("MMM dd, yyyy");
-    public static DateFormat dateFormatForDb = new SimpleDateFormat("dd-MM-yyyy");
+    public static final String dateFormatForDisplayPattern = "MMM dd, yyyy";
+    public static final String dateFormatForDbPattern = "dd-MM-yyyy";
+    public static DateFormat dateFormatForDisplay = new SimpleDateFormat(dateFormatForDisplayPattern);
+    public static DateFormat dateFormatForDb = new SimpleDateFormat(dateFormatForDbPattern);
 
     public static String getSelectColumn(String columnName) {
         return getSelectColumn(columnName, null);
@@ -56,6 +57,25 @@ public class SqlHelper {
             e.printStackTrace();
         }
         return "";
+    }
+
+    public static String getDateForDb(Date date) {
+        return dateFormatForDb.format(date);
+    }
+
+    public static Date getDateFromCursor(Cursor cursor, String columnName, String prefix) {
+        String dateString = cursor.getString(getColumnIndex(cursor, columnName, prefix));
+        if(dateString == null || dateString.isEmpty()) {
+            return new Date();
+        }
+
+        try {
+            return dateFormatForDb.parse(dateString);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return new Date();
     }
 
     public static String getDateForDisplay(Cursor cursor, String columnName, String prefix) {
@@ -112,8 +132,8 @@ public class SqlHelper {
             event.setTitle(SqlHelper.getString(cursor, ApparelContract.Events.TITLE, DbSchema.PREFIX_TBL_EVENTS));
             event.setLocation(SqlHelper.getString(cursor, ApparelContract.Events.LOCATION, DbSchema.PREFIX_TBL_EVENTS));
             event.setOwnerUuid(SqlHelper.getString(cursor, ApparelContract.Events.OWNER_UUID, DbSchema.PREFIX_TBL_EVENTS));
-            event.setStartDate(SqlHelper.getDateForDisplay(cursor, ApparelContract.Events.START_DATE, DbSchema.PREFIX_TBL_EVENTS));
-            event.setEndDate(SqlHelper.getDateForDisplay(cursor, ApparelContract.Events.END_DATE, DbSchema.PREFIX_TBL_EVENTS));
+            event.setStartDate(getDateFromCursor(cursor, ApparelContract.Events.START_DATE, DbSchema.PREFIX_TBL_EVENTS));
+            event.setEndDate(getDateFromCursor(cursor, ApparelContract.Events.END_DATE, DbSchema.PREFIX_TBL_EVENTS));
             event.setDescription(SqlHelper.getString(cursor, ApparelContract.Events.DESCRIPTION, DbSchema.PREFIX_TBL_EVENTS));
             event.setPhotoUuid(SqlHelper.getString(cursor, ApparelContract.Photos.UUID, DbSchema.PREFIX_TBL_PHOTOS));
             User owner = new User();

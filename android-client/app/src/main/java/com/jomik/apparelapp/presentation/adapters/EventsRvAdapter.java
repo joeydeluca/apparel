@@ -58,7 +58,7 @@ public class EventsRvAdapter extends RecyclerView.Adapter<EventsRvAdapter.EventV
         holder.description.setText(event.getDescription());
         holder.ownerText.setText("Created by " + event.getOwner().getName());
 
-        String displayDate = event.getStartDate();
+        String displayDate = SqlHelper.dateFormatForDb.format(event.getStartDate());
         if(event.getEndDate() != null && !event.getEndDate().equals(event.getStartDate())) {
             displayDate = displayDate + " - " + event.getEndDate();
         }
@@ -121,8 +121,8 @@ public class EventsRvAdapter extends RecyclerView.Adapter<EventsRvAdapter.EventV
                 try {
                     Intent intent = new Intent(context, ViewEventOutfitsActivity.class);
                     intent.putExtra("eventId", event.getId().toString());
-                    intent.putExtra("startDate", SqlHelper.dateFormatForDisplay.parse(event.getStartDate()));
-                    intent.putExtra("endDate", SqlHelper.dateFormatForDisplay.parse(event.getEndDate()));
+                    intent.putExtra("startDate", event.getStartDate());
+                    intent.putExtra("endDate", event.getEndDate());
                     context.startActivity(intent);
                 } catch (Exception e) {
                     e.printStackTrace();

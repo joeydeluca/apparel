@@ -2,9 +2,12 @@ package com.jomik.apparelapp.domain.entities;
 
 import android.content.ContentValues;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.jomik.apparelapp.domain.entities.Entity;
 import com.jomik.apparelapp.infrastructure.providers.ApparelContract;
+import com.jomik.apparelapp.infrastructure.providers.SqlHelper;
+
+import java.util.Date;
 
 /**
  * Created by Joe Deluca on 3/22/2016.
@@ -13,8 +16,10 @@ public class Event extends Entity {
     private String title;
     private String location;
     private String description;
-    private String startDate;
-    private String endDate;
+    @JsonFormat(shape= JsonFormat.Shape.STRING, pattern=SqlHelper.dateFormatForDbPattern)
+    private Date startDate;
+    @JsonFormat(shape= JsonFormat.Shape.STRING, pattern=SqlHelper.dateFormatForDbPattern)
+    private Date endDate;
     private String ownerUuid;
     private String photoUuid;
 
@@ -39,19 +44,19 @@ public class Event extends Entity {
         this.location = location;
     }
 
-    public String getStartDate() {
+    public Date getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(String startDate) {
+    public void setStartDate(Date startDate) {
         this.startDate = startDate;
     }
 
-    public String getEndDate() {
+    public Date getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(String endDate) {
+    public void setEndDate(Date endDate) {
         this.endDate = endDate;
     }
 
@@ -101,8 +106,8 @@ public class Event extends Entity {
         values.put(ApparelContract.Events.TITLE, getTitle());
         values.put(ApparelContract.Events.LOCATION, getLocation());
         values.put(ApparelContract.Events.DESCRIPTION, getDescription());
-        values.put(ApparelContract.Events.START_DATE, getStartDate());
-        values.put(ApparelContract.Events.END_DATE, getEndDate());
+        values.put(ApparelContract.Events.START_DATE, SqlHelper.getDateForDb(getStartDate()));
+        values.put(ApparelContract.Events.END_DATE, SqlHelper.getDateForDb(getEndDate()));
         values.put(ApparelContract.Events.OWNER_UUID, getOwnerUuid());
         values.put(ApparelContract.Events.PHOTO_UUID, getPhotoUuid());
         return values;
