@@ -5,6 +5,7 @@ import com.apparel.domain.model.ApparelEntity;
 import com.apparel.domain.model.photo.Photo;
 
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 
@@ -16,10 +17,10 @@ public class Item extends ApparelEntity {
     private String name;
     private String description;
     private String itemCategory;
-    private String photoUuid;
     private String userUuid;
 
-    @OneToOne(optional=false, mappedBy="photoUuid")
+    @OneToOne
+    @JoinColumn(name = "photoUuid")
     private Photo photo;
 
     public String getName() {
@@ -44,14 +45,6 @@ public class Item extends ApparelEntity {
 
     public void setItemCategory(String itemCategory) {
         this.itemCategory = itemCategory;
-    }
-
-    public String getPhotoUuid() {
-        return photoUuid;
-    }
-
-    public void setPhotoUuid(String photoUuid) {
-        this.photoUuid = photoUuid;
     }
 
     public String getUserUuid() {

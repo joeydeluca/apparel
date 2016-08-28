@@ -4,9 +4,9 @@ package com.apparel.domain.model.event;
 import com.apparel.domain.model.ApparelEntity;
 import com.apparel.domain.model.photo.Photo;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import java.util.Date;
 
@@ -23,9 +23,9 @@ public class Event extends ApparelEntity {
     @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="dd-MM-yyyy")
     private Date endDate;
     private String ownerUuid;
-    private String photoUuid;
 
-    @OneToOne(optional=false, mappedBy="photoUuid")
+    @OneToOne
+    @JoinColumn(name = "photoUuid")
     private Photo photo;
 
     public String getTitle() {
@@ -76,11 +76,4 @@ public class Event extends ApparelEntity {
         this.ownerUuid = ownerUuid;
     }
 
-    public String getPhotoUuid() {
-        return photoUuid;
-    }
-
-    public void setPhotoUuid(String photoUuid) {
-        this.photoUuid = photoUuid;
-    }
 }
