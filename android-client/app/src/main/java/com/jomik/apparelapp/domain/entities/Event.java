@@ -2,6 +2,7 @@ package com.jomik.apparelapp.domain.entities;
 
 import android.content.ContentValues;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.jomik.apparelapp.domain.entities.Entity;
 import com.jomik.apparelapp.infrastructure.providers.ApparelContract;
 
@@ -15,11 +16,12 @@ public class Event extends Entity {
     private String startDate;
     private String endDate;
     private String ownerUuid;
-    private String ownerFacebookId;
-    private String ownerName;
     private String photoUuid;
-    private String photoPath;
-    private String photoPathSmall;
+
+    @JsonIgnore
+    private User owner;
+    @JsonIgnore
+    private Photo photo;
 
     public String getTitle() {
         return title;
@@ -69,36 +71,20 @@ public class Event extends Entity {
         this.photoUuid = photoUuid;
     }
 
-    public String getPhotoPath() {
-        return photoPath;
+    public User getOwner() {
+        return owner;
     }
 
-    public void setPhotoPath(String photoPath) {
-        this.photoPath = photoPath;
+    public void setOwner(User owner) {
+        this.owner = owner;
     }
 
-    public String getPhotoPathSmall() {
-        return photoPathSmall;
+    public Photo getPhoto() {
+        return photo;
     }
 
-    public void setPhotoPathSmall(String photoPathSmall) {
-        this.photoPathSmall = photoPathSmall;
-    }
-
-    public String getOwnerFacebookId() {
-        return ownerFacebookId;
-    }
-
-    public void setOwnerFacebookId(String ownerFacebookId) {
-        this.ownerFacebookId = ownerFacebookId;
-    }
-
-    public String getOwnerName() {
-        return ownerName;
-    }
-
-    public void setOwnerName(String ownerName) {
-        this.ownerName = ownerName;
+    public void setPhoto(Photo photo) {
+        this.photo = photo;
     }
 
     public String getDescription() {

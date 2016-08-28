@@ -34,7 +34,7 @@ public class ItemImageAdapter extends ArrayAdapter<Item> {
 
         Item item = items.get(position);
         SimpleDraweeView draweeView = (SimpleDraweeView) rowView.findViewById(R.id.image);
-        ImageHelper.setImageUri(draweeView, item.getPhotoPathSmall());
+        ImageHelper.setImageUri(draweeView, item.getPhoto().getPhotoPathSmall());
 
         rowView.setTag(items.get(position).getId());
 

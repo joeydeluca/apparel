@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.jomik.apparelapp.domain.entities.Entity;
+import com.jomik.apparelapp.domain.entities.Event;
 import com.jomik.apparelapp.domain.entities.Item;
 import com.jomik.apparelapp.domain.entities.Photo;
 import com.jomik.apparelapp.domain.entities.User;
@@ -73,7 +74,6 @@ public class ApparelSyncAdapter extends AbstractThreadedSyncAdapter {
             SyncDto syncDtoResponse = restService.getUserData(appUserUuid).execute().body();
             if(syncDtoResponse == null) syncDtoResponse = new SyncDto();
 
-
             // Items
             List<Item> existingLocalItems = SqlHelper.getItemsFromProvider(provider);
             Set<Item> existingRemoteItems = syncDtoResponse.getItems();
@@ -81,6 +81,14 @@ public class ApparelSyncAdapter extends AbstractThreadedSyncAdapter {
             Set<Item> newRemoteItems = getNewRemoteEntities(existingLocalItems, existingRemoteItems);
             mergeEntitiesWithDuplicateUuids(existingLocalItems, existingRemoteItems, newLocalItems, newRemoteItems);
             saveToDb(newLocalItems, ApparelContract.Items.CONTENT_URI);
+
+            // Events
+            List<Event> existingLocalEvents = SqlHelper.getEventsFromProvider(provider);
+            Set<Event> existingRemoteEvents = syncDtoResponse.getEvents();
+            Set<Event> newLocalEvents = getNewLocalEntities(existingLocalEvents, existingRemoteEvents);
+            Set<Event> newRemoteEvents = getNewRemoteEntities(existingLocalEvents, existingRemoteEvents);
+            mergeEntitiesWithDuplicateUuids(existingLocalEvents, existingRemoteEvents, newLocalEvents, newRemoteEvents);
+            saveToDb(newLocalEvents, ApparelContract.Events.CONTENT_URI);
 
             // Photos
             List<Photo> existingLocalPhotos = getPhotosFromItems(existingLocalItems);
@@ -153,13 +161,13 @@ public class ApparelSyncAdapter extends AbstractThreadedSyncAdapter {
             ContentValues values = entity.getContentValues();
             int rowsUpdated = contentResolver.update(contentUri, values, "uuid = ?", new String[]{entity.getUuid()});
             if(rowsUpdated == 0) {
-                contentResolver.insert(ApparelContract.Items.CONTENT_URI, values);
+                contentResolver.insert(contentUri, values);
             }
         }
     }
 
     private void saveRemoteItems(User user, SyncDto syncDto) throws IOException {
-        if(syncDto.getItems().size() > 0) {
+        if(syncDto.canUpload()) {
             Response response = restService.saveUserData(user.getUuid(), syncDto).execute();
             Log.i(TAG, response.toString());
         }

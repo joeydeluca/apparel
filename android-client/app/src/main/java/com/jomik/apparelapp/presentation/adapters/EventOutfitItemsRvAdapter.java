@@ -35,7 +35,7 @@ public class EventOutfitItemsRvAdapter extends RecyclerView.Adapter<EventOutfitI
     @Override
     public void onBindViewHolder(ViewHolder holder, final int i) {
         Item item = items.get(i);
-        ImageHelper.setImageUri(holder.simpleDraweeView, item.getPhotoPath());
+        ImageHelper.setImageUri(holder.simpleDraweeView, item.getPhoto().getPhotoPath());
     }
 
     @Override

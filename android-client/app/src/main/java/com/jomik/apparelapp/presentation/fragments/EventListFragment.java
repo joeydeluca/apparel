@@ -30,7 +30,6 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -85,24 +84,8 @@ public class EventListFragment extends Fragment {
 
         // Find all owning events
         Uri uri = ApparelContract.Events.CONTENT_URI ;
-        Cursor cursor = getActivity().getContentResolver().query(uri, ApparelContract.Events.PROJECTION_ALL, DbSchema.PREFIX_TBL_EVENTS + "." + ApparelContract.Events.OWNER_UUID + " = ?", new String[] {user.getUuid()}, null);
-        List<Event> events = new ArrayList<>();
-        while(cursor.moveToNext()) {
-            Event event = new Event();
-            event.setId(SqlHelper.getLong(cursor, ApparelContract.Events._ID, DbSchema.PREFIX_TBL_EVENTS));
-            event.setTitle(SqlHelper.getString(cursor, ApparelContract.Events.TITLE, DbSchema.PREFIX_TBL_EVENTS));
-            event.setLocation(SqlHelper.getString(cursor, ApparelContract.Events.LOCATION, DbSchema.PREFIX_TBL_EVENTS));
-            event.setOwnerUuid(SqlHelper.getString(cursor, ApparelContract.Events.OWNER_UUID, DbSchema.PREFIX_TBL_EVENTS));
-            event.setOwnerFacebookId(SqlHelper.getString(cursor, ApparelContract.Users.FACEBOOK_ID, DbSchema.PREFIX_TBL_USERS));
-            event.setOwnerName(SqlHelper.getString(cursor, ApparelContract.Users.NAME, DbSchema.PREFIX_TBL_USERS));
-            event.setStartDate(SqlHelper.getDateForDisplay(cursor, ApparelContract.Events.START_DATE, DbSchema.PREFIX_TBL_EVENTS));
-            event.setEndDate(SqlHelper.getDateForDisplay(cursor, ApparelContract.Events.END_DATE, DbSchema.PREFIX_TBL_EVENTS));
-            event.setDescription(SqlHelper.getString(cursor, ApparelContract.Events.DESCRIPTION, DbSchema.PREFIX_TBL_EVENTS));
-            event.setPhotoUuid(SqlHelper.getString(cursor, ApparelContract.Photos.UUID, DbSchema.PREFIX_TBL_PHOTOS));
-            event.setPhotoPath(SqlHelper.getString(cursor, ApparelContract.Photos.LOCAL_PATH, DbSchema.PREFIX_TBL_PHOTOS));
-            event.setPhotoPathSmall(SqlHelper.getString(cursor, ApparelContract.Photos.LOCAL_PATH_SM, DbSchema.PREFIX_TBL_PHOTOS));
-            events.add(event);
-        }
+        Cursor cursor = getActivity().getContentResolver().query(uri, ApparelContract.Events.PROJECTION_ALL, "("+DbSchema.PREFIX_TBL_EVENTS + "." + ApparelContract.Events.OWNER_UUID + " = ? or eg.guest_uuid=?) and e.marked_for_delete=?", new String[] {user.getUuid(), user.getUuid(), "0"}, null);
+        List<Event> events = SqlHelper.getEventsFromCursor(cursor);
 
         EventBus.getDefault().post(new FindUserEventsComplete(events));
     }

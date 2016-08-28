@@ -1,5 +1,6 @@
 package com.jomik.apparelapp.infrastructure.rest;
 
+import com.jomik.apparelapp.domain.entities.Event;
 import com.jomik.apparelapp.domain.entities.Item;
 import com.jomik.apparelapp.domain.entities.Photo;
 
@@ -11,7 +12,12 @@ import java.util.Set;
  */
 public class SyncDto {
     private Set<Item> items = new HashSet<>();
+    private Set<Event> events = new HashSet<>();
     private Set<Photo> photos = new HashSet<>();
+
+    public boolean canUpload() {
+        return !items.isEmpty() || !events.isEmpty();
+    }
 
     public Set<Item> getItems() {
         return items;
@@ -27,5 +33,13 @@ public class SyncDto {
 
     public void setPhotos(Set<Photo> photos) {
         this.photos = photos;
+    }
+
+    public Set<Event> getEvents() {
+        return events;
+    }
+
+    public void setEvents(Set<Event> events) {
+        this.events = events;
     }
 }

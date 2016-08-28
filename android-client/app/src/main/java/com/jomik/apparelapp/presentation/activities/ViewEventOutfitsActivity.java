@@ -17,8 +17,10 @@ import android.widget.Toast;
 import com.jomik.apparelapp.R;
 import com.jomik.apparelapp.domain.entities.Event;
 import com.jomik.apparelapp.domain.entities.Item;
+import com.jomik.apparelapp.domain.entities.Photo;
 import com.jomik.apparelapp.domain.entities.User;
 import com.jomik.apparelapp.domain.entities.EventGuestOutfit;
+import com.jomik.apparelapp.infrastructure.providers.ApparelContract;
 import com.jomik.apparelapp.infrastructure.providers.ApparelContract.EventGuestOutfitItems;
 import com.jomik.apparelapp.infrastructure.providers.ApparelContract.EventGuestOutfits;
 import com.jomik.apparelapp.infrastructure.providers.ApparelContract.EventGuests;
@@ -241,13 +243,15 @@ public class ViewEventOutfitsActivity extends AppCompatActivity {
 
     private Item getItem(Cursor cursor) {
         Item item = new Item();
-        item.setUuid(SqlHelper.getString(cursor, Items.UUID, DbSchema.PREFIX_TBL_ITEMS));
-        item.setName(SqlHelper.getString(cursor, Items.NAME, DbSchema.PREFIX_TBL_ITEMS));
-        item.setPhotoUuid(SqlHelper.getString(cursor, Photos.UUID, DbSchema.PREFIX_TBL_PHOTOS));
-        item.setPhotoPath(SqlHelper.getString(cursor, Photos.LOCAL_PATH, DbSchema.PREFIX_TBL_PHOTOS));
-        item.setPhotoPathSmall(SqlHelper.getString(cursor, Photos.LOCAL_PATH_SM, DbSchema.PREFIX_TBL_PHOTOS));
-
-
+        SqlHelper.setCommonFieldsFromCursor(cursor, item, DbSchema.PREFIX_TBL_ITEMS);
+        item.setName(SqlHelper.getString(cursor, ApparelContract.Items.NAME, DbSchema.PREFIX_TBL_ITEMS));
+        item.setPhotoUuid(SqlHelper.getString(cursor, ApparelContract.Photos.UUID, DbSchema.PREFIX_TBL_PHOTOS));
+        Photo photo = new Photo();
+        SqlHelper.setCommonFieldsFromCursor(cursor, photo, DbSchema.PREFIX_TBL_PHOTOS);
+        photo.setPhotoPath(SqlHelper.getString(cursor, ApparelContract.Photos.LOCAL_PATH, DbSchema.PREFIX_TBL_PHOTOS));
+        photo.setPhotoPathSmall(SqlHelper.getString(cursor, ApparelContract.Photos.LOCAL_PATH_SM, DbSchema.PREFIX_TBL_PHOTOS));
+        item.setPhoto(photo);
+        
         return item;
     }
 

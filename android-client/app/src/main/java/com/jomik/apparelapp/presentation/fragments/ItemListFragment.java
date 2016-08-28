@@ -76,7 +76,7 @@ public class ItemListFragment extends ListFragment implements AdapterView.OnItem
 
     @Override
     public android.support.v4.content.Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return new CursorLoader(getActivity(), ApparelContract.Items.CONTENT_URI, ApparelContract.Items.PROJECTION_ALL, null, null, null);
+        return new CursorLoader(getActivity(), ApparelContract.Items.CONTENT_URI, ApparelContract.Items.PROJECTION_ALL, "i.marked_for_delete=?", new String[] {"0"}, null);
     }
 
     @Override

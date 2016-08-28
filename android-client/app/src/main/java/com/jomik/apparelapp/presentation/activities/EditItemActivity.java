@@ -101,7 +101,7 @@ public class EditItemActivity extends AppCompatActivity {
 
         final String finalExistingPhotoPath = existingPhotoPath;
         final String finalExistingPhotoUuid = existingPhotoUuid;
-        final int finalVersion = version;
+        final int newItemVersion = ++version;
         btnDone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -138,10 +138,9 @@ public class EditItemActivity extends AppCompatActivity {
                 values.put(Items.DESCRIPTION, txtItemDescription.getText().toString());
                 values.put(Items.ITEM_CATEGORY, dbItemCategory);
                 values.put(Items.PHOTO_UUID, photoUuid);
-                values.put(Items.VERSION, finalVersion);
+                values.put(Items.VERSION, newItemVersion);
 
                 if(id == -1) {
-                    values.put(Items.UUID, UUID.randomUUID().toString());
                     values.put(Items.USER_UUID, user.getUuid());
                     getContentResolver().insert(Items.CONTENT_URI, values);
                 } else {

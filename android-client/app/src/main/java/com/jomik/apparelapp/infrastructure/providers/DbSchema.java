@@ -28,7 +28,7 @@ public interface DbSchema {
             "CREATE TABLE "+TBL_PHOTOS+" (" +
                     CommonColumns._ID+"    INTEGER PRIMARY KEY AUTOINCREMENT, \n" +
                     CommonColumns.UUID+"   TEXT,\n" +
-                    CommonColumns.MARKED_FOR_DELETE+" INTEGER,\n" +
+                    CommonColumns.MARKED_FOR_DELETE+" INTEGER NOT NULL DEFAULT 0,\n" +
                     CommonColumns.VERSION+" INTEGER,\n" +
                     Photos.LOCAL_PATH+"    TEXT,\n" +
                     Photos.LOCAL_PATH_SM+" TEXT\n" +
@@ -38,7 +38,7 @@ public interface DbSchema {
             "CREATE TABLE "+TBL_ITEMS+" (" +
                     CommonColumns._ID+"    INTEGER PRIMARY KEY AUTOINCREMENT, \n" +
                     CommonColumns.UUID+"   TEXT,\n" +
-                    CommonColumns.MARKED_FOR_DELETE+" INTEGER,\n" +
+                    CommonColumns.MARKED_FOR_DELETE+" INTEGER NOT NULL DEFAULT 0," +
                     CommonColumns.VERSION+" INTEGER,\n" +
                     Items.NAME+"          TEXT,\n" +
                     Items.DESCRIPTION+"   TEXT,\n" +
@@ -51,7 +51,7 @@ public interface DbSchema {
             "CREATE TABLE "+TBL_EVENTS+" (" +
                     CommonColumns._ID+"    INTEGER PRIMARY KEY AUTOINCREMENT, \n" +
                     CommonColumns.UUID+"   TEXT,\n" +
-                    CommonColumns.MARKED_FOR_DELETE+" INTEGER,\n" +
+                    CommonColumns.MARKED_FOR_DELETE+" NOT NULL INTEGER DEFAULT 0," +
                     CommonColumns.VERSION+" INTEGER,\n" +
                     Events.TITLE+"          TEXT,\n" +
                     Events.LOCATION+"       TEXT,\n" +
@@ -66,7 +66,7 @@ public interface DbSchema {
             "CREATE TABLE "+TBL_EVENT_GUESTS+" (" +
                     CommonColumns._ID+"    INTEGER PRIMARY KEY AUTOINCREMENT, \n" +
                     CommonColumns.UUID+"   TEXT,\n" +
-                    CommonColumns.MARKED_FOR_DELETE+" INTEGER,\n" +
+                    CommonColumns.MARKED_FOR_DELETE+" INTEGER NOT NULL DEFAULT 0," +
                     CommonColumns.VERSION+" INTEGER,\n" +
                     EventGuests.EVENT_UUID+"        TEXT,\n" +
                     EventGuests.GUEST_UUID+"        TEXT\n" +
@@ -76,7 +76,7 @@ public interface DbSchema {
             "CREATE TABLE "+TBL_EVENT_GUEST_OUTFITS+" (" +
                     CommonColumns._ID+"    INTEGER PRIMARY KEY AUTOINCREMENT, \n" +
                     CommonColumns.UUID+"   TEXT,\n" +
-                    CommonColumns.MARKED_FOR_DELETE+" INTEGER,\n" +
+                    CommonColumns.MARKED_FOR_DELETE+" INTEGER NOT NULL DEFAULT 0," +
                     CommonColumns.VERSION+" INTEGER,\n" +
                     EventGuestOutfits.DESCRIPTION+" TEXT,\n" +
                     EventGuestOutfits.EVENT_DATE+"  TEXT,\n" +
@@ -123,7 +123,8 @@ public interface DbSchema {
     String FROM_EVENTS =
             TBL_EVENTS + " " + PREFIX_TBL_EVENTS + " " +
                     "LEFT JOIN "+TBL_PHOTOS+" "+PREFIX_TBL_PHOTOS+" on "+PREFIX_TBL_PHOTOS+".uuid = "+ PREFIX_TBL_EVENTS +".photo_uuid " +
-                    "LEFT JOIN "+TBL_USERS+" "+PREFIX_TBL_USERS+" on "+PREFIX_TBL_USERS+".uuid = "+ PREFIX_TBL_EVENTS +".owner_uuid";
+                    "LEFT JOIN "+TBL_USERS+" "+PREFIX_TBL_USERS+" on "+PREFIX_TBL_USERS+".uuid = "+ PREFIX_TBL_EVENTS +".owner_uuid " +
+                    "LEFT JOIN "+TBL_EVENT_GUESTS+" "+PREFIX_TBL_EVENT_GUESTS+" on "+PREFIX_TBL_EVENT_GUESTS+".event_uuid = "+ PREFIX_TBL_EVENTS +".uuid";
 
     String FROM_EVENT_GUESTS =
                     TBL_EVENT_GUESTS + " " + PREFIX_TBL_EVENT_GUESTS + " " +

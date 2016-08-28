@@ -1,6 +1,8 @@
 package com.jomik.apparelapp.presentation.adapters;
 
+import android.content.ContentProviderClient;
 import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.CardView;
@@ -54,7 +56,7 @@ public class EventsRvAdapter extends RecyclerView.Adapter<EventsRvAdapter.EventV
         holder.title.setText(event.getTitle());
         holder.location.setText(event.getLocation());
         holder.description.setText(event.getDescription());
-        holder.ownerText.setText("Created by " + event.getOwnerName());
+        holder.ownerText.setText("Created by " + event.getOwner().getName());
 
         String displayDate = event.getStartDate();
         if(event.getEndDate() != null && !event.getEndDate().equals(event.getStartDate())) {
@@ -62,8 +64,8 @@ public class EventsRvAdapter extends RecyclerView.Adapter<EventsRvAdapter.EventV
         }
         holder.date.setText(displayDate);
 
-        ImageHelper.setImageUri(holder.eventPhoto, event.getPhotoPath());
-        ImageHelper.setFacebookProfileImageUri(holder.profilePhoto, event.getOwnerFacebookId());
+        ImageHelper.setImageUri(holder.eventPhoto, event.getPhoto().getPhotoPath());
+        ImageHelper.setFacebookProfileImageUri(holder.profilePhoto, event.getOwner().getFacebookId());
 
         final PopupMenu popup = new PopupMenu(context, holder.btnMenu);
 
@@ -93,7 +95,11 @@ public class EventsRvAdapter extends RecyclerView.Adapter<EventsRvAdapter.EventV
                         break;
                     case R.id.menu_delete:
                         // TODO: Are you sure prompt
-                        context.getContentResolver().delete(ContentUris.withAppendedId(ApparelContract.Events.CONTENT_URI, event.getId()), null, null);
+                        ContentValues values = new ContentValues();
+                        values.put(ApparelContract.CommonColumns.MARKED_FOR_DELETE, 1);
+                        values.put(ApparelContract.CommonColumns.VERSION, event.getVersion() + 1);
+                        context.getContentResolver().update(ContentUris.withAppendedId(ApparelContract.Items.CONTENT_URI, event.getId()), values, null, null);
+
                         events.remove(event);
                         notifyItemRemoved(i);
                         Toast.makeText(context, "Event deleted", Toast.LENGTH_LONG).show();

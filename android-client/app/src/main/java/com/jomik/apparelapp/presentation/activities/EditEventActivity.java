@@ -22,6 +22,7 @@ import android.widget.Toast;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.jomik.apparelapp.R;
+import com.jomik.apparelapp.infrastructure.providers.ApparelContract;
 import com.jomik.apparelapp.infrastructure.providers.ApparelContract.Events;
 import com.jomik.apparelapp.infrastructure.providers.ApparelContract.Photos;
 import com.jomik.apparelapp.infrastructure.providers.DbSchema;
@@ -69,11 +70,6 @@ public class EditEventActivity extends AppCompatActivity implements View.OnClick
         txtToDate = (EditText) findViewById(R.id.date_to);
         txtToDate.setInputType(InputType.TYPE_NULL);
 
-        startDatePickerDialog = createDatePickerDialog(txtFromDate);
-        endDatePickerDialog = createDatePickerDialog(txtToDate);
-        setupDateField(txtFromDate, startDatePickerDialog);
-        setupDateField(txtToDate, endDatePickerDialog);
-
         txtToolbarTitle.setText("Edit Event");
 
         String existingPhotoUuid = null;
@@ -87,6 +83,8 @@ public class EditEventActivity extends AppCompatActivity implements View.OnClick
             }
         });
 
+        int version = 0;
+
         // Populate fields if editing
         Intent intent = getIntent();
         final long id = intent.getLongExtra("id", -1);
@@ -99,6 +97,7 @@ public class EditEventActivity extends AppCompatActivity implements View.OnClick
                 txtDescription.setText(SqlHelper.getString(cursor, Events.DESCRIPTION, DbSchema.PREFIX_TBL_EVENTS));
                 txtFromDate.setText(SqlHelper.getDateForDisplay(cursor, Events.START_DATE, DbSchema.PREFIX_TBL_EVENTS));
                 txtToDate.setText(SqlHelper.getDateForDisplay(cursor, Events.END_DATE, DbSchema.PREFIX_TBL_EVENTS));
+                version = SqlHelper.getInt(cursor, Events.VERSION, DbSchema.PREFIX_TBL_EVENTS);
                 existingPhotoUuid = SqlHelper.getString(cursor, Photos.UUID, DbSchema.PREFIX_TBL_PHOTOS);
                 existingPhotoPath = SqlHelper.getString(cursor, Photos.LOCAL_PATH_SM, DbSchema.PREFIX_TBL_PHOTOS);
             }
@@ -112,12 +111,13 @@ public class EditEventActivity extends AppCompatActivity implements View.OnClick
         final String finalExistingPhotoPath = existingPhotoPath;
         final String finalExistingPhotoUuid = existingPhotoUuid;
 
+        final int newEventVersion = ++version;
         btnDone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Validate
                 if(!FormValidator.validate(txtEventTitle, txtEventLocation, txtFromDate, txtDescription) ||
-                    (finalExistingPhotoPath == null && !ImageValidator.validate(EditEventActivity.this, null))) {
+                    (finalExistingPhotoPath == null && !ImageValidator.validate(EditEventActivity.this, chosenImageUri))) {
                     return;
                 }
 
@@ -161,8 +161,8 @@ public class EditEventActivity extends AppCompatActivity implements View.OnClick
                 values.put(Events.OWNER_UUID, userUuid);
                 values.put(Events.START_DATE, SqlHelper.getDateForDb(txtFromDate.getText().toString()));
                 values.put(Events.END_DATE, SqlHelper.getDateForDb(txtToDate.getText().toString()));
+                values.put(Events.VERSION, newEventVersion);
                 if(id == -1) {
-                    values.put(Events.UUID, UUID.randomUUID().toString());
                     getContentResolver().insert(Events.CONTENT_URI, values);
                 } else {
                     getContentResolver().update(ContentUris.withAppendedId(Events.CONTENT_URI, id), values, null, null);
@@ -180,10 +180,17 @@ public class EditEventActivity extends AppCompatActivity implements View.OnClick
             }
         });
 
+        startDatePickerDialog = createDatePickerDialog(txtFromDate);
+        endDatePickerDialog = createDatePickerDialog(txtToDate);
+        setupDateField(txtFromDate, startDatePickerDialog);
+        setupDateField(txtToDate, endDatePickerDialog);
+
     }
 
     private void setupDateField(final EditText editTextDate, final DatePickerDialog datePickerDialog) {
-        editTextDate.setText(SqlHelper.dateFormatForDisplay.format(new Date()));
+        if(editTextDate.getText().toString().length() == 0) {
+            editTextDate.setText(SqlHelper.dateFormatForDisplay.format(new Date()));
+        }
         editTextDate.setOnClickListener(this);
         editTextDate.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -199,7 +206,12 @@ public class EditEventActivity extends AppCompatActivity implements View.OnClick
         Calendar newCalendar = Calendar.getInstance();
 
         try {
-            Date displayDate = SqlHelper.dateFormatForDisplay.parse(editText.getText().toString());
+            Date displayDate;
+            if(editText.getText().toString().length() > 0) {
+                displayDate = SqlHelper.dateFormatForDisplay.parse(editText.getText().toString());
+            } else {
+                displayDate = new Date();
+            }
             newCalendar.setTime(displayDate);
         } catch (ParseException e) {
             e.printStackTrace();

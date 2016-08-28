@@ -2,8 +2,8 @@ package com.apparel.controllers;
 
 import com.apparel.controllers.dtos.SyncDto;
 import com.apparel.domain.model.item.Item;
+import com.apparel.domain.repository.EventRepository;
 import com.apparel.domain.repository.ItemRepository;
-import com.apparel.domain.service.interfaces.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -18,12 +18,12 @@ import java.util.Set;
 @RequestMapping("/users")
 public class SyncController {
 
-    private final IUserService userService;
+    private final EventRepository eventRepository;
     private final ItemRepository itemRepository;
 
     @Autowired
-    public SyncController(final IUserService userService, final ItemRepository itemRepository){
-        this.userService = userService;
+    public SyncController(final EventRepository eventRepository, final ItemRepository itemRepository){
+        this.eventRepository = eventRepository;
         this.itemRepository = itemRepository;
     }
 
@@ -37,9 +37,9 @@ public class SyncController {
 
         SyncDto dto = new SyncDto();
 
-        Set<Item> items = itemRepository.findByUserUuid(uuid);
+        dto.setItems(itemRepository.findByUserUuid(uuid));
 
-        dto.setItems(items);
+        dto.setEvents(eventRepository.findByOwnerUuid(uuid));
 
         return ResponseEntity.ok(dto);
     }
@@ -53,6 +53,7 @@ public class SyncController {
 
         // Save
         itemRepository.save(syncDto.getItems());
+        eventRepository.save(syncDto.getEvents());
 
         return ResponseEntity.ok(null);
     }

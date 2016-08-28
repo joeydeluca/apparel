@@ -22,6 +22,7 @@ import android.util.Log;
 import com.jomik.apparelapp.BuildConfig;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 /**
  * Created by Joe Deluca of house targaryen, first his name, mother of dragons and breaker of chains on 7/2/2016.
@@ -86,9 +87,11 @@ public class ApparelProvider extends ContentProvider {
                     break;
                 case EVENT_LIST:
                     builder.setTables(DbSchema.FROM_EVENTS);
+                    builder.setDistinct(true);
                     break;
                 case EVENT_ID:
                     builder.setTables(DbSchema.FROM_EVENTS);
+                    builder.setDistinct(true);
                     // limit query to one row at most:
                     builder.appendWhere(DbSchema.PREFIX_TBL_EVENTS + "." + ApparelContract.Events._ID + " = " + uri.getLastPathSegment());
                     break;
@@ -159,6 +162,8 @@ public class ApparelProvider extends ContentProvider {
     @Nullable
     @Override
     public Uri insert(Uri uri, ContentValues values) {
+        values.put(ApparelContract.Events.UUID, UUID.randomUUID().toString());
+
         SQLiteDatabase db = sqlOpenHelper.getWritableDatabase();
         if (URI_MATCHER.match(uri) == PHOTO_LIST) {
             long id = db.insert(DbSchema.TBL_PHOTOS, null, values);
@@ -226,11 +231,6 @@ public class ApparelProvider extends ContentProvider {
 
     @Override
     public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
-        Integer currentVersion = values.getAsInteger(ApparelContract.CommonColumns.VERSION);
-        if(currentVersion == null) currentVersion = 0;
-        int newVersion = currentVersion + 1;
-        values.put(ApparelContract.CommonColumns.VERSION, newVersion);
-
         SQLiteDatabase db = sqlOpenHelper.getWritableDatabase();
         int updateCount = 0;
         switch (URI_MATCHER.match(uri)) {

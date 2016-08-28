@@ -1,6 +1,7 @@
 package com.jomik.apparelapp.presentation.adapters;
 
 import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v4.widget.CursorAdapter;
@@ -46,6 +47,8 @@ public class ItemsCursorAdapter extends CursorAdapter {
 
         SimpleDraweeView draweeView = (SimpleDraweeView) view.findViewById(R.id.my_image_view);
 
+        final int itemVersion = SqlHelper.getInt(cursor, ApparelContract.CommonColumns.VERSION, DbSchema.PREFIX_TBL_ITEMS) + 1;
+
         String photoPath = SqlHelper.getString(cursor, ApparelContract.Photos.LOCAL_PATH_SM, DbSchema.PREFIX_TBL_PHOTOS);
         String photoUuid = SqlHelper.getString(cursor, ApparelContract.Photos.UUID, DbSchema.PREFIX_TBL_PHOTOS);
         if(photoPath != null) {
@@ -66,7 +69,10 @@ public class ItemsCursorAdapter extends CursorAdapter {
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.menu_delete:
-                        context.getContentResolver().delete(ContentUris.withAppendedId(ApparelContract.Items.CONTENT_URI, id), null, null);
+                        ContentValues values = new ContentValues();
+                        values.put(ApparelContract.CommonColumns.MARKED_FOR_DELETE, 1);
+                        values.put(ApparelContract.CommonColumns.VERSION, itemVersion);
+                        context.getContentResolver().update(ContentUris.withAppendedId(ApparelContract.Items.CONTENT_URI, id), values,  null, null);
 
                         Toast.makeText(context, "Deleted", Toast.LENGTH_SHORT).show();
 

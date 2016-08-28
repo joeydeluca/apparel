@@ -16,13 +16,65 @@ import java.util.List;
 public class Event extends ApparelEntity {
     private String title;
     private String location;
-    private Date startDate;
-    private Date endDate;
-    @Transient
-    private User owner;
-    @Transient
-    private List<User> attendees;
+    private String description;
+    private String startDate;
+    private String endDate;
+    private String ownerUuid;
+    private String photoUuid;
 
-    public Event() {
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(String startDate) {
+        this.startDate = startDate;
+    }
+
+    public String getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(String endDate) {
+        this.endDate = endDate;
+    }
+
+    public String getOwnerUuid() {
+        return ownerUuid;
+    }
+
+    public void setOwnerUuid(String ownerUuid) {
+        this.ownerUuid = ownerUuid;
+    }
+
+    public String getPhotoUuid() {
+        return photoUuid;
+    }
+
+    public void setPhotoUuid(String photoUuid) {
+        this.photoUuid = photoUuid;
     }
 }
