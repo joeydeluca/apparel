@@ -4,6 +4,7 @@ import com.apparel.controllers.dtos.SyncDto;
 import com.apparel.domain.model.photo.Photo;
 import com.apparel.domain.repository.EventRepository;
 import com.apparel.domain.repository.ItemRepository;
+import com.apparel.domain.repository.PhotoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -21,11 +22,15 @@ public class SyncController {
 
     private final EventRepository eventRepository;
     private final ItemRepository itemRepository;
+    private final PhotoRepository photoRepository;
 
     @Autowired
-    public SyncController(final EventRepository eventRepository, final ItemRepository itemRepository){
+    public SyncController(final EventRepository eventRepository,
+                          final ItemRepository itemRepository,
+                          final PhotoRepository photoRepository){
         this.eventRepository = eventRepository;
         this.itemRepository = itemRepository;
+        this.photoRepository = photoRepository;
     }
 
 
@@ -56,6 +61,7 @@ public class SyncController {
         // Save
         itemRepository.save(syncDto.getItems());
         eventRepository.save(syncDto.getEvents());
+        photoRepository.save(syncDto.getPhotos());
 
         return ResponseEntity.ok("{\"status\":\"OK\"}");
     }
