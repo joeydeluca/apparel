@@ -3,13 +3,15 @@ package com.apparel.controllers;
 import com.apparel.domain.model.photo.Photo;
 import com.apparel.domain.repository.PhotoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Required;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.websocket.server.PathParam;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
@@ -26,13 +28,23 @@ public class PhotoController {
         this.photoRepository = photoRepository;
     }
 
-    @RequestMapping(value = "/photo", produces = "image/jpg", method = RequestMethod.GET)
+    @RequestMapping(value = "/photos/{uuid}", produces = "image/jpg", method = RequestMethod.GET)
     @ResponseBody
-    public byte[] getPhoto(@RequestParam String uuid, @RequestParam(required = false) String type) throws IOException, URISyntaxException {
+    public byte[] getPhoto(@PathParam("uuid") String uuid, @RequestParam(required = false) String type) throws IOException, URISyntaxException {
 
         Photo photo = photoRepository.findOne(uuid);
 
         return photo.getThumbnail();
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value = "/photos/{uuid}")
+    public ResponseEntity<Void> handleFileUpload(@PathParam("uuid") String uuid, @RequestParam("file") MultipartFile file) throws IOException {
+
+        Photo photo = photoRepository.findOne(uuid);
+        photo.setThumbnail(file.getBytes());
+        photoRepository.save(photo);
+
+        return ResponseEntity.ok().build();
     }
 
 

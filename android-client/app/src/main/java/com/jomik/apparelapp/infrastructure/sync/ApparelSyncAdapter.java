@@ -9,7 +9,6 @@ import android.content.Context;
 import android.content.SyncResult;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.ArraySet;
 import android.util.Log;
 
 import com.jomik.apparelapp.domain.entities.Entity;
@@ -23,6 +22,7 @@ import com.jomik.apparelapp.infrastructure.rest.RestService;
 import com.jomik.apparelapp.infrastructure.rest.SyncDto;
 import com.jomik.apparelapp.infrastructure.services.AuthenticationManager;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -30,6 +30,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
@@ -176,15 +181,25 @@ public class ApparelSyncAdapter extends AbstractThreadedSyncAdapter {
 
     private void saveRemoteItems(User user, SyncDto syncDto) throws IOException {
         if(syncDto.canUpload()) {
+            // Upload data
             Response response = restService.saveUserData(user.getUuid(), syncDto).execute();
-            Log.i(TAG, response.toString());
+
+            // Upload photo files
+            for(Photo photo : syncDto.getPhotos()) {
+                File file = new File(photo.getPhotoPath());
+                RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file);
+                MultipartBody.Part body = MultipartBody.Part.createFormData("file", file.getName(), requestFile);
+                Call<ResponseBody> call = restService.upload(photo.getUuid(), body);
+            }
         }
     }
 
     private List<Photo> getPhotosFromItems(Collection<Item> items) {
         List<Photo> photos = new ArrayList<>();
         for(Item item : items) {
-            photos.add(item.getPhoto());
+            if(item.getPhoto() != null) {
+                photos.add(item.getPhoto());
+            }
         }
         return photos;
     }
@@ -192,7 +207,9 @@ public class ApparelSyncAdapter extends AbstractThreadedSyncAdapter {
     private List<Photo> getPhotosFromEvents(Collection<Event> events) {
         List<Photo> photos = new ArrayList<>();
         for(Event event : events) {
-            photos.add(event.getPhoto());
+            if(event.getPhoto() != null) {
+                photos.add(event.getPhoto());
+            }
         }
         return photos;
     }

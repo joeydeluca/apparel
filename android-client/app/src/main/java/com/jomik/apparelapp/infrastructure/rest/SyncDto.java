@@ -16,7 +16,7 @@ public class SyncDto {
     private Set<Photo> photos = new HashSet<>();
 
     public boolean canUpload() {
-        return !items.isEmpty() || !events.isEmpty();
+        return !items.isEmpty() || !events.isEmpty() || !photos.isEmpty();
     }
 
     public Set<Item> getItems() {

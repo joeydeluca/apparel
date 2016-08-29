@@ -1,7 +1,6 @@
 package com.jomik.apparelapp.infrastructure.rest;
 
 import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -23,6 +22,6 @@ public interface RestService {
     Call<ResponseBody> saveUserData(@Path("uuid") String userUuid, @Body SyncDto syncDto);
 
     @Multipart
-    @POST("photos")
-    Call<ResponseBody> upload(@Part("uuid") RequestBody uuid, @Part MultipartBody.Part file);
+    @POST("photos/{uuid}")
+    Call<ResponseBody> upload(@Path("uuid") String uuid, @Part MultipartBody.Part file);
 }
