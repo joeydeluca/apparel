@@ -189,7 +189,7 @@ public class ApparelSyncAdapter extends AbstractThreadedSyncAdapter {
                 File file = new File(photo.getPhotoPath());
                 RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file);
                 MultipartBody.Part body = MultipartBody.Part.createFormData("file", file.getName(), requestFile);
-                Call<ResponseBody> call = restService.upload(photo.getUuid(), body);
+                response = restService.upload(photo.getUuid(), body).execute();
             }
         }
     }
