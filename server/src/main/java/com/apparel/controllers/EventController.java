@@ -1,6 +1,5 @@
 package com.apparel.controllers;
 
-import com.apparel.controllers.dtos.SyncDto;
 import com.apparel.domain.model.event.Event;
 import com.apparel.domain.repository.EventRepository;
 import com.apparel.domain.repository.ItemRepository;

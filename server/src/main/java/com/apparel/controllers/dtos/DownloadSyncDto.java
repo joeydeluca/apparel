@@ -12,7 +12,7 @@ import java.util.Set;
  * Created by Joe Deluca on 8/24/2016.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class SyncDto {
+public class DownloadSyncDto {
     private Set<Item> items = new HashSet<>();
     private Set<Event> events = new HashSet<>();
     private Set<Photo> photos = new HashSet<>();

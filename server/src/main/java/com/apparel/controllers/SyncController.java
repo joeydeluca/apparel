@@ -1,7 +1,7 @@
 package com.apparel.controllers;
 
-import com.apparel.controllers.dtos.SyncDto;
-import com.apparel.domain.model.photo.Photo;
+import com.apparel.controllers.dtos.DownloadSyncDto;
+import com.apparel.controllers.dtos.UploadSyncDto;
 import com.apparel.domain.repository.EventRepository;
 import com.apparel.domain.repository.ItemRepository;
 import com.apparel.domain.repository.PhotoRepository;
@@ -10,8 +10,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by Joe Deluca on 8/24/2016.
@@ -39,9 +38,9 @@ public class SyncController {
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE
     )
-    public ResponseEntity<SyncDto> getUserData(@PathVariable("id") String uuid) {
+    public ResponseEntity<DownloadSyncDto> getUserData(@PathVariable("id") String uuid) {
 
-        SyncDto dto = new SyncDto();
+        DownloadSyncDto dto = new DownloadSyncDto();
 
         // Get items i own and items that are part of events that i am attending
         dto.setItems(itemRepository.findByUserUuid(uuid));
@@ -56,11 +55,11 @@ public class SyncController {
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE
     )
-    public ResponseEntity<String> setUserData(@PathVariable("id") String userId, @RequestBody SyncDto syncDto) {
+    public ResponseEntity<String> setUserData(@PathVariable("id") String userId, @RequestBody UploadSyncDto syncDto) {
 
         // Save
-        itemRepository.save(syncDto.getItems());
-        eventRepository.save(syncDto.getEvents());
+        itemRepository.save(syncDto.getItems().stream().map(i -> i.toEntity()).collect(Collectors.toList()));
+        eventRepository.save(syncDto.getEvents().stream().map(e -> e.toEntity()).collect(Collectors.toList()));
         photoRepository.save(syncDto.getPhotos());
 
         return ResponseEntity.ok("{\"status\":\"OK\"}");
