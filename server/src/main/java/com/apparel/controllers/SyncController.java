@@ -58,9 +58,10 @@ public class SyncController {
     public ResponseEntity<String> setUserData(@PathVariable("id") String userId, @RequestBody UploadSyncDto syncDto) {
 
         // Save
+        photoRepository.save(syncDto.getPhotos());
+        photoRepository.flush();
         itemRepository.save(syncDto.getItems().stream().map(i -> i.toEntity()).collect(Collectors.toList()));
         eventRepository.save(syncDto.getEvents().stream().map(e -> e.toEntity()).collect(Collectors.toList()));
-        photoRepository.save(syncDto.getPhotos());
 
         return ResponseEntity.ok("{\"status\":\"OK\"}");
     }
