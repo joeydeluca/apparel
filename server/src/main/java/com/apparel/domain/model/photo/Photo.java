@@ -17,27 +17,27 @@ public class Photo extends ApparelEntity {
 
     @JsonIgnore
     @Lob
-    @Column(name="thumbnail", nullable=false, columnDefinition="mediumblob")
-    private Byte[] thumbnail;
+    @Column(name="thumbnail", columnDefinition="mediumblob")
+    private byte[] thumbnail;
 
     @JsonIgnore
     @Lob
-    @Column(name="size_a", nullable=false, columnDefinition="mediumblob")
-    private Byte[] sizeA;
+    @Column(name="size_a", columnDefinition="mediumblob")
+    private byte[] sizeA;
 
-    public Byte[] getThumbnail() {
+    public byte[] getThumbnail() {
         return thumbnail;
     }
 
-    public void setThumbnail(final Byte[] thumbnail) {
+    public void setThumbnail(final byte[] thumbnail) {
         this.thumbnail = thumbnail;
     }
 
-    public Byte[] getSizeA() {
+    public byte[] getSizeA() {
         return sizeA;
     }
 
-    public void setSizeA(final Byte[] sizeA) {
+    public void setSizeA(final byte[] sizeA) {
         this.sizeA = sizeA;
     }
 
