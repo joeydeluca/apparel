@@ -2,6 +2,7 @@ package com.apparel.controllers.dtos;
 
 import com.apparel.domain.model.ApparelEntity;
 import com.apparel.domain.model.item.Item;
+import com.apparel.domain.model.photo.Photo;
 
 /**
  * Created by Joe Deluca on 8/28/2016.
@@ -11,6 +12,7 @@ public class ItemDto extends EntityDto {
     private String description;
     private String itemCategory;
     private String userUuid;
+    private String photoUuid;
 
     public String getName() {
         return name;
@@ -44,6 +46,14 @@ public class ItemDto extends EntityDto {
         this.userUuid = userUuid;
     }
 
+    public String getPhotoUuid() {
+        return photoUuid;
+    }
+
+    public void setPhotoUuid(String photoUuid) {
+        this.photoUuid = photoUuid;
+    }
+
     public Item toEntity() {
         Item item = new Item();
         super.toEntity(item);
@@ -51,6 +61,9 @@ public class ItemDto extends EntityDto {
         item.setDescription(description);
         item.setItemCategory(itemCategory);
         item.setUserUuid(userUuid);
+        Photo photo = new Photo();
+        photo.setUuid(photoUuid);
+        item.setPhoto(photo);
         return item;
     }
 }

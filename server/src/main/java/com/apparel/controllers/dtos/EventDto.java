@@ -18,6 +18,7 @@ public class EventDto extends EntityDto {
     @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="dd-MM-yyyy")
     private Date endDate;
     private String ownerUuid;
+    private String photoUuid;
 
     private Photo photo;
 
@@ -69,6 +70,22 @@ public class EventDto extends EntityDto {
         this.ownerUuid = ownerUuid;
     }
 
+    public String getPhotoUuid() {
+        return photoUuid;
+    }
+
+    public void setPhotoUuid(String photoUuid) {
+        this.photoUuid = photoUuid;
+    }
+
+    public Photo getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(Photo photo) {
+        this.photo = photo;
+    }
+
     public Event toEntity() {
         Event event = new Event();
         super.toEntity(event);
@@ -77,6 +94,9 @@ public class EventDto extends EntityDto {
         event.setStartDate(startDate);
         event.setEndDate(endDate);
         event.setOwnerUuid(ownerUuid);
+        Photo photo = new Photo();
+        photo.setUuid(photoUuid);
+        event.setPhoto(photo);
         return event;
     }
 }

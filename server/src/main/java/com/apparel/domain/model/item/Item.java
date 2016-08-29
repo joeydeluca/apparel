@@ -54,4 +54,12 @@ public class Item extends ApparelEntity {
     public void setUserUuid(String userUuid) {
         this.userUuid = userUuid;
     }
+
+    public Photo getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(Photo photo) {
+        this.photo = photo;
+    }
 }

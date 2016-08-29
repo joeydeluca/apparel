@@ -76,4 +76,11 @@ public class Event extends ApparelEntity {
         this.ownerUuid = ownerUuid;
     }
 
+    public Photo getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(Photo photo) {
+        this.photo = photo;
+    }
 }
