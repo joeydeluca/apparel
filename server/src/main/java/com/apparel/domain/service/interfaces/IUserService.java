@@ -1,6 +1,6 @@
 package com.apparel.domain.service.interfaces;
 
-import com.apparel.domain.model.user.User;
+import com.apparel.domain.model.User;
 
 import java.util.Collection;
 

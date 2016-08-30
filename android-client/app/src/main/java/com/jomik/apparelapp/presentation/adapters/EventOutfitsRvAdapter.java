@@ -41,8 +41,8 @@ public class EventOutfitsRvAdapter extends RecyclerView.Adapter<EventOutfitsRvAd
     public void onBindViewHolder(ViewHolder holder, final int i) {
         EventGuestOutfit eventGuestOutfit = eventGuestOutfits.get(i);
         holder.txtOutfitDescription.setText(eventGuestOutfit.getDescription());
-        holder.txtUsername.setText(eventGuestOutfit.getUser().getName());
-        ImageHelper.setFacebookProfileImageUri(holder.profileImage, eventGuestOutfit.getUser().getFacebookId());
+        holder.txtUsername.setText(eventGuestOutfit.getGuest().getName());
+        ImageHelper.setFacebookProfileImageUri(holder.profileImage, eventGuestOutfit.getGuest().getFacebookId());
 
         LinearLayoutManager llm = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
         holder.recyclerView.setLayoutManager(llm);

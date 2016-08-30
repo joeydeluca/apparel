@@ -1,6 +1,6 @@
 package com.apparel.domain.repository;
 
-import com.apparel.domain.model.user.User;
+import com.apparel.domain.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**

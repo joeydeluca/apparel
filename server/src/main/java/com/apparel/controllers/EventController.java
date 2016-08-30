@@ -1,6 +1,6 @@
 package com.apparel.controllers;
 
-import com.apparel.domain.model.event.Event;
+import com.apparel.domain.model.Event;
 import com.apparel.domain.repository.EventRepository;
 import com.apparel.domain.repository.ItemRepository;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,6 +1,6 @@
 package com.apparel.controllers;
 
-import com.apparel.domain.model.photo.Photo;
+import com.apparel.domain.model.Photo;
 import com.apparel.domain.repository.PhotoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

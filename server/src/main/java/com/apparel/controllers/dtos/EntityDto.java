@@ -1,10 +1,13 @@
+/*
 package com.apparel.controllers.dtos;
 
 import com.apparel.domain.model.ApparelEntity;
 
+*/
 /**
  * Created by Joe Deluca on 8/28/2016.
- */
+ *//*
+
 public abstract class EntityDto {
     private String uuid;
     private int version = 0;
@@ -40,3 +43,4 @@ public abstract class EntityDto {
         apparelEntity.setMarkedForDelete(markedForDelete);
     }
 }
+*/

@@ -2,9 +2,6 @@ package com.jomik.apparelapp.domain.entities;
 
 import android.content.ContentValues;
 
-import com.jomik.apparelapp.domain.entities.Entity;
-import com.jomik.apparelapp.domain.entities.Item;
-import com.jomik.apparelapp.domain.entities.User;
 import com.jomik.apparelapp.infrastructure.providers.ApparelContract;
 
 import java.util.List;
@@ -17,15 +14,15 @@ public class EventGuestOutfit extends Entity {
     private String description;
     private String eventGuestUuid;
 
-    private User user;
+    private User guest;
     private List<Item> items;
 
-    public User getUser() {
-        return user;
+    public User getGuest() {
+        return guest;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setGuest(User guest) {
+        this.guest = guest;
     }
 
     public String getDate() {

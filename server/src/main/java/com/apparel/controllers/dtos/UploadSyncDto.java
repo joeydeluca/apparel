@@ -1,14 +1,17 @@
+/*
 package com.apparel.controllers.dtos;
 
-import com.apparel.domain.model.photo.Photo;
+import com.apparel.domain.model.Photo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.util.HashSet;
 import java.util.Set;
 
+*/
 /**
  * Created by Joe Deluca on 8/24/2016.
- */
+ *//*
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class UploadSyncDto {
     private Set<ItemDto> items = new HashSet<>();
@@ -39,3 +42,4 @@ public class UploadSyncDto {
         this.photos = photos;
     }
 }
+*/

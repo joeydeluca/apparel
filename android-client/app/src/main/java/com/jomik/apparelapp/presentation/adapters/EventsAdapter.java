@@ -19,7 +19,7 @@ import java.util.List;
  */
 public class EventsAdapter extends ArrayAdapter<Event> {
 
-    private final Context context;
+    private final Context context;Set<EventGuest>
     private final List<Event> events;
 
     public EventsAdapter(Context context, List<Event> events) {

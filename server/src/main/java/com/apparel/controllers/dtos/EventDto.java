@@ -1,14 +1,17 @@
+/*
 package com.apparel.controllers.dtos;
 
-import com.apparel.domain.model.event.Event;
-import com.apparel.domain.model.photo.Photo;
+import com.apparel.domain.model.Event;
+import com.apparel.domain.model.Photo;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.util.Date;
 
+*/
 /**
  * Created by Joe Deluca on 8/28/2016.
- */
+ *//*
+
 public class EventDto extends EntityDto {
     private String title;
     private String location;
@@ -100,3 +103,4 @@ public class EventDto extends EntityDto {
         return event;
     }
 }
+*/

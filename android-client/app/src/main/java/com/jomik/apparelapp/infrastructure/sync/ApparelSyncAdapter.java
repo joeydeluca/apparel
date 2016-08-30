@@ -80,6 +80,12 @@ public class ApparelSyncAdapter extends AbstractThreadedSyncAdapter {
             if(syncDtoResponse == null) syncDtoResponse = new SyncDto();
             SyncDto syncDtoRequest = new SyncDto();
 
+            // User
+            User remoteUser = syncDtoResponse.getUser();
+            if(remoteUser == null) {
+                syncDtoRequest.setUser(user);
+            }
+
             // Items
             List<Item> existingLocalItems = SqlHelper.getItemsFromProvider(provider);
             Set<Item> existingRemoteItems = syncDtoResponse.getItems();

@@ -147,12 +147,12 @@ public class ViewEventOutfitsActivity extends AppCompatActivity {
 
             if(eventOutfit == null) {
                 eventOutfit = new EventGuestOutfit();
-                eventOutfit.setUser(getUser(cursor));
+                eventOutfit.setGuest(getUser(cursor));
                 eventOutfit.setDate(SqlHelper.getString(cursor, EventGuestOutfits.EVENT_DATE, DbSchema.PREFIX_TBL_EVENT_GUEST_OUTFITS));
                 eventOutfit.setDescription(SqlHelper.getString(cursor, EventGuestOutfits.DESCRIPTION, DbSchema.PREFIX_TBL_EVENT_GUEST_OUTFITS));
                 EventOutfitMap.put(eventOutfitUuid, eventOutfit);
 
-                if(AuthenticationManager.getAuthenticatedUser(this).getUuid().equals(eventOutfit.getUser().getUuid())) {
+                if(AuthenticationManager.getAuthenticatedUser(this).getUuid().equals(eventOutfit.getGuest().getUuid())) {
                     myEventGuestUuid = SqlHelper.getString(cursor, EventGuests.UUID, DbSchema.PREFIX_TBL_EVENT_GUESTS);
                     myOutfitDescription = SqlHelper.getString(cursor, EventGuestOutfits.DESCRIPTION, DbSchema.PREFIX_TBL_EVENT_GUEST_OUTFITS);
                 }
@@ -169,7 +169,7 @@ public class ViewEventOutfitsActivity extends AppCompatActivity {
                 items.add(getItem(cursor));
             }
 
-            if(AuthenticationManager.getAuthenticatedUser(this).getUuid().equals(eventOutfit.getUser().getUuid())) {
+            if(AuthenticationManager.getAuthenticatedUser(this).getUuid().equals(eventOutfit.getGuest().getUuid())) {
                 mySelectedItems.addAll(items);
             }
 

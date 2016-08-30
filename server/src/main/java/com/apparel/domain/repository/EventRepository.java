@@ -1,6 +1,6 @@
 package com.apparel.domain.repository;
 
-import com.apparel.domain.model.event.Event;
+import com.apparel.domain.model.Event;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Set;

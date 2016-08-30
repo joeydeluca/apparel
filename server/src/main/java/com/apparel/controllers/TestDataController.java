@@ -1,7 +1,7 @@
 package com.apparel.controllers;
 
-import com.apparel.domain.model.item.Item;
-import com.apparel.domain.model.item.ItemCategory;
+import com.apparel.domain.model.Event;
+import com.apparel.domain.model.Item;
 import com.apparel.domain.repository.ItemRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;

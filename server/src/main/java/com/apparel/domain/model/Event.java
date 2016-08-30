@@ -1,14 +1,15 @@
-package com.apparel.domain.model.event;
+package com.apparel.domain.model;
 
 
-import com.apparel.domain.model.ApparelEntity;
-import com.apparel.domain.model.photo.Photo;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by Joe Deluca on 3/22/2016.
@@ -18,15 +19,19 @@ public class Event extends ApparelEntity {
     private String title;
     private String location;
     private String description;
-    @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="dd-MM-yyyy")
+    @JsonFormat(shape= JsonFormat.Shape.STRING, pattern=DATE_FORMAT_PATTERN)
     private Date startDate;
-    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="dd-MM-yyyy")
+    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern=DATE_FORMAT_PATTERN)
     private Date endDate;
     private String ownerUuid;
 
     @OneToOne
     @JoinColumn(name = "photoUuid")
     private Photo photo;
+
+    @OneToMany
+    @JoinColumn(name = "event")
+    private Set<EventGuest> eventGuests = new HashSet<>();
 
     public String getTitle() {
         return title;

@@ -8,6 +8,8 @@ import java.util.Date;
  */
 @MappedSuperclass
 public abstract class ApparelEntity {
+    public final static String DATE_FORMAT_PATTERN = "dd-MM-yyyy";
+
     @Id
     private String uuid;
 

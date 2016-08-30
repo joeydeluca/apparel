@@ -1,12 +1,15 @@
+/*
 package com.apparel.controllers.dtos;
 
 import com.apparel.domain.model.ApparelEntity;
-import com.apparel.domain.model.item.Item;
-import com.apparel.domain.model.photo.Photo;
+import com.apparel.domain.model.Item;
+import com.apparel.domain.model.Photo;
 
+*/
 /**
  * Created by Joe Deluca on 8/28/2016.
- */
+ *//*
+
 public class ItemDto extends EntityDto {
     private String name;
     private String description;
@@ -67,3 +70,4 @@ public class ItemDto extends EntityDto {
         return item;
     }
 }
+*/

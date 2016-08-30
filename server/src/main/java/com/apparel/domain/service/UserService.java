@@ -1,6 +1,6 @@
 package com.apparel.domain.service;
 
-import com.apparel.domain.model.user.User;
+import com.apparel.domain.model.User;
 import com.apparel.domain.repository.UserRepository;
 import com.apparel.domain.service.interfaces.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;

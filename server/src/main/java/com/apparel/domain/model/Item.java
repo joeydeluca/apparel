@@ -1,13 +1,9 @@
-package com.apparel.domain.model.item;
+package com.apparel.domain.model;
 
-
-import com.apparel.domain.model.ApparelEntity;
-import com.apparel.domain.model.photo.Photo;
 
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
-import javax.persistence.PrimaryKeyJoinColumn;
 
 /**
  * Created by Joe Deluca on 3/22/2016.

@@ -1,6 +1,6 @@
 package com.apparel.domain.repository;
 
-import com.apparel.domain.model.photo.Photo;
+import com.apparel.domain.model.Photo;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**

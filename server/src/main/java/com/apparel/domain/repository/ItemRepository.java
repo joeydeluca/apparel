@@ -1,6 +1,6 @@
 package com.apparel.domain.repository;
 
-import com.apparel.domain.model.item.Item;
+import com.apparel.domain.model.Item;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Set;

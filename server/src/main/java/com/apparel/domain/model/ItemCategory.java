@@ -1,4 +1,4 @@
-package com.apparel.domain.model.item;
+package com.apparel.domain.model;
 
 /**
  * Created by Joe Deluca on 3/24/2016.
