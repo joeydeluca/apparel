@@ -2,10 +2,7 @@ package com.apparel.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
 
@@ -18,7 +15,7 @@ public class EventGuestOutfit extends ApparelEntity {
     private Date date;
     private String description;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "guestUuid")
     private EventGuest eventGuest;
 
@@ -48,5 +45,13 @@ public class EventGuestOutfit extends ApparelEntity {
 
     public void setItems(List<Item> items) {
         this.items = items;
+    }
+
+    public EventGuest getEventGuest() {
+        return eventGuest;
+    }
+
+    public void setEventGuest(EventGuest eventGuest) {
+        this.eventGuest = eventGuest;
     }
 }

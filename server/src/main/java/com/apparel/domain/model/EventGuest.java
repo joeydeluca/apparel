@@ -9,15 +9,16 @@ import java.util.Set;
  */
 @Entity
 public class EventGuest extends ApparelEntity {
-    @OneToOne(optional=false)
-    @JoinColumn(name="uuid")
+    @ManyToOne(optional=false)
+    @JoinColumn(name="eventUuid")
     private Event event;
 
-    @OneToOne(optional=false)
-    @JoinColumn(name="uuid", referencedColumnName="uuid")
+    @ManyToOne(optional=false)
+    @JoinColumn(name="guestUuid")
     private User guest;
 
-    @OneToMany(mappedBy = "eventGuest")
+    @OneToMany
+    @JoinColumn(name = "eventGuestOutfitUuid")
     private Set<EventGuestOutfit> eventGuestOutfits = new HashSet<>();
 
     public Event getEvent() {

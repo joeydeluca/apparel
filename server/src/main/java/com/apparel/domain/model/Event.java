@@ -88,4 +88,12 @@ public class Event extends ApparelEntity {
     public void setPhoto(Photo photo) {
         this.photo = photo;
     }
+
+    public Set<EventGuest> getEventGuests() {
+        return eventGuests;
+    }
+
+    public void setEventGuests(Set<EventGuest> eventGuests) {
+        this.eventGuests = eventGuests;
+    }
 }
