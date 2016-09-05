@@ -1,3 +1,4 @@
+/*
 package com.jomik.apparelapp.infrastructure.rest;
 
 import com.jomik.apparelapp.domain.entities.Event;
@@ -8,9 +9,11 @@ import com.jomik.apparelapp.domain.entities.User;
 import java.util.HashSet;
 import java.util.Set;
 
+*/
 /**
  * Created by Joe Deluca on 8/24/2016.
- */
+ *//*
+
 public class SyncDto {
     private User user;
     private Set<Item> items = new HashSet<>();
@@ -29,11 +32,11 @@ public class SyncDto {
         this.user = user;
     }
 
-    public Set<Item> getItems() {
+    public Set<Item> getEventGuestOutfitItems() {
         return items;
     }
 
-    public void setItems(Set<Item> items) {
+    public void setEventGuestOutfitItems(Set<Item> items) {
         this.items = items;
     }
 
@@ -55,3 +58,4 @@ public class SyncDto {
 
 
 }
+*/

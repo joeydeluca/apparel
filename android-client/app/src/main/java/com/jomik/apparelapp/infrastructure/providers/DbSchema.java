@@ -126,6 +126,17 @@ public interface DbSchema {
                     "LEFT JOIN "+TBL_USERS+" "+PREFIX_TBL_USERS+" on "+PREFIX_TBL_USERS+".uuid = "+ PREFIX_TBL_EVENTS +".owner_uuid " +
                     "LEFT JOIN "+TBL_EVENT_GUESTS+" "+PREFIX_TBL_EVENT_GUESTS+" on "+PREFIX_TBL_EVENT_GUESTS+".event_uuid = "+ PREFIX_TBL_EVENTS +".uuid";
 
+    String FROM_EVENTS_FULL =
+            TBL_EVENTS + " " + PREFIX_TBL_EVENTS + " " +
+                    "LEFT JOIN "+TBL_PHOTOS+" "+PREFIX_TBL_PHOTOS+" on "+PREFIX_TBL_PHOTOS+".uuid = "+ PREFIX_TBL_EVENTS +".photo_uuid " +
+                    "LEFT JOIN "+TBL_USERS+" "+PREFIX_TBL_USERS+" on "+PREFIX_TBL_USERS+".uuid = "+ PREFIX_TBL_EVENTS +".owner_uuid " +
+                    "LEFT JOIN "+TBL_EVENT_GUESTS+" "+PREFIX_TBL_EVENT_GUESTS+" on "+PREFIX_TBL_EVENT_GUESTS+".event_uuid = "+ PREFIX_TBL_EVENTS +".uuid " +
+                    "LEFT JOIN "+TBL_EVENT_GUEST_OUTFITS+" "+PREFIX_TBL_EVENT_GUEST_OUTFITS+" on "+PREFIX_TBL_EVENT_GUEST_OUTFITS+".event_guest_uuid = "+ PREFIX_TBL_EVENT_GUESTS +".uuid " +
+                    "LEFT JOIN "+TBL_EVENT_GUEST_OUTFIT_ITEMS+" "+PREFIX_TBL_EVENT_GUEST_OUTFIT_ITEMS+" on "+PREFIX_TBL_EVENT_GUEST_OUTFIT_ITEMS+".event_guest_outfit_uuid = "+PREFIX_TBL_EVENT_GUEST_OUTFITS+".uuid " +
+                    "LEFT JOIN "+TBL_ITEMS+" "+PREFIX_TBL_ITEMS+" on "+PREFIX_TBL_ITEMS+".uuid = "+PREFIX_TBL_EVENT_GUEST_OUTFIT_ITEMS+".item_uuid " +
+                    "LEFT JOIN "+TBL_PHOTOS+" "+PREFIX_TBL_PHOTOS+"_event on "+PREFIX_TBL_PHOTOS+"_event.uuid = "+PREFIX_TBL_ITEMS+".photo_uuid"
+            ;
+
     String FROM_EVENT_GUESTS =
                     TBL_EVENT_GUESTS + " " + PREFIX_TBL_EVENT_GUESTS + " " +
                    "JOIN "+TBL_EVENTS+" "+PREFIX_TBL_EVENTS+" on "+PREFIX_TBL_EVENTS+".uuid = "+ PREFIX_TBL_EVENT_GUESTS +".event_uuid " +

@@ -2,36 +2,42 @@ package com.jomik.apparelapp.domain.entities;
 
 import android.content.ContentValues;
 
-import com.jomik.apparelapp.infrastructure.providers.ApparelContract;
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
 
 /**
  * Created by Joe Deluca on 8/26/2016.
  */
+@DatabaseTable(tableName="event_guest_outfit_items")
 public class EventGuestOutfitItem extends Entity {
-    private String eventGuestOutfitUuid;
-    private String itemUuid;
+    @DatabaseField(foreign=true, columnName="event_guest_outfit_uuid")
+    private EventGuestOutfit eventGuestOutfit;
+    @DatabaseField(columnName = "item_uuid", foreign = true, foreignAutoRefresh = true)
+    private Item item;
 
-    public String getEventGuestOutfitUuid() {
-        return eventGuestOutfitUuid;
+    public EventGuestOutfitItem() {
     }
 
-    public void setEventGuestOutfitUuid(String eventGuestOutfitUuid) {
-        this.eventGuestOutfitUuid = eventGuestOutfitUuid;
+    public EventGuestOutfit getEventGuestOutfit() {
+        return eventGuestOutfit;
     }
 
-    public String getItemUuid() {
-        return itemUuid;
+    public void setEventGuestOutfit(EventGuestOutfit eventGuestOutfit) {
+        this.eventGuestOutfit = eventGuestOutfit;
     }
 
-    public void setItemUuid(String itemUuid) {
-        this.itemUuid = itemUuid;
+    public Item getItem() {
+        return item;
+    }
+
+    public void setItem(Item item) {
+        this.item = item;
     }
 
     @Override
     protected ContentValues getExtraContentValues() {
         ContentValues values = new ContentValues();
-        values.put(ApparelContract.EventGuestOutfitItems.EVENT_GUEST_OUTFIT_UUID, getEventGuestOutfitUuid());
-        values.put(ApparelContract.EventGuestOutfitItems.ITEM_UUID, getItemUuid());
+
         return values;
     }
 }

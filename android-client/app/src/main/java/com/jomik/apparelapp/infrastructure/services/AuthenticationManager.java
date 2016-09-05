@@ -4,13 +4,16 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.content.ContentResolver;
 import android.content.Context;
-import android.database.Cursor;
+import android.content.Intent;
 
 import com.facebook.AccessToken;
 import com.facebook.login.LoginManager;
 import com.jomik.apparelapp.domain.entities.User;
+import com.jomik.apparelapp.infrastructure.ormlite.OrmLiteSqlHelper;
 import com.jomik.apparelapp.infrastructure.providers.ApparelContract;
-import com.jomik.apparelapp.infrastructure.providers.SqlOpenHelper;
+import com.jomik.apparelapp.presentation.activities.FacebookLoginActivity;
+
+import java.sql.SQLException;
 
 /**
  * Created by Joe Deluca on 4/27/2016.
@@ -20,27 +23,26 @@ public class AuthenticationManager {
     private static User user;
 
     public static User getAuthenticatedUser(Context context) {
+
         if(user == null) {
 
             AccessToken accessToken = AccessToken.getCurrentAccessToken();
-            if(accessToken == null) {
-                return null;
+            if (accessToken == null) {
+                Intent intent = new Intent(context, FacebookLoginActivity.class);
+                context.startActivity(intent);
             }
 
-            String facebookId = accessToken.getUserId();
-
-            SqlOpenHelper sqlOpenHelper = new SqlOpenHelper(context);
-            Cursor cursor = sqlOpenHelper.getReadableDatabase()
-                            .query("users", new String[] {"_id", "uuid", "name"}, "facebook_id = ?", new String[] {facebookId}, null, null, null);
-
-            if(cursor.moveToNext()) {
-                user = new User();
-                user.setId(cursor.getLong(cursor.getColumnIndex("_id")));
-                user.setUuid(cursor.getString(cursor.getColumnIndex("uuid")));
-                user.setName(cursor.getString(cursor.getColumnIndex("name")));
-                user.setFacebookId(facebookId);
+            OrmLiteSqlHelper helper  = new OrmLiteSqlHelper(context);
+            try {
+                user = helper.getUserDao().queryBuilder().where().eq("facebook_id", accessToken.getUserId()).queryForFirst();
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
-            cursor.close();
+        }
+
+        if(user == null) {
+            Intent intent = new Intent(context, FacebookLoginActivity.class);
+            context.startActivity(intent);
         }
 
         return user;

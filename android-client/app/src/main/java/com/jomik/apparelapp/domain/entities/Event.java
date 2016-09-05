@@ -3,7 +3,11 @@ package com.jomik.apparelapp.domain.entities;
 import android.content.ContentValues;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.j256.ormlite.dao.ForeignCollection;
+import com.j256.ormlite.field.DataType;
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.ForeignCollectionField;
+import com.j256.ormlite.table.DatabaseTable;
 import com.jomik.apparelapp.infrastructure.providers.ApparelContract;
 import com.jomik.apparelapp.infrastructure.providers.SqlHelper;
 
@@ -12,21 +16,35 @@ import java.util.Date;
 /**
  * Created by Joe Deluca on 3/22/2016.
  */
+@DatabaseTable(tableName="events")
 public class Event extends Entity {
+    @DatabaseField(columnName="title")
     private String title;
+    @DatabaseField(columnName="location")
     private String location;
+    @DatabaseField(columnName="description")
     private String description;
+    @DatabaseField(columnName="start_date", dataType = DataType.DATE_STRING, format = SqlHelper.dateFormatForDbPattern)
     @JsonFormat(shape= JsonFormat.Shape.STRING, pattern=SqlHelper.dateFormatForDbPattern)
     private Date startDate;
+    @DatabaseField(columnName="end_date", dataType = DataType.DATE_STRING, format = SqlHelper.dateFormatForDbPattern)
     @JsonFormat(shape= JsonFormat.Shape.STRING, pattern=SqlHelper.dateFormatForDbPattern)
     private Date endDate;
-    private String ownerUuid;
-    private String photoUuid;
 
+    @DatabaseField(columnName = "photo_uuid", foreign = true, foreignAutoRefresh = true)
     private Photo photo;
-
-    @JsonIgnore
+    @DatabaseField(columnName = "owner_uuid", foreign = true, foreignAutoRefresh = true)
     private User owner;
+
+    @ForeignCollectionField()
+    private ForeignCollection<EventGuest> eventGuests;
+
+    public Event() {
+    }
+
+    public ForeignCollection<EventGuest> getEventGuests() {
+        return eventGuests;
+    }
 
     public String getTitle() {
         return title;
@@ -58,22 +76,6 @@ public class Event extends Entity {
 
     public void setEndDate(Date endDate) {
         this.endDate = endDate;
-    }
-
-    public String getOwnerUuid() {
-        return ownerUuid;
-    }
-
-    public void setOwnerUuid(String ownerUuid) {
-        this.ownerUuid = ownerUuid;
-    }
-
-    public String getPhotoUuid() {
-        return photoUuid;
-    }
-
-    public void setPhotoUuid(String photoUuid) {
-        this.photoUuid = photoUuid;
     }
 
     public User getOwner() {
@@ -108,8 +110,6 @@ public class Event extends Entity {
         values.put(ApparelContract.Events.DESCRIPTION, getDescription());
         values.put(ApparelContract.Events.START_DATE, SqlHelper.getDateForDb(getStartDate()));
         values.put(ApparelContract.Events.END_DATE, SqlHelper.getDateForDb(getEndDate()));
-        values.put(ApparelContract.Events.OWNER_UUID, getOwnerUuid());
-        values.put(ApparelContract.Events.PHOTO_UUID, getPhotoUuid());
         return values;
     }
 }

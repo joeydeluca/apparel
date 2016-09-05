@@ -16,10 +16,10 @@ import retrofit2.http.Path;
 public interface RestService {
 
     @GET("users/{uuid}")
-    Call<SyncDto> getUserData(@Path("uuid") String userUuid);
+    Call<DownloadSyncDto> getUserData(@Path("uuid") String userUuid);
 
     @POST("users/{uuid}")
-    Call<ResponseBody> saveUserData(@Path("uuid") String userUuid, @Body SyncDto syncDto);
+    Call<ResponseBody> saveUserData(@Path("uuid") String userUuid, @Body UploadSyncDto syncDto);
 
     @Multipart
     @POST("photos/{uuid}")

@@ -19,7 +19,7 @@ import java.util.List;
  */
 public class EventsAdapter extends ArrayAdapter<Event> {
 
-    private final Context context;Set<EventGuest>
+    private final Context context;
     private final List<Event> events;
 
     public EventsAdapter(Context context, List<Event> events) {
@@ -44,7 +44,7 @@ public class EventsAdapter extends ArrayAdapter<Event> {
         SimpleDraweeView draweeView = (SimpleDraweeView) rowView.findViewById(R.id.my_image_view);
         ImageHelper.setImageUri(draweeView, event.getPhoto().getPhotoPathSmall());
 
-        rowView.setTag(events.get(position).getId());
+        rowView.setTag(events.get(position).getUuid());
 
         return rowView;
     }

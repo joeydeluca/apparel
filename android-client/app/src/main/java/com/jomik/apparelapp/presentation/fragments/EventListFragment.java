@@ -1,8 +1,6 @@
 package com.jomik.apparelapp.presentation.fragments;
 
 import android.content.Intent;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -17,9 +15,7 @@ import com.jomik.apparelapp.domain.entities.Event;
 import com.jomik.apparelapp.domain.entities.User;
 import com.jomik.apparelapp.infrastructure.events.FindUserEventsComplete;
 import com.jomik.apparelapp.infrastructure.events.FindUserEventsStart;
-import com.jomik.apparelapp.infrastructure.providers.ApparelContract;
-import com.jomik.apparelapp.infrastructure.providers.DbSchema;
-import com.jomik.apparelapp.infrastructure.providers.SqlHelper;
+import com.jomik.apparelapp.infrastructure.ormlite.OrmLiteSqlHelper;
 import com.jomik.apparelapp.infrastructure.services.AuthenticationManager;
 import com.jomik.apparelapp.presentation.activities.EditEventActivity;
 import com.jomik.apparelapp.presentation.activities.EventSearchActivity;
@@ -29,6 +25,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.List;
 
@@ -78,14 +75,12 @@ public class EventListFragment extends Fragment {
     }
 
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
-    public void onMessage(FindUserEventsStart findUserEventsStart) throws ParseException {
+    public void onMessage(FindUserEventsStart findUserEventsStart) throws ParseException, SQLException {
 
         User user = AuthenticationManager.getAuthenticatedUser(getContext());
 
-        // Find all owning events
-        Uri uri = ApparelContract.Events.CONTENT_URI ;
-        Cursor cursor = getActivity().getContentResolver().query(uri, ApparelContract.Events.PROJECTION_ALL, "("+DbSchema.PREFIX_TBL_EVENTS + "." + ApparelContract.Events.OWNER_UUID + " = ? or eg.guest_uuid=?) and e.marked_for_delete=?", new String[] {user.getUuid(), user.getUuid(), "0"}, null);
-        List<Event> events = SqlHelper.getEventsFromCursor(cursor);
+        OrmLiteSqlHelper helper  = new OrmLiteSqlHelper(getContext());
+        List<Event> events = helper.getEventDao().queryBuilder().where().eq("marked_for_delete", false).query();
 
         EventBus.getDefault().post(new FindUserEventsComplete(events));
     }

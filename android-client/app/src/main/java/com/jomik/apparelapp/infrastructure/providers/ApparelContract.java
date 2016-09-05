@@ -4,6 +4,8 @@ import android.content.ContentResolver;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
+import com.jomik.apparelapp.domain.entities.EventGuestOutfitItem;
+
 /**
  * Created by Joe Deluca of house targaryen, first his name, mother of dragons and breaker of chains on 7/3/2016.
  */
@@ -61,6 +63,35 @@ public class ApparelContract {
                 SqlHelper.getSelectColumn(CommonColumns.MARKED_FOR_DELETE, DbSchema.PREFIX_TBL_USERS),
                 SqlHelper.getSelectColumn(Users.NAME, DbSchema.PREFIX_TBL_USERS),
                 SqlHelper.getSelectColumn(Users.FACEBOOK_ID, DbSchema.PREFIX_TBL_USERS),
+        };
+
+        public static final String[] PROJECTION_ALL_FULL = new String[] {
+                SqlHelper.getSelectColumn(CommonColumns._ID, DbSchema.PREFIX_TBL_EVENTS),
+                SqlHelper.getSelectColumn(CommonColumns.UUID, DbSchema.PREFIX_TBL_EVENTS),
+                SqlHelper.getSelectColumn(CommonColumns.VERSION, DbSchema.PREFIX_TBL_EVENTS),
+                SqlHelper.getSelectColumn(CommonColumns.MARKED_FOR_DELETE, DbSchema.PREFIX_TBL_EVENTS),
+                SqlHelper.getSelectColumn(Events.TITLE, DbSchema.PREFIX_TBL_EVENTS),
+                SqlHelper.getSelectColumn(Events.LOCATION, DbSchema.PREFIX_TBL_EVENTS),
+                SqlHelper.getSelectColumn(Events.START_DATE, DbSchema.PREFIX_TBL_EVENTS),
+                SqlHelper.getSelectColumn(Events.END_DATE, DbSchema.PREFIX_TBL_EVENTS),
+                SqlHelper.getSelectColumn(Events.DESCRIPTION, DbSchema.PREFIX_TBL_EVENTS),
+                SqlHelper.getSelectColumn(Events.OWNER_UUID, DbSchema.PREFIX_TBL_EVENTS),
+                SqlHelper.getSelectColumn(CommonColumns._ID, DbSchema.PREFIX_TBL_PHOTOS),
+                SqlHelper.getSelectColumn(CommonColumns.UUID, DbSchema.PREFIX_TBL_PHOTOS),
+                SqlHelper.getSelectColumn(CommonColumns.VERSION, DbSchema.PREFIX_TBL_PHOTOS),
+                SqlHelper.getSelectColumn(CommonColumns.MARKED_FOR_DELETE, DbSchema.PREFIX_TBL_PHOTOS),
+                SqlHelper.getSelectColumn(Photos.LOCAL_PATH, DbSchema.PREFIX_TBL_PHOTOS),
+                SqlHelper.getSelectColumn(Photos.LOCAL_PATH_SM, DbSchema.PREFIX_TBL_PHOTOS),
+                SqlHelper.getSelectColumn(CommonColumns._ID, DbSchema.PREFIX_TBL_USERS),
+                SqlHelper.getSelectColumn(CommonColumns.UUID, DbSchema.PREFIX_TBL_USERS),
+                SqlHelper.getSelectColumn(CommonColumns.VERSION, DbSchema.PREFIX_TBL_USERS),
+                SqlHelper.getSelectColumn(CommonColumns.MARKED_FOR_DELETE, DbSchema.PREFIX_TBL_USERS),
+                SqlHelper.getSelectColumn(Users.NAME, DbSchema.PREFIX_TBL_USERS),
+                SqlHelper.getSelectColumn(Users.FACEBOOK_ID, DbSchema.PREFIX_TBL_USERS),
+
+                SqlHelper.getSelectColumn(EventGuestOutfitItems.ITEM_UUID, DbSchema.PREFIX_TBL_EVENT_GUEST_OUTFIT_ITEMS),
+
+
         };
 
         public static final String SORT_ORDER_DEFAULT = TITLE + " ASC";

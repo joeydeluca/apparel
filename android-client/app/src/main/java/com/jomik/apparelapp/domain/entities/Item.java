@@ -4,18 +4,24 @@ package com.jomik.apparelapp.domain.entities;
 import android.content.ContentValues;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
 import com.jomik.apparelapp.infrastructure.providers.ApparelContract;
 
 /**
  * Created by Joe Deluca on 3/22/2016.
  */
+@DatabaseTable(tableName="items")
 public class Item extends Entity {
+    @DatabaseField(columnName="name")
     private String name;
+    @DatabaseField(columnName="description")
     private String description;
+    @DatabaseField(columnName="item_category")
     private ItemCategory itemCategory;
-    private String photoUuid;
-    private String userUuid;
-
+    @DatabaseField(columnName = "user_uuid", foreign = true, foreignAutoRefresh = true)
+    private User user;
+    @DatabaseField(columnName = "photo_uuid", foreign = true, foreignAutoRefresh = true)
     private Photo photo;
 
     public String getName() {
@@ -42,28 +48,20 @@ public class Item extends Entity {
         this.itemCategory = itemCategory;
     }
 
-    public String getPhotoUuid() {
-        return photoUuid;
-    }
-
-    public void setPhotoUuid(String photoUuid) {
-        this.photoUuid = photoUuid;
-    }
-
-    public String getUserUuid() {
-        return userUuid;
-    }
-
-    public void setUserUuid(String userUuid) {
-        this.userUuid = userUuid;
-    }
-
     public Photo getPhoto() {
         return photo;
     }
 
     public void setPhoto(Photo photo) {
         this.photo = photo;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     @JsonIgnore
@@ -73,7 +71,6 @@ public class Item extends Entity {
         values.put(ApparelContract.Items.NAME, getName());
         values.put(ApparelContract.Items.DESCRIPTION, getDescription());
         values.put(ApparelContract.Items.ITEM_CATEGORY, getItemCategory().name());
-        values.put(ApparelContract.Items.PHOTO_UUID, getPhotoUuid());
         return values;
     }
 }

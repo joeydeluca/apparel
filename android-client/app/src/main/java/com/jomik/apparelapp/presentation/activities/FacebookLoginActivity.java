@@ -1,9 +1,7 @@
 package com.jomik.apparelapp.presentation.activities;
 
 import android.app.Activity;
-import android.content.ContentValues;
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
@@ -16,12 +14,14 @@ import com.facebook.GraphResponse;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.jomik.apparelapp.R;
-import com.jomik.apparelapp.infrastructure.providers.SqlOpenHelper;
+import com.jomik.apparelapp.domain.entities.User;
+import com.jomik.apparelapp.infrastructure.ormlite.OrmLiteSqlHelper;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.UUID;
+import java.sql.SQLException;
+
 
 public class FacebookLoginActivity extends AppCompatActivity {
 
@@ -49,22 +49,17 @@ public class FacebookLoginActivity extends AppCompatActivity {
                                     GraphResponse response) {
 
                                 try {
-                                    // Get existing user if applicable
-                                    SqlOpenHelper sqlOpenHelper = new SqlOpenHelper(getApplicationContext());
-                                    Cursor cursor = sqlOpenHelper.getReadableDatabase()
-                                            .query("users", new String[] {"_id"}, "facebook_id = ?", new String[] {object.getString("id")}, null, null, null);
-
-                                    if(!cursor.moveToNext()) {
-                                        ContentValues contentValues = new ContentValues();
-                                        contentValues.put("uuid", UUID.randomUUID().toString());
-                                        contentValues.put("facebook_id", object.getString("id"));
-                                        contentValues.put("name", object.getString("name"));
-                                        sqlOpenHelper.getWritableDatabase().insert("users", null, contentValues);
+                                    OrmLiteSqlHelper helper  = new OrmLiteSqlHelper(getApplicationContext());
+                                    User user = helper.getUserDao().queryBuilder().where().eq("facebook_id", object.getString("id")).queryForFirst();
+                                    if(user == null) {
+                                        user = new User();
                                     }
-                                    cursor.close();
+                                    user.setName(object.getString("name"));
+                                    user.setFacebookId(object.getString("id"));
+                                    helper.getUserDao().createOrUpdate(user);
 
                                     Toast.makeText(FacebookLoginActivity.this, "Welcome " + object.getString("name"), Toast.LENGTH_LONG).show();
-                                } catch (JSONException e) {
+                                } catch (JSONException | SQLException e) {
                                     e.printStackTrace();
                                 }
 

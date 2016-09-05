@@ -1,8 +1,5 @@
 package com.jomik.apparelapp.presentation.adapters;
 
-import android.content.ContentProviderClient;
-import android.content.ContentUris;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.CardView;
@@ -19,7 +16,6 @@ import android.widget.Toast;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.jomik.apparelapp.R;
 import com.jomik.apparelapp.domain.entities.Event;
-import com.jomik.apparelapp.infrastructure.providers.ApparelContract;
 import com.jomik.apparelapp.infrastructure.providers.SqlHelper;
 import com.jomik.apparelapp.infrastructure.services.AuthenticationManager;
 import com.jomik.apparelapp.infrastructure.services.ImageHelper;
@@ -58,7 +54,7 @@ public class EventsRvAdapter extends RecyclerView.Adapter<EventsRvAdapter.EventV
         holder.description.setText(event.getDescription());
         holder.ownerText.setText("Created by " + event.getOwner().getName());
 
-        String displayDate = SqlHelper.dateFormatForDb.format(event.getStartDate());
+        String displayDate = SqlHelper.dateFormatForDisplay.format(event.getStartDate());
         if(event.getEndDate() != null && !event.getEndDate().equals(event.getStartDate())) {
             displayDate = displayDate + " - " + event.getEndDate();
         }
@@ -69,7 +65,7 @@ public class EventsRvAdapter extends RecyclerView.Adapter<EventsRvAdapter.EventV
 
         final PopupMenu popup = new PopupMenu(context, holder.btnMenu);
 
-        if(events.get(i).getOwnerUuid().equals(AuthenticationManager.getAuthenticatedUser(context).getUuid())) {
+        if(events.get(i).getOwner().getUuid().equals(AuthenticationManager.getAuthenticatedUser(context).getUuid())) {
             popup.getMenu().add(1, R.id.menu_manage, 1, "Manage");
             popup.getMenu().add(1, R.id.menu_delete, 10, "Delete");
         }
@@ -81,28 +77,25 @@ public class EventsRvAdapter extends RecyclerView.Adapter<EventsRvAdapter.EventV
                 switch (item.getItemId()) {
                     case R.id.menu_manage:
                         Intent intent = new Intent(context, EditEventActivity.class);
-                        intent.putExtra("id", event.getId());
+                        intent.putExtra("id", event.getUuid());
                         context.startActivity(intent);
                         break;
                     case R.id.menu_leave:
-                        if (!event.getOwnerUuid().equals(AuthenticationManager.getAuthenticatedUser(context).getUuid())) {
+                        if (!event.getOwner().getUuid().equals(AuthenticationManager.getAuthenticatedUser(context).getUuid())) {
                             events.remove(event);
                             notifyItemRemoved(i);
                         }
+                        // TODO
                         //events.get(i).getAttendees().remove(AuthenticationManager.getAuthenticatedUser(context));
                         //eventsRepository.save(events.get(i));
                         Toast.makeText(context, "You have left the event", Toast.LENGTH_LONG).show();
                         break;
                     case R.id.menu_delete:
                         // TODO: Are you sure prompt
-                        ContentValues values = new ContentValues();
-                        values.put(ApparelContract.CommonColumns.MARKED_FOR_DELETE, 1);
-                        values.put(ApparelContract.CommonColumns.VERSION, event.getVersion() + 1);
-                        context.getContentResolver().update(ContentUris.withAppendedId(ApparelContract.Items.CONTENT_URI, event.getId()), values, null, null);
-
+                        /*context.getContentResolver().delete(ContentUris.withAppendedId(ApparelContract.Events.CONTENT_URI, event.getUuid()), null, null);
                         events.remove(event);
                         notifyItemRemoved(i);
-                        Toast.makeText(context, "Event deleted", Toast.LENGTH_LONG).show();
+                        Toast.makeText(context, "Event deleted", Toast.LENGTH_LONG).show();*/
                         break;
                 }
 
@@ -120,7 +113,7 @@ public class EventsRvAdapter extends RecyclerView.Adapter<EventsRvAdapter.EventV
             public void onClick(View v) {
                 try {
                     Intent intent = new Intent(context, ViewEventOutfitsActivity.class);
-                    intent.putExtra("eventId", event.getId().toString());
+                    intent.putExtra("eventId", event.getUuid().toString());
                     intent.putExtra("startDate", event.getStartDate());
                     intent.putExtra("endDate", event.getEndDate());
                     context.startActivity(intent);

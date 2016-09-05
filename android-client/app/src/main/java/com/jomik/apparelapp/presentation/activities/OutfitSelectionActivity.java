@@ -17,15 +17,21 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.j256.ormlite.stmt.QueryBuilder;
 import com.jomik.apparelapp.R;
+import com.jomik.apparelapp.domain.entities.EventGuest;
+import com.jomik.apparelapp.domain.entities.EventGuestOutfit;
+import com.jomik.apparelapp.domain.entities.EventGuestOutfitItem;
 import com.jomik.apparelapp.domain.entities.Item;
-import com.jomik.apparelapp.domain.entities.Photo;
+import com.jomik.apparelapp.domain.entities.User;
+import com.jomik.apparelapp.infrastructure.ormlite.OrmLiteSqlHelper;
 import com.jomik.apparelapp.infrastructure.providers.ApparelContract;
-import com.jomik.apparelapp.infrastructure.providers.DbSchema;
 import com.jomik.apparelapp.infrastructure.providers.SqlHelper;
+import com.jomik.apparelapp.infrastructure.services.AuthenticationManager;
 import com.jomik.apparelapp.presentation.adapters.ItemImageRvAdapter;
 import com.jomik.apparelapp.presentation.adapters.ItemSelectionAdapter;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -41,12 +47,14 @@ public class OutfitSelectionActivity extends AppCompatActivity {
     private static final String EVENT_START_DATE = "eventStartDate";
     private static final String EVENT_END_DATE = "eventEndDate";
     private static final String EVENT_TARGET_DATE = "eventTargetDate";
+    private static final String EVENT_GUEST = "eventGuest";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_outfit_selection);
 
+        final EventGuest eventGuest = (EventGuest) getIntent().getSerializableExtra(EVENT_GUEST);;
         final String eventId = getIntent().getStringExtra(EVENT_ID);
         final String eventGuestUuid = getIntent().getStringExtra(GUEST_EVENT_UUID);
         final Date targetDate = (Date) getIntent().getSerializableExtra(EVENT_TARGET_DATE);
@@ -75,23 +83,15 @@ public class OutfitSelectionActivity extends AppCompatActivity {
         final ItemImageRvAdapter adapter = new ItemImageRvAdapter(selectedItems);
         rv.setAdapter(adapter);
 
-        Uri uri = ApparelContract.Items.CONTENT_URI;
-        Cursor cursor = getContentResolver().query(uri, ApparelContract.Items.PROJECTION_ALL, null, null, null);
+        final OrmLiteSqlHelper helper = new OrmLiteSqlHelper(getApplicationContext());
         final List<Item> items = new ArrayList<>();
-        while(cursor.moveToNext()) {
-            Item item = new Item();
-            SqlHelper.setCommonFieldsFromCursor(cursor, item, DbSchema.PREFIX_TBL_ITEMS);
-            item.setName(SqlHelper.getString(cursor, ApparelContract.Items.NAME, DbSchema.PREFIX_TBL_ITEMS));
-            item.setPhotoUuid(SqlHelper.getString(cursor, ApparelContract.Photos.UUID, DbSchema.PREFIX_TBL_PHOTOS));
-            Photo photo = new Photo();
-            SqlHelper.setCommonFieldsFromCursor(cursor, photo, DbSchema.PREFIX_TBL_PHOTOS);
-            photo.setPhotoPath(SqlHelper.getString(cursor, ApparelContract.Photos.LOCAL_PATH, DbSchema.PREFIX_TBL_PHOTOS));
-            photo.setPhotoPathSmall(SqlHelper.getString(cursor, ApparelContract.Photos.LOCAL_PATH_SM, DbSchema.PREFIX_TBL_PHOTOS));
-            item.setPhoto(photo);
-
-            items.add(item);
+        try {
+            QueryBuilder<User, String> userQb = helper.getUserDao().queryBuilder();
+            userQb.where().eq("uuid", AuthenticationManager.getAuthenticatedUser(getApplicationContext()).getUuid());
+            items.addAll(helper.getItemDao().queryBuilder().join(userQb).where().eq("marked_for_delete", false).query());
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-        cursor.close();
 
         gridView.setAdapter(new ItemSelectionAdapter(this, items.toArray(new Item[items.size()]), new HashSet<>(selectedItems)));
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -115,14 +115,33 @@ public class OutfitSelectionActivity extends AppCompatActivity {
         btnDone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                EventGuestOutfit eventGuestOutfit = null;
+                try {
+                    eventGuestOutfit = helper.getEventGuestOutfitDao().queryBuilder().where().eq("event_guest_uuid", eventGuestUuid).and().eq("event_date", targetDate).queryForFirst();
 
-                String guestOutfitUuid = getOrCreateEventGuestOutfitUuid(eventGuestUuid, targetDisplayDate);
+                    if(eventGuestOutfit == null) {
+                        eventGuestOutfit = new EventGuestOutfit();
+                        eventGuestOutfit.setDate(targetDate);
+                        eventGuestOutfit.setEventGuest(eventGuest);
+                    }
+                    eventGuestOutfit.setDescription(txtOutfitDescription.getText().toString());
+                    eventGuestOutfit.incrementVersion();
 
-                deleteExistingOutfit(eventGuestUuid, targetDisplayDate);
+                    helper.getEventGuestOutfitDao().createOrUpdate(eventGuestOutfit);
 
-                saveOutfit(guestOutfitUuid, selectedItems);
+                    helper.getEventGuestOutfitItemDao().delete(eventGuestOutfit.getEventGuestOutfitItems());
 
-                saveOutfitDescription(guestOutfitUuid, outfitDescription, txtOutfitDescription.getText().toString());
+                    for(Item selectedItem : selectedItems) {
+                        EventGuestOutfitItem eventGuestOutfitItem = new EventGuestOutfitItem();
+                        eventGuestOutfitItem.setItem(selectedItem);
+                        eventGuestOutfitItem.setEventGuestOutfit(eventGuestOutfit);
+                        helper.getEventGuestOutfitItemDao().create(eventGuestOutfitItem);
+                    }
+
+
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                };
 
                 Toast.makeText(OutfitSelectionActivity.this, "Saved", Toast.LENGTH_SHORT).show();
 
@@ -188,7 +207,7 @@ public class OutfitSelectionActivity extends AppCompatActivity {
         }
     }
 
-    public static Intent getIntent(Context context, String eventId, String eventGuestUuid, Date targetDate, Date eventStartDate, Date eventEndDate, ArrayList<Item> selectedItems, String outfitDescription) {
+    public static Intent getIntent(Context context, String eventId, String eventGuestUuid, Date targetDate, Date eventStartDate, Date eventEndDate, ArrayList<Item> selectedItems, String outfitDescription, EventGuest eventGuest) {
         Intent intent = new Intent(context, OutfitSelectionActivity.class);
         intent.putExtra(EVENT_ID, eventId);
         intent.putExtra(GUEST_EVENT_UUID, eventGuestUuid);
@@ -197,6 +216,7 @@ public class OutfitSelectionActivity extends AppCompatActivity {
         intent.putExtra(EVENT_END_DATE, eventEndDate);
         intent.putExtra(SELECTED_ITEMS, selectedItems);
         intent.putExtra(OUTFIT_DESCRIPTION, outfitDescription);
+        intent.putExtra(EVENT_GUEST, eventGuest);
         return intent;
     }
 

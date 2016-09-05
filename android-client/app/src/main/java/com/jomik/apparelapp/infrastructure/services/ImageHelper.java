@@ -12,7 +12,9 @@ import java.io.File;
 public class ImageHelper {
 
     public static void setImageUri(SimpleDraweeView simpleDraweeView, String path) {
-        simpleDraweeView.setImageURI(android.net.Uri.parse("file://" + new File(path).toString()));
+        if(path != null) {
+            simpleDraweeView.setImageURI(android.net.Uri.parse("file://" + new File(path).toString()));
+        }
     }
 
     public static void setFacebookProfileImageUri(SimpleDraweeView simpleDraweeView, String facebookId) {

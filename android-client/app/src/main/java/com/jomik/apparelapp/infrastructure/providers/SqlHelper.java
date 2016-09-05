@@ -7,9 +7,7 @@ import android.os.RemoteException;
 import com.jomik.apparelapp.domain.entities.Entity;
 import com.jomik.apparelapp.domain.entities.Event;
 import com.jomik.apparelapp.domain.entities.Item;
-import com.jomik.apparelapp.domain.entities.ItemCategory;
 import com.jomik.apparelapp.domain.entities.Photo;
-import com.jomik.apparelapp.domain.entities.User;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -102,7 +100,7 @@ public class SqlHelper {
         return cursor.getColumnIndexOrThrow(prefix + "_" + columnName);
     }
 
-    public static List<Photo> getPhotosFromProvider(ContentProviderClient contentProvider) throws RemoteException {
+    /*public static List<Photo> getPhotosFromProvider(ContentProviderClient contentProvider) throws RemoteException {
         Cursor cursor = contentProvider.query(ApparelContract.Photos.CONTENT_URI, ApparelContract.Photos.PROJECTION_ALL, null, null, null);
         List<Photo> photos = new ArrayList<>();
 
@@ -115,52 +113,24 @@ public class SqlHelper {
         }
         cursor.close();
         return photos;
-    }
+    }*/
 
-    public static List<Event> getEventsFromProvider(ContentProviderClient contentProvider) throws RemoteException {
+    /*public static List<Event> getEventsFromProvider(ContentProviderClient contentProvider) throws RemoteException {
         Cursor cursor = contentProvider.query(ApparelContract.Events.CONTENT_URI, ApparelContract.Events.PROJECTION_ALL, null, null, null);
         List<Event> events = getEventsFromCursor(cursor);
         cursor.close();
         return events;
-    }
+    }*/
 
-    public static List<Event> getEventsFromCursor(Cursor cursor) {
-        List<Event> events = new ArrayList<>();
-        while(cursor.moveToNext()) {
-            Event event = new Event();
-            SqlHelper.setCommonFieldsFromCursor(cursor, event, DbSchema.PREFIX_TBL_EVENTS);
-            event.setTitle(SqlHelper.getString(cursor, ApparelContract.Events.TITLE, DbSchema.PREFIX_TBL_EVENTS));
-            event.setLocation(SqlHelper.getString(cursor, ApparelContract.Events.LOCATION, DbSchema.PREFIX_TBL_EVENTS));
-            event.setOwnerUuid(SqlHelper.getString(cursor, ApparelContract.Events.OWNER_UUID, DbSchema.PREFIX_TBL_EVENTS));
-            event.setStartDate(getDateFromCursor(cursor, ApparelContract.Events.START_DATE, DbSchema.PREFIX_TBL_EVENTS));
-            event.setEndDate(getDateFromCursor(cursor, ApparelContract.Events.END_DATE, DbSchema.PREFIX_TBL_EVENTS));
-            event.setDescription(SqlHelper.getString(cursor, ApparelContract.Events.DESCRIPTION, DbSchema.PREFIX_TBL_EVENTS));
-            event.setPhotoUuid(SqlHelper.getString(cursor, ApparelContract.Photos.UUID, DbSchema.PREFIX_TBL_PHOTOS));
-            User owner = new User();
-            SqlHelper.setCommonFieldsFromCursor(cursor, owner, DbSchema.PREFIX_TBL_USERS);
-            owner.setFacebookId(SqlHelper.getString(cursor, ApparelContract.Users.FACEBOOK_ID, DbSchema.PREFIX_TBL_USERS));
-            owner.setName(SqlHelper.getString(cursor, ApparelContract.Users.NAME, DbSchema.PREFIX_TBL_USERS));
-            event.setOwner(owner);
-            Photo photo = new Photo();
-            SqlHelper.setCommonFieldsFromCursor(cursor, photo, DbSchema.PREFIX_TBL_PHOTOS);
-            photo.setPhotoPath(SqlHelper.getString(cursor, ApparelContract.Photos.LOCAL_PATH, DbSchema.PREFIX_TBL_PHOTOS));
-            photo.setPhotoPathSmall(SqlHelper.getString(cursor, ApparelContract.Photos.LOCAL_PATH_SM, DbSchema.PREFIX_TBL_PHOTOS));
-            event.setPhoto(photo);
 
-            events.add(event);
-        }
-
-        return events;
-    }
-
-    public static List<Item> getItemsFromProvider(ContentProviderClient contentProvider) throws RemoteException {
+    /*public static List<Item> getItemsFromProvider(ContentProviderClient contentProvider) throws RemoteException {
         Cursor cursor = contentProvider.query(ApparelContract.Items.CONTENT_URI, ApparelContract.Items.PROJECTION_ALL, null, null, null);
         List<Item> items = getItemsFromCursor(cursor);
         cursor.close();
         return items;
-    }
+    }*/
 
-    public static List<Item> getItemsFromCursor(Cursor cursor) {
+   /* public static List<Item> getItemsFromCursor(Cursor cursor) {
         List<Item> items = new ArrayList<>();
         while(cursor.moveToNext()) {
             Item item = new Item();
@@ -181,13 +151,23 @@ public class SqlHelper {
         }
 
         return items;
+    }*/
+
+    public static void printCursorRow(Cursor cursor) {
+        System.out.println("===============================");
+        if(cursor.getCount() > 0) {
+            for (int i = 0; i < cursor.getColumnCount(); i++) {
+                System.out.println(cursor.getColumnName(i) + ": " + cursor.getString(i));
+            }
+        }
+        System.out.println("===============================");
     }
 
-    public static void setCommonFieldsFromCursor(Cursor cursor, Entity entity, String prefix) {
+    /*public static void setCommonFieldsFromCursor(Cursor cursor, Entity entity, String prefix) {
         entity.setId(SqlHelper.getLong(cursor, ApparelContract.CommonColumns._ID, prefix));
         entity.setUuid(SqlHelper.getString(cursor, ApparelContract.CommonColumns.UUID, prefix));
         entity.setMarkedForDelete(SqlHelper.getBoolean(cursor, ApparelContract.CommonColumns.MARKED_FOR_DELETE, prefix));
         entity.setVersion(SqlHelper.getInt(cursor, ApparelContract.CommonColumns.VERSION, prefix));
-    }
+    }*/
 
 }

@@ -1,8 +1,12 @@
 
-package com.apparel.controllers.dtos;
+package com.jomik.apparelapp.infrastructure.rest;
 
-import com.apparel.domain.model.*;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.jomik.apparelapp.domain.entities.Event;
+import com.jomik.apparelapp.domain.entities.EventGuest;
+import com.jomik.apparelapp.domain.entities.Item;
+import com.jomik.apparelapp.domain.entities.Photo;
+import com.jomik.apparelapp.domain.entities.User;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -19,6 +23,10 @@ public class UploadSyncDto {
     private Set<Event> events = new HashSet<>();
     private Set<Photo> photos = new HashSet<>();
     private Set<EventGuest> eventGuests = new HashSet<>();
+
+    public boolean canUpload() {
+        return user != null || !items.isEmpty() || !events.isEmpty() || !photos.isEmpty();
+    }
 
     public Set<Item> getItems() {
         return items;

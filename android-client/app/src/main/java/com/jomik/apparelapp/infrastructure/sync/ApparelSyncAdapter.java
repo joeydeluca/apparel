@@ -18,8 +18,9 @@ import com.jomik.apparelapp.domain.entities.Photo;
 import com.jomik.apparelapp.domain.entities.User;
 import com.jomik.apparelapp.infrastructure.providers.ApparelContract;
 import com.jomik.apparelapp.infrastructure.providers.SqlHelper;
+import com.jomik.apparelapp.infrastructure.rest.DownloadSyncDto;
 import com.jomik.apparelapp.infrastructure.rest.RestService;
-import com.jomik.apparelapp.infrastructure.rest.SyncDto;
+import com.jomik.apparelapp.infrastructure.rest.UploadSyncDto;
 import com.jomik.apparelapp.infrastructure.services.AuthenticationManager;
 
 import java.io.File;
@@ -76,36 +77,45 @@ public class ApparelSyncAdapter extends AbstractThreadedSyncAdapter {
             String appUserUuid = user.getUuid();
 
             // get data from server
-            SyncDto syncDtoResponse = restService.getUserData(appUserUuid).execute().body();
-            if(syncDtoResponse == null) syncDtoResponse = new SyncDto();
-            SyncDto syncDtoRequest = new SyncDto();
+            DownloadSyncDto downloadSyncDto = restService.getUserData(appUserUuid).execute().body();
+            if(downloadSyncDto == null) downloadSyncDto = new DownloadSyncDto();
+            UploadSyncDto uploadSyncDto = new UploadSyncDto();
 
             // User
-            User remoteUser = syncDtoResponse.getUser();
+            /*User remoteUser = downloadSyncDto.getUser();
             if(remoteUser == null) {
-                syncDtoRequest.setUser(user);
-            }
+                uploadSyncDto.setUser(user);
+            }*/
 
             // Items
-            List<Item> existingLocalItems = SqlHelper.getItemsFromProvider(provider);
-            Set<Item> existingRemoteItems = syncDtoResponse.getItems();
+           /* List<Item> existingLocalItems = SqlHelper.getItemsFromProvider(provider);
+            Set<Item> existingRemoteItems = downloadSyncDto.getEventGuestOutfitItems();
             Set<Item> newLocalItems = getNewLocalEntities(existingLocalItems, existingRemoteItems);
             Set<Item> newRemoteItems = getNewRemoteEntities(existingLocalItems, existingRemoteItems);
             mergeEntitiesWithDuplicateUuids(existingLocalItems, existingRemoteItems, newLocalItems, newRemoteItems);
             saveToDb(newLocalItems, ApparelContract.Items.CONTENT_URI);
-            syncDtoRequest.setItems(newRemoteItems);
+            uploadSyncDto.setEventGuestOutfitItems(newRemoteItems);
 
             // Events
             List<Event> existingLocalEvents = SqlHelper.getEventsFromProvider(provider);
-            Set<Event> existingRemoteEvents = syncDtoResponse.getEvents();
+            Set<Event> existingRemoteEvents = downloadSyncDto.getEvents();
             Set<Event> newLocalEvents = getNewLocalEntities(existingLocalEvents, existingRemoteEvents);
             Set<Event> newRemoteEvents = getNewRemoteEntities(existingLocalEvents, existingRemoteEvents);
             mergeEntitiesWithDuplicateUuids(existingLocalEvents, existingRemoteEvents, newLocalEvents, newRemoteEvents);
             saveToDb(newLocalEvents, ApparelContract.Events.CONTENT_URI);
-            syncDtoRequest.setEvents(newRemoteEvents);
+            uploadSyncDto.setEvents(newRemoteEvents);*/
+
+            // Event Guests
+            /*List<EventGuest> existingLocal = SqlHelper.getEventsFromProvider(provider);
+            Set<Event> existingRemote = downloadSyncDto.getEvents();
+            Set<Event> newLocals = getNewLocalEntities(existingLocalEvents, existingRemoteEvents);
+            Set<Event> newRemote = getNewRemoteEntities(existingLocalEvents, existingRemoteEvents);
+            mergeEntitiesWithDuplicateUuids(existingLocalEvents, existingRemoteEvents, newLocalEvents, newRemoteEvents);
+            saveToDb(newLocalEvents, ApparelContract.Events.CONTENT_URI);
+            uploadSyncDto.setEvents(newRemoteEvents);*/
 
             // Photos
-            List<Photo> existingLocalPhotos = new ArrayList<>();
+           /* List<Photo> existingLocalPhotos = new ArrayList<>();
             existingLocalPhotos.addAll(getPhotosFromItems(existingLocalItems));
             existingLocalPhotos.addAll(getPhotosFromEvents(existingLocalEvents));
 
@@ -117,11 +127,11 @@ public class ApparelSyncAdapter extends AbstractThreadedSyncAdapter {
             Set<Photo> newRemotePhotos = getNewRemoteEntities(existingLocalPhotos, existingRemotePhotos);
             mergeEntitiesWithDuplicateUuids(existingLocalPhotos, existingRemotePhotos, newLocalPhotos, newRemotePhotos);
             saveToDb(newLocalPhotos, ApparelContract.Photos.CONTENT_URI);
-            syncDtoRequest.setPhotos(newRemotePhotos);
+            uploadSyncDto.setPhotos(newRemotePhotos);
 
-            saveRemoteItems(user, syncDtoRequest);
+            saveRemoteItems(user, uploadSyncDto);
 
-            contentResolver.notifyChange(ApparelContract.CONTENT_URI, null);
+            contentResolver.notifyChange(ApparelContract.CONTENT_URI, null);*/
 
         } catch(Exception e) {
             Log.e(TAG, e.getMessage());
@@ -183,7 +193,7 @@ public class ApparelSyncAdapter extends AbstractThreadedSyncAdapter {
         }
     }
 
-    private void saveRemoteItems(User user, SyncDto syncDto) throws IOException {
+    private void saveRemoteItems(User user, UploadSyncDto syncDto) throws IOException {
         if(syncDto.canUpload()) {
             // Upload data
             Response response = restService.saveUserData(user.getUuid(), syncDto).execute();

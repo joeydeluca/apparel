@@ -1,7 +1,9 @@
 package com.apparel.controllers;
 
-import com.apparel.controllers.dtos.SyncDto;
-import com.apparel.domain.model.EventGuest;
+import com.apparel.controllers.dtos.DownloadSyncDto;
+import com.apparel.controllers.dtos.UploadSyncDto;
+import com.apparel.domain.model.Event;
+import com.apparel.domain.model.Item;
 import com.apparel.domain.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -42,25 +44,22 @@ public class SyncController {
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE
     )
-    public ResponseEntity<SyncDto> getUserData(@PathVariable("id") String uuid) {
+    public ResponseEntity<DownloadSyncDto> getUserData(@PathVariable("id") String uuid) {
 
-        SyncDto dto = new SyncDto();
+        DownloadSyncDto dto = new DownloadSyncDto();
 
         try {
             dto.setUser(userRepository.findOne(uuid));
         } catch(Exception e) {}
 
+        // Get items i own
+        Set<Item> items = itemRepository.findByUserUuid(uuid);
+        dto.setItems(items);
 
-        // find all events im attending
-        Set<EventGuest> eventGuests = eventGuestRepository.findByGuestUuid(uuid);
-
-        // get all events i own
-        dto.setEvents(eventRepository.findByOwnerUuid(uuid));
-
-        // Get items i own and items that are part of events that i am attending
-        dto.setItems(itemRepository.findByUserUuid(uuid));
-
-
+        // find all events i own or am attending
+        Set<Event> events = eventRepository.findByOwnerUuid(uuid);
+        events.addAll(eventRepository.findByEventGuestsGuestUuid(uuid));
+        dto.setEvents(events);
 
         return ResponseEntity.ok(dto);
     }
@@ -70,7 +69,7 @@ public class SyncController {
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE
     )
-    public ResponseEntity<String> setUserData(@PathVariable("id") String userId, @RequestBody SyncDto syncDto) {
+    public ResponseEntity<String> setUserData(@PathVariable("id") String userId, @RequestBody UploadSyncDto syncDto) {
 
         // Save
         photoRepository.save(syncDto.getPhotos());

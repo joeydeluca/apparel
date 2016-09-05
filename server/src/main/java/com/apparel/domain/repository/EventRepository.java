@@ -12,4 +12,6 @@ public interface EventRepository extends JpaRepository<Event, String> {
 
     Set<Event> findByOwnerUuid(String uuid);
 
+    Set<Event> findByEventGuestsGuestUuid(String uuid);
+
 }

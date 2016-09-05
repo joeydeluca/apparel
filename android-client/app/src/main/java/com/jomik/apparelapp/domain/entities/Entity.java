@@ -4,6 +4,7 @@ import android.content.ContentValues;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.j256.ormlite.field.DatabaseField;
 import com.jomik.apparelapp.infrastructure.providers.ApparelContract;
 
 import java.io.Serializable;
@@ -14,10 +15,12 @@ import java.util.UUID;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public abstract class Entity implements Serializable {
-    private Long id;
+    @DatabaseField(columnName="uuid", id = true)
     private String uuid;
+    @DatabaseField(columnName="marked_for_delete")
     private boolean markedForDelete;
-    private Integer version;
+    @DatabaseField(columnName="version")
+    private int version;
 
     public Entity() {
         version = 0;
@@ -28,9 +31,9 @@ public abstract class Entity implements Serializable {
     @JsonIgnore
     public ContentValues getContentValues() {
         ContentValues values = new ContentValues();
-        if(getId() != null) {
+        /*if(getId() != null) {
             values.put(ApparelContract.CommonColumns._ID, getId());
-        }
+        }*/
         values.put(ApparelContract.CommonColumns.UUID, getUuid());
         values.put(ApparelContract.CommonColumns.VERSION, getUuid());
         values.put(ApparelContract.CommonColumns.MARKED_FOR_DELETE, isMarkedForDelete());
@@ -41,14 +44,6 @@ public abstract class Entity implements Serializable {
 
     @JsonIgnore
     protected abstract ContentValues getExtraContentValues();
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public String getUuid() {
         return uuid;
@@ -72,6 +67,10 @@ public abstract class Entity implements Serializable {
 
     public void setMarkedForDelete(boolean markedForDelete) {
         this.markedForDelete = markedForDelete;
+    }
+
+    public void incrementVersion() {
+        version++;
     }
 
     @Override

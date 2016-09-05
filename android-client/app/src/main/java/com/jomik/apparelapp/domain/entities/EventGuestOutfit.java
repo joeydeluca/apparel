@@ -2,34 +2,37 @@ package com.jomik.apparelapp.domain.entities;
 
 import android.content.ContentValues;
 
+import com.j256.ormlite.dao.ForeignCollection;
+import com.j256.ormlite.field.DataType;
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.ForeignCollectionField;
+import com.j256.ormlite.table.DatabaseTable;
 import com.jomik.apparelapp.infrastructure.providers.ApparelContract;
+import com.jomik.apparelapp.infrastructure.providers.SqlHelper;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
  * Created by Joe Deluca on 3/22/2016.
  */
+@DatabaseTable(tableName="event_guest_outfits")
 public class EventGuestOutfit extends Entity {
-    private String date;
+    @DatabaseField(columnName="event_date", dataType = DataType.DATE_STRING, format = SqlHelper.dateFormatForDbPattern)
+    private Date date;
+    @DatabaseField(columnName="description")
     private String description;
-    private String eventGuestUuid;
+    @DatabaseField(foreign=true, columnName="event_guest_uuid", foreignAutoRefresh = true)
+    private EventGuest eventGuest;
+    @ForeignCollectionField(eager = true)
+    private ForeignCollection<EventGuestOutfitItem> eventGuestOutfitItems;
 
-    private User guest;
-    private List<Item> items;
-
-    public User getGuest() {
-        return guest;
-    }
-
-    public void setGuest(User guest) {
-        this.guest = guest;
-    }
-
-    public String getDate() {
+    public Date getDate() {
         return date;
     }
 
-    public void setDate(String date) {
+    public void setDate(Date date) {
         this.date = date;
     }
 
@@ -41,20 +44,30 @@ public class EventGuestOutfit extends Entity {
         this.description = description;
     }
 
+    public ForeignCollection<EventGuestOutfitItem> getEventGuestOutfitItems() {
+        return eventGuestOutfitItems;
+    }
+
+    public void setEventGuestOutfitItems(ForeignCollection<EventGuestOutfitItem> eventGuestOutfitItems) {
+        this.eventGuestOutfitItems = eventGuestOutfitItems;
+    }
+
     public List<Item> getItems() {
+        List<Item> items = new ArrayList<>();
+        for(EventGuestOutfitItem eventGuestOutfitItem : eventGuestOutfitItems) {
+            if(!eventGuestOutfitItem.getItem().isMarkedForDelete()) {
+                items.add(eventGuestOutfitItem.getItem());
+            }
+        }
         return items;
     }
 
-    public void setItems(List<Item> items) {
-        this.items = items;
+    public EventGuest getEventGuest() {
+        return eventGuest;
     }
 
-    public String getEventGuestUuid() {
-        return eventGuestUuid;
-    }
-
-    public void setEventGuestUuid(String eventGuestUuid) {
-        this.eventGuestUuid = eventGuestUuid;
+    public void setEventGuest(EventGuest eventGuest) {
+        this.eventGuest = eventGuest;
     }
 
     @Override
@@ -62,7 +75,6 @@ public class EventGuestOutfit extends Entity {
         ContentValues values = new ContentValues();
         values.put(ApparelContract.EventGuestOutfits.DESCRIPTION, getDescription());
         values.put(ApparelContract.EventGuestOutfits.EVENT_DATE, getDescription());
-        values.put(ApparelContract.EventGuestOutfits.EVENT_GUEST_UUID, getEventGuestUuid());
         return values;
     }
 }

@@ -29,8 +29,7 @@ public class Event extends ApparelEntity {
     @JoinColumn(name = "photoUuid")
     private Photo photo;
 
-    @OneToMany
-    @JoinColumn(name = "event")
+    @OneToMany(mappedBy = "eventUuid")
     private Set<EventGuest> eventGuests = new HashSet<>();
 
     public String getTitle() {

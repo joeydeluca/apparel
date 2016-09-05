@@ -2,36 +2,54 @@ package com.jomik.apparelapp.domain.entities;
 
 import android.content.ContentValues;
 
-import com.jomik.apparelapp.infrastructure.providers.ApparelContract;
+import com.j256.ormlite.dao.ForeignCollection;
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.ForeignCollectionField;
+import com.j256.ormlite.table.DatabaseTable;
 
 /**
  * Created by Joe Deluca on 8/26/2016.
  */
+@DatabaseTable(tableName="event_guests")
 public class EventGuest extends Entity {
-    private String eventUuid;
-    private String guestUuid;
+    @DatabaseField(foreign=true, columnName="event_uuid", foreignAutoRefresh = true)
+    private Event event;
+    @DatabaseField(foreign=true, columnName="guest_uuid", foreignAutoRefresh = true)
+    private User user;
 
-    public String getEventUuid() {
-        return eventUuid;
+    @ForeignCollectionField(eager = true)
+    private ForeignCollection<EventGuestOutfit> eventGuestOutfits;
+
+    public EventGuest() {
     }
 
-    public void setEventUuid(String eventUuid) {
-        this.eventUuid = eventUuid;
+    public Event getEvent() {
+        return event;
     }
 
-    public String getGuestUuid() {
-        return guestUuid;
+    public void setEvent(Event event) {
+        this.event = event;
     }
 
-    public void setGuestUuid(String guestUuid) {
-        this.guestUuid = guestUuid;
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public ForeignCollection<EventGuestOutfit> getEventGuestOutfits() {
+        return eventGuestOutfits;
+    }
+
+    public void setEventGuestOutfits(ForeignCollection<EventGuestOutfit> eventGuestOutfits) {
+        this.eventGuestOutfits = eventGuestOutfits;
     }
 
     @Override
     protected ContentValues getExtraContentValues() {
         ContentValues values = new ContentValues();
-        values.put(ApparelContract.EventGuestOutfitItems.EVENT_GUEST_OUTFIT_UUID, getEventUuid());
-        values.put(ApparelContract.EventGuestOutfitItems.ITEM_UUID, getGuestUuid());
         return values;
     }
 }

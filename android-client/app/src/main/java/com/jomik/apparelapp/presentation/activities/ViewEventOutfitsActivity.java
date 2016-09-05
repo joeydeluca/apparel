@@ -1,8 +1,6 @@
 package com.jomik.apparelapp.presentation.activities;
 
 import android.app.DatePickerDialog;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -14,32 +12,22 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.j256.ormlite.stmt.QueryBuilder;
 import com.jomik.apparelapp.R;
 import com.jomik.apparelapp.domain.entities.Event;
-import com.jomik.apparelapp.domain.entities.Item;
-import com.jomik.apparelapp.domain.entities.Photo;
-import com.jomik.apparelapp.domain.entities.User;
+import com.jomik.apparelapp.domain.entities.EventGuest;
 import com.jomik.apparelapp.domain.entities.EventGuestOutfit;
-import com.jomik.apparelapp.infrastructure.providers.ApparelContract;
-import com.jomik.apparelapp.infrastructure.providers.ApparelContract.EventGuestOutfitItems;
-import com.jomik.apparelapp.infrastructure.providers.ApparelContract.EventGuestOutfits;
-import com.jomik.apparelapp.infrastructure.providers.ApparelContract.EventGuests;
-import com.jomik.apparelapp.infrastructure.providers.ApparelContract.Items;
-import com.jomik.apparelapp.infrastructure.providers.ApparelContract.Users;
-import com.jomik.apparelapp.infrastructure.providers.ApparelContract.Photos;
-import com.jomik.apparelapp.infrastructure.providers.DbSchema;
+import com.jomik.apparelapp.domain.entities.Item;
+import com.jomik.apparelapp.infrastructure.ormlite.OrmLiteSqlHelper;
 import com.jomik.apparelapp.infrastructure.providers.SqlHelper;
 import com.jomik.apparelapp.infrastructure.services.AuthenticationManager;
 import com.jomik.apparelapp.presentation.adapters.EventOutfitsRvAdapter;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 public class ViewEventOutfitsActivity extends AppCompatActivity {
 
@@ -100,99 +88,55 @@ public class ViewEventOutfitsActivity extends AppCompatActivity {
         mDatePickerDialog = createDatePickerDialog(eventId, datePage);
 
         String myEventGuestUuid = null;
-        final Set<Item> mySelectedItems = new HashSet<>();
         String myOutfitDescription = null;
+        EventGuest myEventGuest = null;
 
-        String[] select = new String[] {
-                SqlHelper.getSelectColumn(EventGuests.UUID, DbSchema.PREFIX_TBL_EVENT_GUESTS),
-                SqlHelper.getSelectColumn(EventGuests.EVENT_UUID, DbSchema.PREFIX_TBL_EVENT_GUESTS),
-                SqlHelper.getSelectColumn(EventGuests.GUEST_UUID, DbSchema.PREFIX_TBL_EVENT_GUESTS),
+        List<EventGuestOutfit> outfits = new ArrayList<>();
+        OrmLiteSqlHelper helper  = new OrmLiteSqlHelper(getApplicationContext());
+        try {
+            QueryBuilder<EventGuestOutfit, String> outfitQb = helper.getEventGuestOutfitDao().queryBuilder();
+            outfitQb.where().eq("event_date", datePage.getTargetDate());
 
-                SqlHelper.getSelectColumn(Users.UUID, DbSchema.PREFIX_TBL_USERS),
-                SqlHelper.getSelectColumn(Users.NAME, DbSchema.PREFIX_TBL_USERS),
-                SqlHelper.getSelectColumn(Users.FACEBOOK_ID, DbSchema.PREFIX_TBL_USERS),
+            QueryBuilder<Event, String> eventQb = helper.getEventDao().queryBuilder();
+            eventQb.where().eq("uuid", eventId);
 
-                SqlHelper.getSelectColumn(EventGuestOutfits.UUID, DbSchema.PREFIX_TBL_EVENT_GUEST_OUTFITS),
-                SqlHelper.getSelectColumn(EventGuestOutfits.DESCRIPTION, DbSchema.PREFIX_TBL_EVENT_GUEST_OUTFITS),
-                SqlHelper.getSelectColumn(EventGuestOutfits.EVENT_DATE, DbSchema.PREFIX_TBL_EVENT_GUEST_OUTFITS),
-                SqlHelper.getSelectColumn(EventGuestOutfits.EVENT_GUEST_UUID, DbSchema.PREFIX_TBL_EVENT_GUEST_OUTFITS),
+            QueryBuilder<EventGuest, String> eventGuestQb = helper.getEventGuestDao().queryBuilder();
+            eventGuestQb.where().eq("marked_for_delete", false);
 
-                SqlHelper.getSelectColumn(EventGuestOutfitItems.UUID, DbSchema.PREFIX_TBL_EVENT_GUEST_OUTFIT_ITEMS),
-                SqlHelper.getSelectColumn(EventGuestOutfitItems.ITEM_UUID, DbSchema.PREFIX_TBL_EVENT_GUEST_OUTFIT_ITEMS),
-                SqlHelper.getSelectColumn(EventGuestOutfitItems.EVENT_GUEST_OUTFIT_UUID, DbSchema.PREFIX_TBL_EVENT_GUEST_OUTFIT_ITEMS),
+            outfits = outfitQb.join(eventGuestQb.join(eventQb)).query();
 
-                SqlHelper.getSelectColumn(Items.UUID, DbSchema.PREFIX_TBL_ITEMS),
-                SqlHelper.getSelectColumn(Items.NAME, DbSchema.PREFIX_TBL_ITEMS),
-                SqlHelper.getSelectColumn(Items.PHOTO_UUID, DbSchema.PREFIX_TBL_ITEMS),
-
-                SqlHelper.getSelectColumn(Photos.UUID, DbSchema.PREFIX_TBL_PHOTOS),
-                SqlHelper.getSelectColumn(Photos.LOCAL_PATH, DbSchema.PREFIX_TBL_PHOTOS),
-                SqlHelper.getSelectColumn(Photos.LOCAL_PATH_SM, DbSchema.PREFIX_TBL_PHOTOS),
-        };
-
-        Uri uri = EventGuests.CONTENT_URI;
-        Cursor cursor = getContentResolver().query(uri, select, DbSchema.PREFIX_TBL_EVENTS + "._id = ? and (" + DbSchema.PREFIX_TBL_EVENT_GUEST_OUTFITS + ".event_date is null or " + DbSchema.PREFIX_TBL_EVENT_GUEST_OUTFITS + ".event_date = ?)", new String[]{SqlHelper.getDateForDb(datePage.getDisplayTargetDate()), eventId, SqlHelper.getDateForDb(datePage.getDisplayTargetDate())}, null);
-
-        Map<String, EventGuestOutfit> EventOutfitMap = new HashMap<>();
-
-        while(cursor.moveToNext()) {
-            System.out.println("===============================");
-            for(int i = 0; i < cursor.getColumnCount() - 1; i++){
-                System.out.println(cursor.getColumnName(i) + ": " + cursor.getString(i));
-            }
-            System.out.println("===============================");
-
-            String eventOutfitUuid = SqlHelper.getString(cursor, EventGuestOutfits.UUID, DbSchema.PREFIX_TBL_EVENT_GUEST_OUTFITS);
-            EventGuestOutfit eventOutfit = EventOutfitMap.get(eventOutfitUuid);
-
-            if(eventOutfit == null) {
-                eventOutfit = new EventGuestOutfit();
-                eventOutfit.setGuest(getUser(cursor));
-                eventOutfit.setDate(SqlHelper.getString(cursor, EventGuestOutfits.EVENT_DATE, DbSchema.PREFIX_TBL_EVENT_GUEST_OUTFITS));
-                eventOutfit.setDescription(SqlHelper.getString(cursor, EventGuestOutfits.DESCRIPTION, DbSchema.PREFIX_TBL_EVENT_GUEST_OUTFITS));
-                EventOutfitMap.put(eventOutfitUuid, eventOutfit);
-
-                if(AuthenticationManager.getAuthenticatedUser(this).getUuid().equals(eventOutfit.getGuest().getUuid())) {
-                    myEventGuestUuid = SqlHelper.getString(cursor, EventGuests.UUID, DbSchema.PREFIX_TBL_EVENT_GUESTS);
-                    myOutfitDescription = SqlHelper.getString(cursor, EventGuestOutfits.DESCRIPTION, DbSchema.PREFIX_TBL_EVENT_GUEST_OUTFITS);
-                }
-            }
-
-            List<Item> items = eventOutfit.getItems();
-            if(items == null) {
-                items = new ArrayList<>();
-            }
-            eventOutfit.setItems(items);
-
-            String itemUuid = SqlHelper.getString(cursor, Items.UUID, DbSchema.PREFIX_TBL_ITEMS);
-            if(itemUuid != null && !itemUuid.isEmpty()) {
-                items.add(getItem(cursor));
-            }
-
-            if(AuthenticationManager.getAuthenticatedUser(this).getUuid().equals(eventOutfit.getGuest().getUuid())) {
-                mySelectedItems.addAll(items);
-            }
-
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
 
+        final ArrayList<Item> mySelectedItems = new ArrayList<>();
+
+        for(EventGuestOutfit outfit : outfits) {
+            if(outfit.getEventGuest().getUser().getUuid().equals(AuthenticationManager.getAuthenticatedUser(this).getUuid())) {
+                myEventGuestUuid = outfit.getUuid();
+                myOutfitDescription = outfit.getDescription();
+                mySelectedItems.addAll(outfit.getItems());
+                myEventGuest = outfit.getEventGuest();
+                break;
+            }
+        }
 
         RecyclerView rv = (RecyclerView) findViewById(R.id.rv);
         LinearLayoutManager llm = new LinearLayoutManager(getApplicationContext());
         rv.setLayoutManager(llm);
 
-        EventOutfitsRvAdapter adapter = new EventOutfitsRvAdapter(new ArrayList<>(EventOutfitMap.values()));
+        EventOutfitsRvAdapter adapter = new EventOutfitsRvAdapter(outfits);
         rv.setAdapter(adapter);
-
-
 
         if(myEventGuestUuid != null) {
             final String finalMyEventGuestUuid = myEventGuestUuid;
             final String finalMyOutfitDescription = myOutfitDescription;
+            final EventGuest finalMyEventGuest = myEventGuest;
             addButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     startActivity(
-                            OutfitSelectionActivity.getIntent(getApplicationContext(), eventId, finalMyEventGuestUuid, datePage.getTargetDate(), datePage.getEventStartDate(), datePage.getEventEndDate(), new ArrayList<>(mySelectedItems), finalMyOutfitDescription)
+                            OutfitSelectionActivity.getIntent(getApplicationContext(), eventId, finalMyEventGuestUuid, datePage.getTargetDate(), datePage.getEventStartDate(), datePage.getEventEndDate(), mySelectedItems, finalMyOutfitDescription, finalMyEventGuest)
                     );
                 }
             });
@@ -226,33 +170,6 @@ public class ViewEventOutfitsActivity extends AppCompatActivity {
         } else {
             btnForward.setVisibility(View.INVISIBLE);
         }
-    }
-
-    private User getUser(Cursor cursor) {
-        User user = new User();
-        user.setUuid(SqlHelper.getString(cursor, Users.UUID, DbSchema.PREFIX_TBL_USERS));
-        user.setName(SqlHelper.getString(cursor, Users.NAME, DbSchema.PREFIX_TBL_USERS));
-        user.setFacebookId(SqlHelper.getString(cursor, Users.FACEBOOK_ID, DbSchema.PREFIX_TBL_USERS));
-
-        return user;
-    }
-
-    private Event getEvent(Cursor cursor) {
-        return new Event();
-    }
-
-    private Item getItem(Cursor cursor) {
-        Item item = new Item();
-        SqlHelper.setCommonFieldsFromCursor(cursor, item, DbSchema.PREFIX_TBL_ITEMS);
-        item.setName(SqlHelper.getString(cursor, ApparelContract.Items.NAME, DbSchema.PREFIX_TBL_ITEMS));
-        item.setPhotoUuid(SqlHelper.getString(cursor, ApparelContract.Photos.UUID, DbSchema.PREFIX_TBL_PHOTOS));
-        Photo photo = new Photo();
-        SqlHelper.setCommonFieldsFromCursor(cursor, photo, DbSchema.PREFIX_TBL_PHOTOS);
-        photo.setPhotoPath(SqlHelper.getString(cursor, ApparelContract.Photos.LOCAL_PATH, DbSchema.PREFIX_TBL_PHOTOS));
-        photo.setPhotoPathSmall(SqlHelper.getString(cursor, ApparelContract.Photos.LOCAL_PATH_SM, DbSchema.PREFIX_TBL_PHOTOS));
-        item.setPhoto(photo);
-        
-        return item;
     }
 
     private DatePickerDialog createDatePickerDialog(final String eventId, final DatePage datePage) {

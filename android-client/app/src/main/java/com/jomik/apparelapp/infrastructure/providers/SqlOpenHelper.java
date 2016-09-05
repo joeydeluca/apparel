@@ -1,3 +1,4 @@
+/*
 package com.jomik.apparelapp.infrastructure.providers;
 
 import android.content.Context;
@@ -6,14 +7,14 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import com.facebook.AccessToken;
 
-import java.util.UUID;
-
+*/
 /**
  * Created by Joe Deluca of house targaryen, first his name, mother of dragons and breaker of chains on 7/4/2016.
- */
+ *//*
+
 public class SqlOpenHelper extends SQLiteOpenHelper {
 
-    private static final String NAME = DbSchema.DB_NAME;
+    private static final String NAME = "apparel.db";
     private static final int VERSION = 38;
 
 
@@ -48,3 +49,4 @@ public class SqlOpenHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 }
+*/

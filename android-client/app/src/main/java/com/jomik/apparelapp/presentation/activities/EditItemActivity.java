@@ -2,11 +2,8 @@ package com.jomik.apparelapp.presentation.activities;
 
 import android.Manifest;
 import android.app.Activity;
-import android.content.ContentUris;
-import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -23,17 +20,14 @@ import com.facebook.drawee.view.SimpleDraweeView;
 import com.jomik.apparelapp.R;
 import com.jomik.apparelapp.domain.entities.Item;
 import com.jomik.apparelapp.domain.entities.ItemCategory;
-import com.jomik.apparelapp.domain.entities.User;
-import com.jomik.apparelapp.infrastructure.providers.ApparelContract.Items;
-import com.jomik.apparelapp.infrastructure.providers.ApparelContract.Photos;
-import com.jomik.apparelapp.infrastructure.providers.DbSchema;
-import com.jomik.apparelapp.infrastructure.providers.SqlHelper;
+import com.jomik.apparelapp.domain.entities.Photo;
+import com.jomik.apparelapp.infrastructure.ormlite.OrmLiteSqlHelper;
 import com.jomik.apparelapp.infrastructure.services.AuthenticationManager;
 import com.jomik.apparelapp.infrastructure.services.ImageHelper;
 import com.jomik.apparelapp.presentation.validator.FormValidator;
 import com.jomik.apparelapp.presentation.validator.ImageValidator;
 
-import java.util.UUID;
+import java.sql.SQLException;
 
 public class EditItemActivity extends AppCompatActivity {
 
@@ -55,9 +49,6 @@ public class EditItemActivity extends AppCompatActivity {
         final ImageView imgCancel = (ImageView) findViewById(R.id.toolbar_cancel_button);
         final TextView txtToolbarTitle = (TextView) findViewById(R.id.toolbar_title);
 
-        String existingPhotoUuid = null;
-        String existingPhotoPath = null;
-
         txtToolbarTitle.setText("Edit Item");
 
         final ArrayAdapter spinnerTypeAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, ItemCategory.getCategoryLabels());
@@ -72,42 +63,37 @@ public class EditItemActivity extends AppCompatActivity {
             }
         });
 
-        final User user = AuthenticationManager.getAuthenticatedUser(getApplicationContext());
-
         Intent intent = getIntent();
-        // Populate fields if editing
+        final String id = intent.getStringExtra("id");
 
-        int version = 0;
+        final OrmLiteSqlHelper helper = new OrmLiteSqlHelper(getApplicationContext());
 
-        final long id = intent.getLongExtra("id", -1);
-        if(id != -1) {
-            Uri uri = ContentUris.withAppendedId(Items.CONTENT_URI, id);
-            Cursor cursor = getContentResolver().query(uri, Items.PROJECTION_ALL, null, null, null);
-            if (cursor.moveToFirst()) {
-                txtItemName.setText(SqlHelper.getString(cursor, Items.NAME, DbSchema.PREFIX_TBL_ITEMS));
-                txtItemDescription.setText(SqlHelper.getString(cursor, Items.DESCRIPTION, DbSchema.PREFIX_TBL_ITEMS));
-                spnType.setSelection(ItemCategory.valueOf(SqlHelper.getString(cursor, Items.ITEM_CATEGORY, DbSchema.PREFIX_TBL_ITEMS)).ordinal());
-                existingPhotoUuid = SqlHelper.getString(cursor, Photos.UUID, DbSchema.PREFIX_TBL_PHOTOS);
-                existingPhotoPath = SqlHelper.getString(cursor, Photos.LOCAL_PATH_SM, DbSchema.PREFIX_TBL_PHOTOS);
-                version = SqlHelper.getInt(cursor, Items.VERSION, DbSchema.PREFIX_TBL_ITEMS);
+        Item item = null;
+        try {
+            item = helper.getItemDao().queryForId(id);
+            if(item != null) {
+                txtItemName.setText(item.getName());
+                txtItemDescription.setText(item.getDescription());
+                spnType.setSelection(item.getItemCategory().ordinal());
+                if(item.getPhoto() != null && chosenImageUri == null) {
+                    ImageHelper.setImageUri(simpleDraweeView, item.getPhoto().getPhotoPath());
+                }
+            } else {
+                item = new Item();
+                item.setUser(AuthenticationManager.getAuthenticatedUser(getApplicationContext()));
             }
-            cursor.close();
-
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
 
-        if(existingPhotoPath != null && chosenImageUri == null) {
-            ImageHelper.setImageUri(simpleDraweeView, existingPhotoPath);
-        }
+        final Item newItem = item;
 
-        final String finalExistingPhotoPath = existingPhotoPath;
-        final String finalExistingPhotoUuid = existingPhotoUuid;
-        final int newItemVersion = ++version;
         btnDone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Validate!
                 if(!FormValidator.validate(txtItemName) ||
-                        (finalExistingPhotoPath == null && !ImageValidator.validate(EditItemActivity.this, chosenImageUri))) {
+                        (newItem.getPhoto() == null && !ImageValidator.validate(EditItemActivity.this, chosenImageUri))) {
                     return;
                 }
 
@@ -117,34 +103,29 @@ public class EditItemActivity extends AppCompatActivity {
                 }
 
                 // Save image record
-                String photoUuid = finalExistingPhotoUuid;
-                if(chosenImageUuid != null) {
-                    if(photoUuid != null) {
-                        getContentResolver().delete(Photos.CONTENT_URI, "uuid = ?", new String[] {photoUuid});
-                    }
-                    ContentValues values = new ContentValues();
-                    values.put(Photos.UUID, chosenImageUuid);
-                    values.put(Photos.LOCAL_PATH, chosenImageUri.getPath());
-                    values.put(Photos.LOCAL_PATH_SM, chosenImageUri.getPath());
-                    getContentResolver().insert(Photos.CONTENT_URI, values);
-                    photoUuid = chosenImageUuid;
+                Photo photo = newItem.getPhoto();
+                if(photo == null) {
+                    photo = new Photo();
+                }
+                photo.setPhotoPath(chosenImageUri.getPath());
+                photo.setPhotoPathSmall(chosenImageUri.getPath());
+                photo.incrementVersion();
+                try {
+                    helper.getPhotoDao().createOrUpdate(photo);
+                } catch (SQLException e) {
+                    e.printStackTrace();
                 }
 
                 // Save item
-                String dbItemCategory = ItemCategory.getEnumFromDisplayName(spnType.getSelectedItem().toString()).toString();
-
-                ContentValues values = new ContentValues();
-                values.put(Items.NAME, txtItemName.getText().toString());
-                values.put(Items.DESCRIPTION, txtItemDescription.getText().toString());
-                values.put(Items.ITEM_CATEGORY, dbItemCategory);
-                values.put(Items.PHOTO_UUID, photoUuid);
-                values.put(Items.VERSION, newItemVersion);
-
-                if(id == -1) {
-                    values.put(Items.USER_UUID, user.getUuid());
-                    getContentResolver().insert(Items.CONTENT_URI, values);
-                } else {
-                    getContentResolver().update(ContentUris.withAppendedId(Items.CONTENT_URI, id), values, null, null);
+                newItem.setName(txtItemName.getText().toString());
+                newItem.setDescription(txtItemDescription.getText().toString());
+                newItem.setItemCategory(ItemCategory.getEnumFromDisplayName(spnType.getSelectedItem().toString()));
+                newItem.setPhoto(photo);
+                newItem.incrementVersion();
+                try {
+                    helper.getItemDao().createOrUpdate(newItem);
+                } catch (SQLException e) {
+                    e.printStackTrace();
                 }
 
                 Toast.makeText(EditItemActivity.this, "Saved", Toast.LENGTH_SHORT).show();

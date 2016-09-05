@@ -1,22 +1,16 @@
 package com.jomik.apparelapp.presentation.activities;
 
-import android.content.ContentResolver;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.design.widget.TabLayout;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.facebook.login.LoginManager;
 import com.jomik.apparelapp.R;
-import com.jomik.apparelapp.infrastructure.providers.ApparelContract;
 import com.jomik.apparelapp.infrastructure.services.AuthenticationManager;
 import com.jomik.apparelapp.presentation.fragments.EventListFragment;
 import com.jomik.apparelapp.presentation.fragments.ItemListFragment;
@@ -24,7 +18,7 @@ import com.jomik.apparelapp.presentation.fragments.ItemListFragment;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TabbedActivity extends AppCompatActivity {
+public class TabbedActivity extends BaseActivity {
 
     private TabLayout tabLayout;
     private ViewPager viewPager;
