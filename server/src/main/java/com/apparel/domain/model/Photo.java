@@ -1,6 +1,5 @@
 package com.apparel.domain.model;
 
-import com.apparel.domain.model.ApparelEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.Column;

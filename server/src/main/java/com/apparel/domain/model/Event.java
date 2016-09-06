@@ -3,10 +3,7 @@ package com.apparel.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -23,13 +20,16 @@ public class Event extends ApparelEntity {
     private Date startDate;
     @JsonFormat(shape=JsonFormat.Shape.STRING, pattern=DATE_FORMAT_PATTERN)
     private Date endDate;
-    private String ownerUuid;
+
+    @OneToOne
+    @JoinColumn(name = "ownerUuid")
+    private User owner;
 
     @OneToOne
     @JoinColumn(name = "photoUuid")
     private Photo photo;
 
-    @OneToMany(mappedBy = "eventUuid")
+    @OneToMany(mappedBy = "event", fetch = FetchType.EAGER)
     private Set<EventGuest> eventGuests = new HashSet<>();
 
     public String getTitle() {
@@ -72,12 +72,12 @@ public class Event extends ApparelEntity {
         this.endDate = endDate;
     }
 
-    public String getOwnerUuid() {
-        return ownerUuid;
+    public User getOwner() {
+        return owner;
     }
 
-    public void setOwnerUuid(String ownerUuid) {
-        this.ownerUuid = ownerUuid;
+    public void setOwner(User owner) {
+        this.owner = owner;
     }
 
     public Photo getPhoto() {

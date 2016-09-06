@@ -19,6 +19,7 @@ public class UploadSyncDto {
     private Set<Event> events = new HashSet<>();
     private Set<Photo> photos = new HashSet<>();
     private Set<EventGuest> eventGuests = new HashSet<>();
+    private Set<EventGuestOutfit> eventGuestOutfits = new HashSet<>();
 
     public Set<Item> getItems() {
         return items;
@@ -58,5 +59,13 @@ public class UploadSyncDto {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public Set<EventGuestOutfit> getEventGuestOutfits() {
+        return eventGuestOutfits;
+    }
+
+    public void setEventGuestOutfits(Set<EventGuestOutfit> eventGuestOutfits) {
+        this.eventGuestOutfits = eventGuestOutfits;
     }
 }

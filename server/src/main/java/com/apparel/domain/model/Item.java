@@ -13,7 +13,10 @@ public class Item extends ApparelEntity {
     private String name;
     private String description;
     private String itemCategory;
-    private String userUuid;
+
+    @OneToOne
+    @JoinColumn(name = "userUuid")
+    private User user;
 
     @OneToOne
     @JoinColumn(name = "photoUuid")
@@ -43,12 +46,12 @@ public class Item extends ApparelEntity {
         this.itemCategory = itemCategory;
     }
 
-    public String getUserUuid() {
-        return userUuid;
+    public User getUser() {
+        return user;
     }
 
-    public void setUserUuid(String userUuid) {
-        this.userUuid = userUuid;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public Photo getPhoto() {

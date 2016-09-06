@@ -24,20 +24,22 @@ public class SyncController {
     private final PhotoRepository photoRepository;
     private final UserRepository userRepository;
     private final EventGuestRepository eventGuestRepository;
+    private final EventGuestOutfitRepository eventGuestOutfitRepository;
 
     @Autowired
     public SyncController(final EventRepository eventRepository,
                           final ItemRepository itemRepository,
                           final PhotoRepository photoRepository,
                           final UserRepository userRepository,
-                          final EventGuestRepository eventGuestRepository){
+                          final EventGuestRepository eventGuestRepository,
+                          final EventGuestOutfitRepository eventGuestOutfitRepository){
         this.eventRepository = eventRepository;
         this.itemRepository = itemRepository;
         this.photoRepository = photoRepository;
         this.userRepository = userRepository;
         this.eventGuestRepository = eventGuestRepository;
+        this.eventGuestOutfitRepository = eventGuestOutfitRepository;
     }
-
 
     @RequestMapping(
             value = "/{id}",
@@ -50,7 +52,9 @@ public class SyncController {
 
         try {
             dto.setUser(userRepository.findOne(uuid));
-        } catch(Exception e) {}
+        } catch(Exception e) {
+            throw new IllegalArgumentException("Invalid user id");
+        }
 
         // Get items i own
         Set<Item> items = itemRepository.findByUserUuid(uuid);
@@ -77,6 +81,8 @@ public class SyncController {
         userRepository.save(syncDto.getUser());
         itemRepository.save(syncDto.getItems());
         eventRepository.save(syncDto.getEvents());
+        eventGuestRepository.save(syncDto.getEventGuests());
+        eventGuestOutfitRepository.save(syncDto.getEventGuestOutfits());
 
         return ResponseEntity.ok("{\"status\":\"OK\"}");
     }

@@ -17,7 +17,7 @@ public class EventGuest extends ApparelEntity {
     @JoinColumn(name="guestUuid")
     private User guest;
 
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER)
     @JoinColumn(name = "eventGuestOutfitUuid")
     private Set<EventGuestOutfit> eventGuestOutfits = new HashSet<>();
 

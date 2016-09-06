@@ -19,7 +19,7 @@ public class EventGuestOutfit extends ApparelEntity {
     @JoinColumn(name = "guestUuid")
     private EventGuest eventGuest;
 
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER)
     @JoinColumn(name = "itemUuid")
     private List<Item> items;
 
