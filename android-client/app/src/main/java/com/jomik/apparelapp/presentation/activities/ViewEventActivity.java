@@ -1,10 +1,6 @@
 package com.jomik.apparelapp.presentation.activities;
 
-import android.content.ContentUris;
-import android.content.ContentValues;
 import android.content.Intent;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -15,13 +11,14 @@ import android.widget.Toast;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.jomik.apparelapp.R;
-import com.jomik.apparelapp.infrastructure.providers.ApparelContract;
-import com.jomik.apparelapp.infrastructure.providers.DbSchema;
-import com.jomik.apparelapp.infrastructure.providers.SqlHelper;
+import com.jomik.apparelapp.domain.entities.Event;
+import com.jomik.apparelapp.domain.entities.EventGuest;
+import com.jomik.apparelapp.domain.entities.User;
+import com.jomik.apparelapp.infrastructure.ormlite.OrmLiteSqlHelper;
 import com.jomik.apparelapp.infrastructure.services.AuthenticationManager;
 import com.jomik.apparelapp.infrastructure.services.ImageHelper;
 
-import java.util.UUID;
+import java.sql.SQLException;
 
 public class ViewEventActivity extends AppCompatActivity {
 
@@ -42,26 +39,24 @@ public class ViewEventActivity extends AppCompatActivity {
 
         // Populate fields if editing
         Intent intent = getIntent();
-        final long eventId = intent.getLongExtra("id", -1);
-        String eventUuid = null;
-        String photoUuid = null;
-        String photoPath = null;
+        final String eventId = intent.getStringExtra("id");
 
-        Uri uri = ContentUris.withAppendedId(ApparelContract.Events.CONTENT_URI, eventId);
-        Cursor cursor = getContentResolver().query(uri, ApparelContract.Events.PROJECTION_ALL, null, null, null);
-        if (cursor.moveToFirst()) {
-            txtEventTitle.setText(SqlHelper.getString(cursor, ApparelContract.Events.TITLE, DbSchema.PREFIX_TBL_EVENTS));
-            eventUuid = SqlHelper.getString(cursor, ApparelContract.Events.UUID, DbSchema.PREFIX_TBL_EVENTS);
-            photoUuid = SqlHelper.getString(cursor, ApparelContract.Photos.UUID, DbSchema.PREFIX_TBL_PHOTOS);
-            photoPath = SqlHelper.getString(cursor, ApparelContract.Photos.LOCAL_PATH, DbSchema.PREFIX_TBL_PHOTOS);
-        }
-        cursor.close();
+        final User user = AuthenticationManager.getAuthenticatedUser(getApplicationContext());
+        Event event = null;
 
-        if(photoUuid != null) {
-            ImageHelper.setImageUri(simpleDraweeView, photoPath);
+        final OrmLiteSqlHelper helper = new OrmLiteSqlHelper(getApplicationContext());
+        try {
+            event = helper.getEventDao().queryForId(eventId);
+            if(helper.getEventGuestDao().queryBuilder().where().eq("event_uuid", eventId).and().eq("guest_uuid", user.getUuid()).countOf() > 0) {
+                btnJoin.setVisibility(View.INVISIBLE);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
 
-        final String finalEventUuid = eventUuid;
+        if(event.getPhoto() != null) {
+            ImageHelper.setImageUri(simpleDraweeView, event.getPhoto().getPhotoPath());
+        }
 
         btnDone.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -77,17 +72,23 @@ public class ViewEventActivity extends AppCompatActivity {
             }
         });
 
+        final Event finalEvent = event;
         btnJoin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ContentValues values = new ContentValues();
-                values.put(ApparelContract.EventGuests.UUID, UUID.randomUUID().toString());
-                values.put(ApparelContract.EventGuests.EVENT_UUID, finalEventUuid);
-                values.put(ApparelContract.EventGuests.GUEST_UUID, AuthenticationManager.getAuthenticatedUser(getApplicationContext()).getUuid());
+                EventGuest eventGuest = new EventGuest();
+                eventGuest.setUser(user);
+                eventGuest.setEvent(finalEvent);
+                try {
+                    helper.getEventGuestDao().create(eventGuest);
+                    btnJoin.setVisibility(View.INVISIBLE);
+                    Toast.makeText(getApplicationContext(), "You have joined the event", Toast.LENGTH_LONG).show();
+                } catch (SQLException e) {
+                    Toast.makeText(getApplicationContext(), "Something went wrong", Toast.LENGTH_LONG).show();
+                    e.printStackTrace();
+                }
 
-                getContentResolver().insert(ApparelContract.EventGuests.CONTENT_URI, values);
 
-                Toast.makeText(getApplicationContext(), "You have joined the event", Toast.LENGTH_LONG).show();
 
             }
         });

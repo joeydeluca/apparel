@@ -70,7 +70,7 @@ public class EditItemActivity extends AppCompatActivity {
 
         Item item = null;
         try {
-            item = helper.getItemDao().queryForId(id);
+            item = id != null ? helper.getItemDao().queryForId(id) : null;
             if(item != null) {
                 txtItemName.setText(item.getName());
                 txtItemDescription.setText(item.getDescription());
@@ -103,24 +103,26 @@ public class EditItemActivity extends AppCompatActivity {
                 }
 
                 // Save image record
-                Photo photo = newItem.getPhoto();
-                if(photo == null) {
-                    photo = new Photo();
-                }
-                photo.setPhotoPath(chosenImageUri.getPath());
-                photo.setPhotoPathSmall(chosenImageUri.getPath());
-                photo.incrementVersion();
-                try {
-                    helper.getPhotoDao().createOrUpdate(photo);
-                } catch (SQLException e) {
-                    e.printStackTrace();
+                if(chosenImageUri != null) {
+                    Photo photo = newItem.getPhoto();
+                    if (photo == null) {
+                        photo = new Photo();
+                    }
+                    photo.setPhotoPath(chosenImageUri.getPath());
+                    photo.setPhotoPathSmall(chosenImageUri.getPath());
+                    photo.incrementVersion();
+                    try {
+                        helper.getPhotoDao().createOrUpdate(photo);
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                    newItem.setPhoto(photo);
                 }
 
                 // Save item
                 newItem.setName(txtItemName.getText().toString());
                 newItem.setDescription(txtItemDescription.getText().toString());
                 newItem.setItemCategory(ItemCategory.getEnumFromDisplayName(spnType.getSelectedItem().toString()));
-                newItem.setPhoto(photo);
                 newItem.incrementVersion();
                 try {
                     helper.getItemDao().createOrUpdate(newItem);

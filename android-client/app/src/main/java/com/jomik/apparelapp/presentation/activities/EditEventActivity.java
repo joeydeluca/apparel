@@ -3,11 +3,8 @@ package com.jomik.apparelapp.presentation.activities;
 import android.Manifest;
 import android.app.Activity;
 import android.app.DatePickerDialog;
-import android.content.ContentUris;
-import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -22,25 +19,19 @@ import android.widget.Toast;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.jomik.apparelapp.R;
-import com.jomik.apparelapp.infrastructure.providers.ApparelContract;
-import com.jomik.apparelapp.infrastructure.providers.ApparelContract.Events;
-import com.jomik.apparelapp.infrastructure.providers.ApparelContract.Photos;
-import com.jomik.apparelapp.infrastructure.providers.DbSchema;
+import com.jomik.apparelapp.domain.entities.Event;
+import com.jomik.apparelapp.domain.entities.Photo;
+import com.jomik.apparelapp.infrastructure.ormlite.OrmLiteSqlHelper;
 import com.jomik.apparelapp.infrastructure.providers.SqlHelper;
 import com.jomik.apparelapp.infrastructure.services.AuthenticationManager;
 import com.jomik.apparelapp.infrastructure.services.ImageHelper;
 import com.jomik.apparelapp.presentation.validator.FormValidator;
 import com.jomik.apparelapp.presentation.validator.ImageValidator;
-import com.kbeanie.multipicker.api.ImagePicker;
-import com.kbeanie.multipicker.api.Picker;
-import com.kbeanie.multipicker.api.callbacks.ImagePickerCallback;
-import com.kbeanie.multipicker.api.entity.ChosenImage;
 
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
-import java.util.UUID;
 
 public class EditEventActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -85,39 +76,41 @@ public class EditEventActivity extends AppCompatActivity implements View.OnClick
 
         int version = 0;
 
+        final OrmLiteSqlHelper helper = new OrmLiteSqlHelper(getApplicationContext());
+
         // Populate fields if editing
         Intent intent = getIntent();
-        final long id = intent.getLongExtra("id", -1);
-        if(id != -1) {
-            Uri uri = ContentUris.withAppendedId(Events.CONTENT_URI, id);
-            Cursor cursor = getContentResolver().query(uri, Events.PROJECTION_ALL, null, null, null);
-            if (cursor.moveToFirst()) {
-                txtEventTitle.setText((SqlHelper.getString(cursor, Events.TITLE, DbSchema.PREFIX_TBL_EVENTS)));
-                txtEventLocation.setText(SqlHelper.getString(cursor, Events.LOCATION, DbSchema.PREFIX_TBL_EVENTS));
-                txtDescription.setText(SqlHelper.getString(cursor, Events.DESCRIPTION, DbSchema.PREFIX_TBL_EVENTS));
-                txtFromDate.setText(SqlHelper.getDateForDisplay(cursor, Events.START_DATE, DbSchema.PREFIX_TBL_EVENTS));
-                txtToDate.setText(SqlHelper.getDateForDisplay(cursor, Events.END_DATE, DbSchema.PREFIX_TBL_EVENTS));
-                version = SqlHelper.getInt(cursor, Events.VERSION, DbSchema.PREFIX_TBL_EVENTS);
-                existingPhotoUuid = SqlHelper.getString(cursor, Photos.UUID, DbSchema.PREFIX_TBL_PHOTOS);
-                existingPhotoPath = SqlHelper.getString(cursor, Photos.LOCAL_PATH_SM, DbSchema.PREFIX_TBL_PHOTOS);
+        final String id = intent.getStringExtra("id");
+
+        Event event = null;
+        try {
+            event = id != null ? helper.getEventDao().queryForId(id) : null;
+            if(event != null) {
+                txtEventTitle.setText(event.getTitle());
+                txtEventLocation.setText(event.getLocation());
+                txtDescription.setText(event.getDescription());
+                txtFromDate.setText(SqlHelper.dateFormatForDisplay.format(event.getStartDate()));
+                txtToDate.setText(SqlHelper.dateFormatForDisplay.format(event.getEndDate()));
+                if(event.getPhoto() != null && chosenImageUri == null) {
+                    ImageHelper.setImageUri(simpleDraweeView, event.getPhoto().getPhotoPath());
+                }
+            } else {
+                event = new Event();
+                event.setOwner(AuthenticationManager.getAuthenticatedUser(getApplicationContext()));
             }
-            cursor.close();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
 
-        if(existingPhotoPath != null && chosenImageUri == null) {
-            ImageHelper.setImageUri(simpleDraweeView, existingPhotoPath);
-        }
+        final Event newEvent = event;
 
-        final String finalExistingPhotoPath = existingPhotoPath;
-        final String finalExistingPhotoUuid = existingPhotoUuid;
-
-        final int newEventVersion = ++version;
         btnDone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Validate
                 if(!FormValidator.validate(txtEventTitle, txtEventLocation, txtFromDate, txtDescription) ||
-                    (finalExistingPhotoPath == null && !ImageValidator.validate(EditEventActivity.this, chosenImageUri))) {
+                    (newEvent.getPhoto() == null && !ImageValidator.validate(EditEventActivity.this, chosenImageUri))) {
                     return;
                 }
 
@@ -137,36 +130,36 @@ public class EditEventActivity extends AppCompatActivity implements View.OnClick
                 }
 
                 // Save image record
-                String photoUuid = finalExistingPhotoUuid;
-                if(chosenImageUuid != null) {
-                    if(photoUuid != null) {
-                        getContentResolver().delete(Photos.CONTENT_URI, "uuid = ?", new String[] {photoUuid});
+                if(chosenImageUri != null) {
+                    Photo photo = newEvent.getPhoto();
+                    if (photo == null) {
+                        photo = new Photo();
                     }
-                    String newPhotoUuid = UUID.randomUUID().toString();
-                    ContentValues values = new ContentValues();
-                    values.put(Photos.UUID, newPhotoUuid);
-                    values.put(Photos.LOCAL_PATH, chosenImageUri.getPath());
-                    values.put(Photos.LOCAL_PATH_SM, chosenImageUri.getPath());
-                    getContentResolver().insert(Photos.CONTENT_URI, values);
-                    photoUuid = newPhotoUuid;
+                    photo.setPhotoPath(chosenImageUri.getPath());
+                    photo.setPhotoPathSmall(chosenImageUri.getPath());
+                    photo.incrementVersion();
+                    try {
+                        helper.getPhotoDao().createOrUpdate(photo);
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                    newEvent.setPhoto(photo);
                 }
 
-                String userUuid = AuthenticationManager.getAuthenticatedUser(getApplicationContext()).getUuid();
-
-                ContentValues values = new ContentValues();
-                values.put(Events.TITLE, txtEventTitle.getText().toString());
-                values.put(Events.LOCATION, txtEventLocation.getText().toString());
-                values.put(Events.DESCRIPTION, txtDescription.getText().toString());
-                values.put(Events.PHOTO_UUID, photoUuid);
-                values.put(Events.OWNER_UUID, userUuid);
-                values.put(Events.START_DATE, SqlHelper.getDateForDb(txtFromDate.getText().toString()));
-                values.put(Events.END_DATE, SqlHelper.getDateForDb(txtToDate.getText().toString()));
-                values.put(Events.VERSION, newEventVersion);
-                if(id == -1) {
-                    getContentResolver().insert(Events.CONTENT_URI, values);
-                } else {
-                    getContentResolver().update(ContentUris.withAppendedId(Events.CONTENT_URI, id), values, null, null);
+                try {
+                    newEvent.setTitle(txtEventTitle.getText().toString());
+                    newEvent.setLocation(txtEventLocation.getText().toString());
+                    newEvent.setDescription(txtDescription.getText().toString());
+                    newEvent.setStartDate(SqlHelper.dateFormatForDisplay.parse(txtFromDate.getText().toString()));
+                    newEvent.setEndDate(SqlHelper.dateFormatForDisplay.parse(txtToDate.getText().toString()));
+                    newEvent.incrementVersion();
+                    helper.getEventDao().createOrUpdate(newEvent);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                } catch (ParseException e) {
+                    e.printStackTrace();
                 }
+
                 Toast.makeText(EditEventActivity.this, "Saved", Toast.LENGTH_SHORT).show();
 
                 onBackPressed();

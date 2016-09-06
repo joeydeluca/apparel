@@ -14,13 +14,14 @@ import com.jomik.apparelapp.R;
 import com.jomik.apparelapp.domain.entities.Event;
 import com.jomik.apparelapp.infrastructure.events.EventSearchComplete;
 import com.jomik.apparelapp.infrastructure.events.EventSearchStart;
+import com.jomik.apparelapp.infrastructure.ormlite.OrmLiteSqlHelper;
 import com.jomik.apparelapp.infrastructure.providers.ApparelContract;
-import com.jomik.apparelapp.infrastructure.providers.SqlHelper;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.List;
 
@@ -51,14 +52,16 @@ public class EventSearchActivity extends AppCompatActivity {
     }
 
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
-    public void onMessage(EventSearchStart eventSearchStart) throws InterruptedException, ParseException {
+    public void onMessage(EventSearchStart eventSearchStart) throws InterruptedException, ParseException, SQLException {
 
         // find all events TODO: use server api
         Uri uri = ApparelContract.Events.CONTENT_URI ;
         Cursor cursor = getContentResolver().query(uri, ApparelContract.Events.PROJECTION_ALL, null, null, null);
-        //List<Event> events = SqlHelper.getEventsFromCursor(cursor);
+        OrmLiteSqlHelper helper = new OrmLiteSqlHelper(getApplicationContext());
 
-        EventBus.getDefault().post(new EventSearchComplete(null));
+        List<Event> events = helper.getEventDao().queryForAll();
+
+        EventBus.getDefault().post(new EventSearchComplete(events));
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

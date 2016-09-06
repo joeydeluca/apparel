@@ -82,7 +82,7 @@ public class ItemListFragment extends ListFragment implements AdapterView.OnItem
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position,long id) {
         Intent intent = new Intent(getActivity().getApplicationContext(), EditItemActivity.class);
-        intent.putExtra("id", Long.parseLong(view.getTag().toString()));
+        intent.putExtra("id", view.getTag().toString());
         startActivity(intent);
     }
 

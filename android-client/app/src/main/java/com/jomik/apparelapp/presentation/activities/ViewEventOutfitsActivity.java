@@ -87,7 +87,6 @@ public class ViewEventOutfitsActivity extends AppCompatActivity {
 
         mDatePickerDialog = createDatePickerDialog(eventId, datePage);
 
-        String myEventGuestUuid = null;
         String myOutfitDescription = null;
         EventGuest myEventGuest = null;
 
@@ -105,6 +104,8 @@ public class ViewEventOutfitsActivity extends AppCompatActivity {
 
             outfits = outfitQb.join(eventGuestQb.join(eventQb)).query();
 
+            myEventGuest = helper.getEventGuestDao().queryBuilder().where().eq("event_uuid", eventId).and().eq("guest_uuid", AuthenticationManager.getAuthenticatedUser(this).getUuid()).queryForFirst();
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -113,10 +114,8 @@ public class ViewEventOutfitsActivity extends AppCompatActivity {
 
         for(EventGuestOutfit outfit : outfits) {
             if(outfit.getEventGuest().getUser().getUuid().equals(AuthenticationManager.getAuthenticatedUser(this).getUuid())) {
-                myEventGuestUuid = outfit.getUuid();
                 myOutfitDescription = outfit.getDescription();
                 mySelectedItems.addAll(outfit.getItems());
-                myEventGuest = outfit.getEventGuest();
                 break;
             }
         }
@@ -128,8 +127,8 @@ public class ViewEventOutfitsActivity extends AppCompatActivity {
         EventOutfitsRvAdapter adapter = new EventOutfitsRvAdapter(outfits);
         rv.setAdapter(adapter);
 
-        if(myEventGuestUuid != null) {
-            final String finalMyEventGuestUuid = myEventGuestUuid;
+        if(myEventGuest != null) {
+            final String finalMyEventGuestUuid = myEventGuest.getUuid();
             final String finalMyOutfitDescription = myOutfitDescription;
             final EventGuest finalMyEventGuest = myEventGuest;
             addButton.setOnClickListener(new View.OnClickListener() {
