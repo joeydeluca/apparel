@@ -24,11 +24,11 @@ public class SyncDto {
         return user != null || !items.isEmpty() || !events.isEmpty() || !photos.isEmpty();
     }
 
-    public User getUser() {
+    public User getGuest() {
         return user;
     }
 
-    public void setUser(User user) {
+    public void setGuest(User user) {
         this.user = user;
     }
 

@@ -4,20 +4,22 @@ import android.accounts.Account;
 import android.content.AbstractThreadedSyncAdapter;
 import android.content.ContentProviderClient;
 import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.SyncResult;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.stmt.DeleteBuilder;
 import com.jomik.apparelapp.domain.entities.Entity;
 import com.jomik.apparelapp.domain.entities.Event;
+import com.jomik.apparelapp.domain.entities.EventGuest;
+import com.jomik.apparelapp.domain.entities.EventGuestOutfit;
+import com.jomik.apparelapp.domain.entities.EventGuestOutfitItem;
 import com.jomik.apparelapp.domain.entities.Item;
 import com.jomik.apparelapp.domain.entities.Photo;
 import com.jomik.apparelapp.domain.entities.User;
-import com.jomik.apparelapp.infrastructure.providers.ApparelContract;
-import com.jomik.apparelapp.infrastructure.providers.SqlHelper;
+import com.jomik.apparelapp.infrastructure.ormlite.OrmLiteSqlHelper;
 import com.jomik.apparelapp.infrastructure.rest.DownloadSyncDto;
 import com.jomik.apparelapp.infrastructure.rest.RestService;
 import com.jomik.apparelapp.infrastructure.rest.UploadSyncDto;
@@ -25,6 +27,7 @@ import com.jomik.apparelapp.infrastructure.services.AuthenticationManager;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -47,6 +50,7 @@ public class ApparelSyncAdapter extends AbstractThreadedSyncAdapter {
 
     private RestService restService;
     private ContentResolver contentResolver;
+    private OrmLiteSqlHelper mHelper;
 
     public ApparelSyncAdapter(Context context, boolean autoInitialize) {
         super(context, autoInitialize);
@@ -65,6 +69,7 @@ public class ApparelSyncAdapter extends AbstractThreadedSyncAdapter {
                 .build();
         restService = retrofit.create(RestService.class);
         contentResolver = c.getContentResolver();
+        mHelper = new OrmLiteSqlHelper(c);
     }
 
     @Override
@@ -72,50 +77,55 @@ public class ApparelSyncAdapter extends AbstractThreadedSyncAdapter {
         Log.i(TAG, "Start Sync Adapter");
 
         try {
-
             User user = AuthenticationManager.getAuthenticatedUser(getContext());
             String appUserUuid = user.getUuid();
 
             // get data from server
-            DownloadSyncDto downloadSyncDto = restService.getUserData(appUserUuid).execute().body();
+            Response<DownloadSyncDto> response = restService.getUserData(appUserUuid).execute();
+            Log.i(TAG, response.raw().body().string());
+            DownloadSyncDto downloadSyncDto = response.body();
             if(downloadSyncDto == null) downloadSyncDto = new DownloadSyncDto();
             UploadSyncDto uploadSyncDto = new UploadSyncDto();
 
             // User
-            /*User remoteUser = downloadSyncDto.getUser();
+            User remoteUser = downloadSyncDto.getUser();
             if(remoteUser == null) {
                 uploadSyncDto.setUser(user);
-            }*/
+            }
+
+            // remove this after server bug fix TODO
+            uploadSyncDto.setUser(user);
 
             // Items
-           /* List<Item> existingLocalItems = SqlHelper.getItemsFromProvider(provider);
-            Set<Item> existingRemoteItems = downloadSyncDto.getEventGuestOutfitItems();
+            List<Item> existingLocalItems = mHelper.getItemDao().queryForAll();
+            Set<Item> existingRemoteItems = downloadSyncDto.getItems();
             Set<Item> newLocalItems = getNewLocalEntities(existingLocalItems, existingRemoteItems);
             Set<Item> newRemoteItems = getNewRemoteEntities(existingLocalItems, existingRemoteItems);
             mergeEntitiesWithDuplicateUuids(existingLocalItems, existingRemoteItems, newLocalItems, newRemoteItems);
-            saveToDb(newLocalItems, ApparelContract.Items.CONTENT_URI);
-            uploadSyncDto.setEventGuestOutfitItems(newRemoteItems);
 
             // Events
-            List<Event> existingLocalEvents = SqlHelper.getEventsFromProvider(provider);
+            List<Event> existingLocalEvents = mHelper.getEventDao().queryForAll();
             Set<Event> existingRemoteEvents = downloadSyncDto.getEvents();
             Set<Event> newLocalEvents = getNewLocalEntities(existingLocalEvents, existingRemoteEvents);
             Set<Event> newRemoteEvents = getNewRemoteEntities(existingLocalEvents, existingRemoteEvents);
             mergeEntitiesWithDuplicateUuids(existingLocalEvents, existingRemoteEvents, newLocalEvents, newRemoteEvents);
-            saveToDb(newLocalEvents, ApparelContract.Events.CONTENT_URI);
-            uploadSyncDto.setEvents(newRemoteEvents);*/
 
             // Event Guests
-            /*List<EventGuest> existingLocal = SqlHelper.getEventsFromProvider(provider);
-            Set<Event> existingRemote = downloadSyncDto.getEvents();
-            Set<Event> newLocals = getNewLocalEntities(existingLocalEvents, existingRemoteEvents);
-            Set<Event> newRemote = getNewRemoteEntities(existingLocalEvents, existingRemoteEvents);
-            mergeEntitiesWithDuplicateUuids(existingLocalEvents, existingRemoteEvents, newLocalEvents, newRemoteEvents);
-            saveToDb(newLocalEvents, ApparelContract.Events.CONTENT_URI);
-            uploadSyncDto.setEvents(newRemoteEvents);*/
+            List<EventGuest> existingLocalEventGuests = mHelper.getEventGuestDao().queryForAll();
+            Set<EventGuest> existingRemoteEventGuests = downloadSyncDto.getEventGuests();
+            Set<EventGuest> newLocalEventGuests = getNewLocalEntities(existingLocalEventGuests, existingRemoteEventGuests);
+            Set<EventGuest> newRemoteEventGuests = getNewRemoteEntities(existingLocalEventGuests, existingRemoteEventGuests);
+            mergeEntitiesWithDuplicateUuids(existingLocalEventGuests, existingRemoteEventGuests, newLocalEventGuests, newRemoteEventGuests);
+
+            // Event Guest Outfits
+            List<EventGuestOutfit> existingLocalEventGuestOutfits = mHelper.getEventGuestOutfitDao().queryForAll();
+            Set<EventGuestOutfit> existingRemoteEventGuestOutfits = downloadSyncDto.getEventGuestOutfits();
+            Set<EventGuestOutfit> newLocalEventGuestOutfits = getNewLocalEntities(existingLocalEventGuestOutfits, existingRemoteEventGuestOutfits);
+            Set<EventGuestOutfit> newRemoteEventGuestOutfits = getNewRemoteEntities(existingLocalEventGuestOutfits, existingRemoteEventGuestOutfits);
+            mergeEntitiesWithDuplicateUuids(existingLocalEventGuests, existingRemoteEventGuestOutfits, newLocalEventGuestOutfits, newRemoteEventGuestOutfits);
 
             // Photos
-           /* List<Photo> existingLocalPhotos = new ArrayList<>();
+            List<Photo> existingLocalPhotos = new ArrayList<>();
             existingLocalPhotos.addAll(getPhotosFromItems(existingLocalItems));
             existingLocalPhotos.addAll(getPhotosFromEvents(existingLocalEvents));
 
@@ -126,12 +136,21 @@ public class ApparelSyncAdapter extends AbstractThreadedSyncAdapter {
             Set<Photo> newLocalPhotos = getNewLocalEntities(existingLocalPhotos, existingRemotePhotos);
             Set<Photo> newRemotePhotos = getNewRemoteEntities(existingLocalPhotos, existingRemotePhotos);
             mergeEntitiesWithDuplicateUuids(existingLocalPhotos, existingRemotePhotos, newLocalPhotos, newRemotePhotos);
-            saveToDb(newLocalPhotos, ApparelContract.Photos.CONTENT_URI);
+
+            // Save to local db
+            saveToDb(mHelper.getPhotoDao(), newLocalPhotos);
+            saveToDb(mHelper.getItemDao(), newLocalItems);
+            saveToDb(mHelper.getEventDao(), newLocalEvents);
+            saveToDb(mHelper.getEventGuestDao(), newLocalEventGuests);
+            saveEventGuestOutfitsToDb(newLocalEventGuestOutfits);
+
+            // Upload to server
+            uploadSyncDto.setItems(newRemoteItems);
+            uploadSyncDto.setEvents(newRemoteEvents);
             uploadSyncDto.setPhotos(newRemotePhotos);
-
-            saveRemoteItems(user, uploadSyncDto);
-
-            contentResolver.notifyChange(ApparelContract.CONTENT_URI, null);*/
+            uploadSyncDto.setEventGuests(newRemoteEventGuests);
+            uploadSyncDto.setEventGuestOutfits(newRemoteEventGuestOutfits);
+            uploadRemoteItems(user, uploadSyncDto);
 
         } catch(Exception e) {
             Log.e(TAG, e.getMessage());
@@ -183,17 +202,30 @@ public class ApparelSyncAdapter extends AbstractThreadedSyncAdapter {
         }
     }
 
-    private void saveToDb(Set<? extends Entity> entities, Uri contentUri) {
+    private void saveToDb(Dao dao, Set<? extends Entity> entities) throws SQLException {
         for(Entity entity : entities) {
-            ContentValues values = entity.getContentValues();
-            int rowsUpdated = contentResolver.update(contentUri, values, "uuid = ?", new String[]{entity.getUuid()});
-            if(rowsUpdated == 0) {
-                contentResolver.insert(contentUri, values);
+            dao.createOrUpdate(entity);
+        }
+    }
+
+    private void saveEventGuestOutfitsToDb(Set<EventGuestOutfit> eventGuestOutfits) throws SQLException {
+        for(EventGuestOutfit eventGuestOutfit : eventGuestOutfits) {
+            // Save outfit
+            mHelper.getEventGuestOutfitDao().createOrUpdate(eventGuestOutfit);
+
+            // Delete existing outfit items
+            DeleteBuilder<EventGuestOutfitItem, String> deleteBuilder = mHelper.getEventGuestOutfitItemDao().deleteBuilder();
+            deleteBuilder.where().eq("event_guest_outfit_uuid", eventGuestOutfit.getUuid());
+            deleteBuilder.delete();
+
+            // Create new outfit items
+            for(EventGuestOutfitItem eventGuestOutfitItem : eventGuestOutfit.getEventGuestOutfitItemList()) {
+                mHelper.getEventGuestOutfitItemDao().create(eventGuestOutfitItem);
             }
         }
     }
 
-    private void saveRemoteItems(User user, UploadSyncDto syncDto) throws IOException {
+    private void uploadRemoteItems(User user, UploadSyncDto syncDto) throws IOException {
         if(syncDto.canUpload()) {
             // Upload data
             Response response = restService.saveUserData(user.getUuid(), syncDto).execute();

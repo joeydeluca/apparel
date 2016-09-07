@@ -2,6 +2,8 @@ package com.jomik.apparelapp.domain.entities;
 
 import android.content.ContentValues;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
@@ -26,7 +28,11 @@ public class EventGuestOutfit extends Entity {
     @DatabaseField(foreign=true, columnName="event_guest_uuid", foreignAutoRefresh = true)
     private EventGuest eventGuest;
     @ForeignCollectionField(eager = true)
+    @JsonIgnore
     private ForeignCollection<EventGuestOutfitItem> eventGuestOutfitItems;
+    @JsonProperty("eventGuestOutfitItems")
+    private List<EventGuestOutfitItem> eventGuestOutfitItemList;
+
 
     public Date getDate() {
         return date;
@@ -68,6 +74,14 @@ public class EventGuestOutfit extends Entity {
 
     public void setEventGuest(EventGuest eventGuest) {
         this.eventGuest = eventGuest;
+    }
+
+    public List<EventGuestOutfitItem> getEventGuestOutfitItemList() {
+        return eventGuestOutfitItemList;
+    }
+
+    public void setEventGuestOutfitItemList(List<EventGuestOutfitItem> eventGuestOutfitItemList) {
+        this.eventGuestOutfitItemList = eventGuestOutfitItemList;
     }
 
     @Override

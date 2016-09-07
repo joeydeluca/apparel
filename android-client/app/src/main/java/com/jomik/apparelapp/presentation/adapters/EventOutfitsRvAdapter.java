@@ -10,10 +10,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
-import com.j256.ormlite.dao.ForeignCollection;
 import com.jomik.apparelapp.R;
 import com.jomik.apparelapp.domain.entities.EventGuestOutfit;
-import com.jomik.apparelapp.domain.entities.EventGuestOutfitItem;
 import com.jomik.apparelapp.domain.entities.Item;
 import com.jomik.apparelapp.infrastructure.services.ImageHelper;
 
@@ -44,8 +42,8 @@ public class EventOutfitsRvAdapter extends RecyclerView.Adapter<EventOutfitsRvAd
     public void onBindViewHolder(ViewHolder holder, final int i) {
         EventGuestOutfit eventGuestOutfit = eventGuestOutfits.get(i);
         holder.txtOutfitDescription.setText(eventGuestOutfit.getDescription());
-        holder.txtUsername.setText(eventGuestOutfit.getEventGuest().getUser().getName());
-        ImageHelper.setFacebookProfileImageUri(holder.profileImage, eventGuestOutfit.getEventGuest().getUser().getFacebookId());
+        holder.txtUsername.setText(eventGuestOutfit.getEventGuest().getGuest().getName());
+        ImageHelper.setFacebookProfileImageUri(holder.profileImage, eventGuestOutfit.getEventGuest().getGuest().getFacebookId());
 
         LinearLayoutManager llm = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
         holder.recyclerView.setLayoutManager(llm);

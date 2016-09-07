@@ -2,10 +2,14 @@ package com.jomik.apparelapp.domain.entities;
 
 import android.content.ContentValues;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
+
+import java.util.List;
 
 /**
  * Created by Joe Deluca on 8/26/2016.
@@ -15,10 +19,14 @@ public class EventGuest extends Entity {
     @DatabaseField(foreign=true, columnName="event_uuid", foreignAutoRefresh = true)
     private Event event;
     @DatabaseField(foreign=true, columnName="guest_uuid", foreignAutoRefresh = true)
-    private User user;
+    private User guest;
 
     @ForeignCollectionField(eager = true)
+    @JsonIgnore
     private ForeignCollection<EventGuestOutfit> eventGuestOutfits;
+
+    @JsonProperty("eventGuestOutfits")
+    private List<EventGuestOutfit> eventGuestOutfitList;
 
     public EventGuest() {
     }
@@ -31,12 +39,12 @@ public class EventGuest extends Entity {
         this.event = event;
     }
 
-    public User getUser() {
-        return user;
+    public User getGuest() {
+        return guest;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setGuest(User guest) {
+        this.guest = guest;
     }
 
     public ForeignCollection<EventGuestOutfit> getEventGuestOutfits() {
@@ -45,6 +53,14 @@ public class EventGuest extends Entity {
 
     public void setEventGuestOutfits(ForeignCollection<EventGuestOutfit> eventGuestOutfits) {
         this.eventGuestOutfits = eventGuestOutfits;
+    }
+
+    public List<EventGuestOutfit> getEventGuestOutfitList() {
+        return eventGuestOutfitList;
+    }
+
+    public void setEventGuestOutfitList(List<EventGuestOutfit> eventGuestOutfitList) {
+        this.eventGuestOutfitList = eventGuestOutfitList;
     }
 
     @Override

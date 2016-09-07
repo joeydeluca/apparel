@@ -78,7 +78,9 @@ public class SyncController {
         // Save
         photoRepository.save(syncDto.getPhotos());
         photoRepository.flush();
-        userRepository.save(syncDto.getUser());
+        if(syncDto.getUser() != null) {
+            userRepository.save(syncDto.getUser());
+        }
         itemRepository.save(syncDto.getItems());
         eventRepository.save(syncDto.getEvents());
         eventGuestRepository.save(syncDto.getEventGuests());

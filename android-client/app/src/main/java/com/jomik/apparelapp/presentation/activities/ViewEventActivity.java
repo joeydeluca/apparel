@@ -77,7 +77,7 @@ public class ViewEventActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 EventGuest eventGuest = new EventGuest();
-                eventGuest.setUser(user);
+                eventGuest.setGuest(user);
                 eventGuest.setEvent(finalEvent);
                 try {
                     helper.getEventGuestDao().create(eventGuest);

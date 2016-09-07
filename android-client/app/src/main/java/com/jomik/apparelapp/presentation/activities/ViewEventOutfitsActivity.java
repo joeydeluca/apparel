@@ -113,7 +113,7 @@ public class ViewEventOutfitsActivity extends AppCompatActivity {
         final ArrayList<Item> mySelectedItems = new ArrayList<>();
 
         for(EventGuestOutfit outfit : outfits) {
-            if(outfit.getEventGuest().getUser().getUuid().equals(AuthenticationManager.getAuthenticatedUser(this).getUuid())) {
+            if(outfit.getEventGuest().getGuest().getUuid().equals(AuthenticationManager.getAuthenticatedUser(this).getUuid())) {
                 myOutfitDescription = outfit.getDescription();
                 mySelectedItems.addAll(outfit.getItems());
                 break;
