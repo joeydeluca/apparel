@@ -82,7 +82,6 @@ public class ApparelSyncAdapter extends AbstractThreadedSyncAdapter {
 
             // get data from server
             Response<DownloadSyncDto> response = restService.getUserData(appUserUuid).execute();
-            Log.i(TAG, response.raw().body().string());
             DownloadSyncDto downloadSyncDto = response.body();
             if(downloadSyncDto == null) downloadSyncDto = new DownloadSyncDto();
             UploadSyncDto uploadSyncDto = new UploadSyncDto();

@@ -2,6 +2,7 @@ package com.apparel.domain.model;
 
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -30,6 +31,7 @@ public class Event extends ApparelEntity {
     private Photo photo;
 
     @OneToMany(mappedBy = "event", fetch = FetchType.EAGER)
+    @JsonManagedReference
     private Set<EventGuest> eventGuests = new HashSet<>();
 
     public String getTitle() {
