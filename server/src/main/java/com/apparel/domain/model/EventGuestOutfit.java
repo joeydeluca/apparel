@@ -19,9 +19,8 @@ public class EventGuestOutfit extends ApparelEntity {
     @JoinColumn(name = "guestUuid")
     private EventGuest eventGuest;
 
-    @OneToMany(fetch = FetchType.EAGER)
-    @JoinColumn(name = "itemUuid")
-    private List<Item> items;
+    @OneToMany(mappedBy = "eventGuestOutfit", fetch = FetchType.EAGER)
+    private List<EventGuestOutfitItem> eventGuestOutfitItems;
 
     public Date getDate() {
         return date;
@@ -39,12 +38,12 @@ public class EventGuestOutfit extends ApparelEntity {
         this.description = description;
     }
 
-    public List<Item> getItems() {
-        return items;
+    public List<EventGuestOutfitItem> getEventGuestOutfitItems() {
+        return eventGuestOutfitItems;
     }
 
-    public void setItems(List<Item> items) {
-        this.items = items;
+    public void setEventGuestOutfitItems(List<EventGuestOutfitItem> eventGuestOutfitItems) {
+        this.eventGuestOutfitItems = eventGuestOutfitItems;
     }
 
     public EventGuest getEventGuest() {

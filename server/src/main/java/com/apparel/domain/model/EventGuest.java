@@ -20,8 +20,7 @@ public class EventGuest extends ApparelEntity {
     @JoinColumn(name="guestUuid")
     private User guest;
 
-    @OneToMany(fetch = FetchType.EAGER)
-    @JoinColumn(name = "eventGuestOutfitUuid")
+    @OneToMany(mappedBy = "eventGuest", fetch = FetchType.EAGER)
     private Set<EventGuestOutfit> eventGuestOutfits = new HashSet<>();
 
     public Event getEvent() {

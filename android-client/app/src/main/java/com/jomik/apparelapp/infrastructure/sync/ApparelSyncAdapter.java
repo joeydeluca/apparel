@@ -92,9 +92,6 @@ public class ApparelSyncAdapter extends AbstractThreadedSyncAdapter {
                 uploadSyncDto.setUser(user);
             }
 
-            // remove this after server bug fix TODO
-            uploadSyncDto.setUser(user);
-
             // Items
             List<Item> existingLocalItems = mHelper.getItemDao().queryForAll();
             Set<Item> existingRemoteItems = downloadSyncDto.getItems();
