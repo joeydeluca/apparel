@@ -78,10 +78,9 @@ public class ApparelSyncAdapter extends AbstractThreadedSyncAdapter {
 
         try {
             User user = AuthenticationManager.getAuthenticatedUser(getContext());
-            String appUserUuid = user.getUuid();
 
             // get data from server
-            Response<DownloadSyncDto> response = restService.getUserData(appUserUuid).execute();
+            Response<DownloadSyncDto> response = restService.getUserData(user.getFacebookId()).execute();
             DownloadSyncDto downloadSyncDto = response.body();
             if(downloadSyncDto == null) downloadSyncDto = new DownloadSyncDto();
             UploadSyncDto uploadSyncDto = new UploadSyncDto();
@@ -138,7 +137,7 @@ public class ApparelSyncAdapter extends AbstractThreadedSyncAdapter {
             saveToDb(mHelper.getItemDao(), newLocalItems);
             saveToDb(mHelper.getEventDao(), newLocalEvents);
             saveToDb(mHelper.getEventGuestDao(), newLocalEventGuests);
-            saveEventGuestOutfitsToDb(newLocalEventGuestOutfits);
+            saveEventGuestOutfitsToDb(newLocalEventGuestOutfits, downloadSyncDto.getEventGuestOutfitItems());
 
             // Upload to server
             uploadSyncDto.setItems(newRemoteItems);
@@ -146,6 +145,7 @@ public class ApparelSyncAdapter extends AbstractThreadedSyncAdapter {
             uploadSyncDto.setPhotos(newRemotePhotos);
             uploadSyncDto.setEventGuests(newRemoteEventGuests);
             uploadSyncDto.setEventGuestOutfits(newRemoteEventGuestOutfits);
+            uploadSyncDto.setEventGuestOutfitItems(newRemoteEventGuestOutfits);
             uploadRemoteItems(user, uploadSyncDto);
 
         } catch(Exception e) {
@@ -204,7 +204,7 @@ public class ApparelSyncAdapter extends AbstractThreadedSyncAdapter {
         }
     }
 
-    private void saveEventGuestOutfitsToDb(Set<EventGuestOutfit> eventGuestOutfits) throws SQLException {
+    private void saveEventGuestOutfitsToDb(Set<EventGuestOutfit> eventGuestOutfits, Set<EventGuestOutfitItem> eventGuestOutfitItems) throws SQLException {
         for(EventGuestOutfit eventGuestOutfit : eventGuestOutfits) {
             // Save outfit
             mHelper.getEventGuestOutfitDao().createOrUpdate(eventGuestOutfit);
@@ -215,7 +215,7 @@ public class ApparelSyncAdapter extends AbstractThreadedSyncAdapter {
             deleteBuilder.delete();
 
             // Create new outfit items
-            for(EventGuestOutfitItem eventGuestOutfitItem : eventGuestOutfit.getEventGuestOutfitItems()) {
+            for(EventGuestOutfitItem eventGuestOutfitItem : eventGuestOutfitItems) {
                 if(eventGuestOutfit.getUuid().equals(eventGuestOutfitItem.getEventGuestOutfit().getUuid())) {
                     mHelper.getEventGuestOutfitItemDao().create(eventGuestOutfitItem);
                 }

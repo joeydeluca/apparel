@@ -52,10 +52,22 @@ public class EventGuestOutfit extends Entity {
         return eventGuestOutfitItems;
     }
 
+    public List<EventGuestOutfitItem> getEventGuestOutfitItemList() {
+        List<EventGuestOutfitItem> eventGuestOutfitItemList = new ArrayList<>();
+
+        if(eventGuestOutfitItems != null) {
+            for (EventGuestOutfitItem eventGuestOutfitItem : eventGuestOutfitItems) {
+                eventGuestOutfitItemList.add(eventGuestOutfitItem);
+            }
+        }
+        return eventGuestOutfitItemList;
+    }
+
     public void setEventGuestOutfitItems(ForeignCollection<EventGuestOutfitItem> eventGuestOutfitItems) {
         this.eventGuestOutfitItems = eventGuestOutfitItems;
     }
 
+    @JsonIgnore
     public List<Item> getItems() {
         List<Item> items = new ArrayList<>();
         for(EventGuestOutfitItem eventGuestOutfitItem : eventGuestOutfitItems) {

@@ -35,11 +35,6 @@ public class ItemListFragment extends ListFragment implements AdapterView.OnItem
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // TODO: TESTING !!!!
-        ContentResolver.requestSync(AuthenticationManager.getSyncAccount(getContext()), ApparelContract.AUTHORITY, Bundle.EMPTY);
-
-
     }
 
     @Override
@@ -86,6 +81,10 @@ public class ItemListFragment extends ListFragment implements AdapterView.OnItem
         Intent intent = new Intent(getActivity().getApplicationContext(), EditItemActivity.class);
         intent.putExtra("id", view.getTag().toString());
         startActivity(intent);
+
+        // TODO: TESTING !!!!
+        ContentResolver.requestSync(AuthenticationManager.getSyncAccount(getContext()), ApparelContract.AUTHORITY, Bundle.EMPTY);
+
     }
 
 }

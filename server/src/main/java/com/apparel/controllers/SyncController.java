@@ -4,6 +4,8 @@ import com.apparel.controllers.dtos.DownloadSyncDto;
 import com.apparel.controllers.dtos.UploadSyncDto;
 import com.apparel.domain.model.*;
 import com.apparel.domain.repository.*;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -49,23 +51,26 @@ public class SyncController {
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE
     )
-    public ResponseEntity<DownloadSyncDto> getUserData(@PathVariable("id") String uuid) {
+    public ResponseEntity<DownloadSyncDto> getUserData(@PathVariable("id") String facebookId) {
 
         DownloadSyncDto dto = new DownloadSyncDto();
 
+        User user;
         try {
-            dto.setUser(userRepository.findOne(uuid));
+            user = userRepository.findByFacebookId(facebookId);
         } catch(Exception e) {
             throw new IllegalArgumentException("Invalid user id");
         }
 
+        dto.setUser(user);
+
         // Get items i own
-        Set<Item> items = itemRepository.findByUserUuid(uuid);
+        Set<Item> items = itemRepository.findByUserUuid(user.getUuid());
         dto.setItems(items);
 
         // find all events i own or am attending
-        Set<Event> events = eventRepository.findByOwnerUuid(uuid);
-        events.addAll(eventRepository.findByEventGuestsGuestUuid(uuid));
+        Set<Event> events = eventRepository.findByOwnerUuid(user.getUuid());
+        events.addAll(eventRepository.findByEventGuestsGuestUuid(user.getUuid()));
         dto.setEvents(events);
 
         Set<EventGuest> eventGuests = eventGuestRepository.findByEventUuidIn(events.stream().map(e -> e.getUuid()).collect(Collectors.toList()));
@@ -87,6 +92,13 @@ public class SyncController {
     )
     public ResponseEntity<String> setUserData(@PathVariable("id") String userId, @RequestBody UploadSyncDto syncDto) {
 
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            System.out.println(mapper.writeValueAsString(syncDto));
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
         // Save
         photoRepository.save(syncDto.getPhotos());
         photoRepository.flush();
@@ -101,10 +113,11 @@ public class SyncController {
         if(eventGuestOutfits != null && !eventGuestOutfits.isEmpty()) {
             // delete outfits and outfit items
             eventGuestOutfitRepository.delete(eventGuestOutfits);
-            // add new set of outfit and outfit items
+            // add new set of outfit
             eventGuestOutfitRepository.save(syncDto.getEventGuestOutfits());
-
         }
+
+        eventGuestOutfitItemRepository.save(syncDto.getEventGuestOutfitItems());
 
         return ResponseEntity.ok("{\"status\":\"OK\"}");
     }

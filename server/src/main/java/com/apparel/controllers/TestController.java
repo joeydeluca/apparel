@@ -3,6 +3,7 @@ package com.apparel.controllers;
 import com.apparel.domain.model.Event;
 import com.apparel.domain.model.EventGuest;
 import com.apparel.domain.model.EventGuestOutfit;
+import com.apparel.domain.model.EventGuestOutfitItem;
 import com.apparel.domain.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -11,9 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Created by Joe Deluca on 8/24/2016.
@@ -70,9 +69,22 @@ public class TestController {
 
         EventGuestOutfit eventGuestOutfit = new EventGuestOutfit();
         eventGuestOutfit.setUuid(UUID.randomUUID().toString());
-        eventGuestOutfit.setEventGuest(eventGuest);
+        //eventGuestOutfit.setEventGuest(eventGuest);
         eventGuestOutfits.add(eventGuestOutfit);
 
+        EventGuestOutfitItem eventGuestOutfitItem = new EventGuestOutfitItem();
+        eventGuestOutfitItem.setUuid("111");
+        eventGuestOutfitItem.setEventGuestOutfit(eventGuestOutfit);
+
+        List<EventGuestOutfitItem> items = new ArrayList<>();
+        items.add(eventGuestOutfitItem);
+
+        eventGuestOutfit.setEventGuestOutfitItems(items);
+
+        /*eventGuestOutfitRepository.save(eventGuestOutfit);
+
+        List outfits = eventGuestOutfitRepository.findAll();
+*/
 
         return ResponseEntity.ok(event);
     }

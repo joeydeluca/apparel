@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jomik.apparelapp.domain.entities.Event;
 import com.jomik.apparelapp.domain.entities.EventGuest;
 import com.jomik.apparelapp.domain.entities.EventGuestOutfit;
+import com.jomik.apparelapp.domain.entities.EventGuestOutfitItem;
 import com.jomik.apparelapp.domain.entities.Item;
 import com.jomik.apparelapp.domain.entities.Photo;
 import com.jomik.apparelapp.domain.entities.User;
@@ -25,9 +26,10 @@ public class UploadSyncDto {
     private Set<Photo> photos = new HashSet<>();
     private Set<EventGuest> eventGuests = new HashSet<>();
     private Set<EventGuestOutfit> eventGuestOutfits = new HashSet<>();
+    private Set<EventGuestOutfitItem> eventGuestOutfitItems = new HashSet<>();
 
     public boolean canUpload() {
-        return user != null || !items.isEmpty() || !events.isEmpty() || !photos.isEmpty() || !eventGuests.isEmpty() || !eventGuestOutfits.isEmpty();
+        return user != null || !items.isEmpty() || !events.isEmpty() || !photos.isEmpty() || !eventGuests.isEmpty() || !eventGuestOutfits.isEmpty() || !eventGuestOutfitItems.isEmpty();
     }
 
     public Set<Item> getItems() {
@@ -76,5 +78,19 @@ public class UploadSyncDto {
 
     public void setEventGuestOutfits(Set<EventGuestOutfit> eventGuestOutfits) {
         this.eventGuestOutfits = eventGuestOutfits;
+    }
+
+    public Set<EventGuestOutfitItem> getEventGuestOutfitItems() {
+        return eventGuestOutfitItems;
+    }
+
+    public void setEventGuestOutfitItems(Set<EventGuestOutfit> eventGuestOutfits) {
+        Set<EventGuestOutfitItem> eventGuestOutfitItems = new HashSet<>();
+
+        for(EventGuestOutfit eventGuestOutfit : eventGuestOutfits) {
+            eventGuestOutfitItems.addAll(eventGuestOutfit.getEventGuestOutfitItemList());
+        }
+
+        this.eventGuestOutfitItems = eventGuestOutfitItems;
     }
 }
