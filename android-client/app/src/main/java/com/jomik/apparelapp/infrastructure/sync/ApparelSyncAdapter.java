@@ -81,6 +81,10 @@ public class ApparelSyncAdapter extends AbstractThreadedSyncAdapter {
 
             // get data from server
             Response<DownloadSyncDto> response = restService.getUserData(user.getFacebookId()).execute();
+            if(!response.isSuccessful()) {
+                Log.e(TAG, "Error downloading data from server. " + response.errorBody().string());
+                return;
+            }
             DownloadSyncDto downloadSyncDto = response.body();
             if(downloadSyncDto == null) downloadSyncDto = new DownloadSyncDto();
             UploadSyncDto uploadSyncDto = new UploadSyncDto();
@@ -200,12 +204,14 @@ public class ApparelSyncAdapter extends AbstractThreadedSyncAdapter {
 
     private void saveToDb(Dao dao, Set<? extends Entity> entities) throws SQLException {
         for(Entity entity : entities) {
+            Log.i(TAG, "Saving " + entity.getClass().getSimpleName() + " uuid: " + entity.getUuid() );
             dao.createOrUpdate(entity);
         }
     }
 
     private void saveEventGuestOutfitsToDb(Set<EventGuestOutfit> eventGuestOutfits, Set<EventGuestOutfitItem> eventGuestOutfitItems) throws SQLException {
         for(EventGuestOutfit eventGuestOutfit : eventGuestOutfits) {
+            Log.i(TAG, "Saving " + eventGuestOutfit.getClass().getSimpleName() + " uuid: " + eventGuestOutfit.getUuid());
             // Save outfit
             mHelper.getEventGuestOutfitDao().createOrUpdate(eventGuestOutfit);
 
@@ -226,14 +232,20 @@ public class ApparelSyncAdapter extends AbstractThreadedSyncAdapter {
     private void uploadRemoteItems(User user, UploadSyncDto syncDto) throws IOException {
         if(syncDto.canUpload()) {
             // Upload data
+            Log.i(TAG, "Uploading data");
             Response response = restService.saveUserData(user.getUuid(), syncDto).execute();
+            if(response.isSuccessful()) Log.i(TAG, "Data upload successful");
+            else Log.e(TAG, "Data upload failed");
 
             // Upload photo files
             for(Photo photo : syncDto.getPhotos()) {
+                Log.i(TAG, "Uploading photo " + photo.getUuid());
                 File file = new File(photo.getPhotoPath());
                 RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file);
                 MultipartBody.Part body = MultipartBody.Part.createFormData("file", file.getName(), requestFile);
                 response = restService.upload(photo.getUuid(), body).execute();
+                if(response.isSuccessful()) Log.i(TAG, "Data upload successful");
+                else Log.e(TAG, "Data upload failed");
             }
         }
     }

@@ -55,12 +55,8 @@ public class SyncController {
 
         DownloadSyncDto dto = new DownloadSyncDto();
 
-        User user;
-        try {
-            user = userRepository.findByFacebookId(facebookId);
-        } catch(Exception e) {
-            throw new IllegalArgumentException("Invalid user id");
-        }
+        User user = userRepository.findByFacebookId(facebookId);
+        if(user == null) throw new UserNotCreated();
 
         dto.setUser(user);
 

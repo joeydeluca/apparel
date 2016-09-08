@@ -24,6 +24,17 @@ public class RestErrorHandler {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ResponseBody
     public ErrorResponse notFoundHandler(Exception e){
-        return new ErrorResponse(HttpStatus.NOT_FOUND, "Whatever you are looking for does not exist");
+        return new ErrorResponse(HttpStatus.NOT_FOUND, "Whatever you are looking for does not exist. " + e.getMessage());
+    }
+
+    @ExceptionHandler(
+            {
+                    UserNotCreated.class
+            }
+    )
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    @ResponseBody
+    public ErrorResponse userNotCreatedHandler(Exception e){
+        return new ErrorResponse(HttpStatus.NOT_FOUND, "User is not yet created on server");
     }
 }
