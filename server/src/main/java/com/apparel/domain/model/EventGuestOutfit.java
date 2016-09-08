@@ -1,6 +1,7 @@
 package com.apparel.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.*;
@@ -21,7 +22,8 @@ public class EventGuestOutfit extends ApparelEntity {
     private EventGuest eventGuest;
 
     @OneToMany(mappedBy = "eventGuestOutfit", cascade = CascadeType.ALL)
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    //@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @JsonIgnore
     private List<EventGuestOutfitItem> eventGuestOutfitItems;
 
     public Date getDate() {
@@ -44,6 +46,7 @@ public class EventGuestOutfit extends ApparelEntity {
         return eventGuestOutfitItems;
     }
 
+    @JsonProperty
     public void setEventGuestOutfitItems(List<EventGuestOutfitItem> eventGuestOutfitItems) {
         this.eventGuestOutfitItems = eventGuestOutfitItems;
     }
