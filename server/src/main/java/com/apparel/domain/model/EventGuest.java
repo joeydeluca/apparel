@@ -17,7 +17,6 @@ import java.util.Set;
 public class EventGuest extends ApparelEntity {
     @ManyToOne(optional=false)
     @JoinColumn(name="eventUuid")
-    @JsonBackReference
     private Event event;
 
     @ManyToOne(optional=false)

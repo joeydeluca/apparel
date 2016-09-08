@@ -21,7 +21,7 @@ public class EventGuestOutfit extends ApparelEntity {
     private EventGuest eventGuest;
 
     @OneToMany(mappedBy = "eventGuestOutfit", cascade = CascadeType.ALL)
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private List<EventGuestOutfitItem> eventGuestOutfitItems;
 
     public Date getDate() {
