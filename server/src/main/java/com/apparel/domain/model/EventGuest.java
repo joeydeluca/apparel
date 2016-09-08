@@ -1,6 +1,7 @@
 package com.apparel.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -24,6 +25,7 @@ public class EventGuest extends ApparelEntity {
     private User guest;
 
     @OneToMany(mappedBy = "eventGuest")
+    @JsonIgnore
     private Set<EventGuestOutfit> eventGuestOutfits = new HashSet<>();
 
     public Event getEvent() {

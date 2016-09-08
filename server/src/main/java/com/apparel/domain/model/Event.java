@@ -2,6 +2,7 @@ package com.apparel.domain.model;
 
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -33,6 +34,7 @@ public class Event extends ApparelEntity {
     private Photo photo;
 
     @OneToMany(mappedBy = "event")
+    @JsonIgnore
     private Set<EventGuest> eventGuests = new HashSet<>();
 
     public String getTitle() {
