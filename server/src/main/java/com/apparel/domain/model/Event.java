@@ -2,9 +2,11 @@ package com.apparel.domain.model;
 
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -30,8 +32,7 @@ public class Event extends ApparelEntity {
     @JoinColumn(name = "photoUuid")
     private Photo photo;
 
-    @OneToMany(mappedBy = "event", fetch = FetchType.EAGER)
-    @JsonManagedReference
+    @OneToMany(mappedBy = "event")
     private Set<EventGuest> eventGuests = new HashSet<>();
 
     public String getTitle() {

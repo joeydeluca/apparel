@@ -2,8 +2,8 @@ package com.jomik.apparelapp.domain.entities;
 
 import android.content.ContentValues;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
@@ -21,6 +21,7 @@ import java.util.List;
  */
 @DatabaseTable(tableName="event_guest_outfits")
 public class EventGuestOutfit extends Entity {
+    @JsonFormat(shape= JsonFormat.Shape.STRING, pattern = SqlHelper.dateFormatForDbPattern)
     @DatabaseField(columnName="event_date", dataType = DataType.DATE_STRING, format = SqlHelper.dateFormatForDbPattern)
     private Date date;
     @DatabaseField(columnName="description")
@@ -30,9 +31,6 @@ public class EventGuestOutfit extends Entity {
     @ForeignCollectionField(eager = true)
     @JsonIgnore
     private ForeignCollection<EventGuestOutfitItem> eventGuestOutfitItems;
-    @JsonProperty("eventGuestOutfitItems")
-    private List<EventGuestOutfitItem> eventGuestOutfitItemList;
-
 
     public Date getDate() {
         return date;
@@ -74,14 +72,6 @@ public class EventGuestOutfit extends Entity {
 
     public void setEventGuest(EventGuest eventGuest) {
         this.eventGuest = eventGuest;
-    }
-
-    public List<EventGuestOutfitItem> getEventGuestOutfitItemList() {
-        return eventGuestOutfitItemList;
-    }
-
-    public void setEventGuestOutfitItemList(List<EventGuestOutfitItem> eventGuestOutfitItemList) {
-        this.eventGuestOutfitItemList = eventGuestOutfitItemList;
     }
 
     @Override

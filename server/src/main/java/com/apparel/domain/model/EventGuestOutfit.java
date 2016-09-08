@@ -19,7 +19,7 @@ public class EventGuestOutfit extends ApparelEntity {
     @JoinColumn(name = "guestUuid")
     private EventGuest eventGuest;
 
-    @OneToMany(mappedBy = "eventGuestOutfit", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "eventGuestOutfit", cascade = CascadeType.ALL)
     private List<EventGuestOutfitItem> eventGuestOutfitItems;
 
     public Date getDate() {

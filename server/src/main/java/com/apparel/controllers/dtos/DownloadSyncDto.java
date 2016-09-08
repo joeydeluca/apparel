@@ -1,9 +1,7 @@
 
 package com.apparel.controllers.dtos;
 
-import com.apparel.domain.model.Event;
-import com.apparel.domain.model.Item;
-import com.apparel.domain.model.User;
+import com.apparel.domain.model.*;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.util.HashSet;
@@ -19,6 +17,9 @@ public class DownloadSyncDto {
     private User user;
     private Set<Item> items = new HashSet<>();
     private Set<Event> events = new HashSet<>();
+    private Set<EventGuest> eventGuests = new HashSet<>();
+    private Set<EventGuestOutfit> eventGuestOutfits = new HashSet<>();
+    private Set<EventGuestOutfitItem> eventGuestOutfitItems = new HashSet<>();
 
     public Set<Item> getItems() {
         return items;
@@ -42,5 +43,29 @@ public class DownloadSyncDto {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public Set<EventGuest> getEventGuests() {
+        return eventGuests;
+    }
+
+    public void setEventGuests(Set<EventGuest> eventGuests) {
+        this.eventGuests = eventGuests;
+    }
+
+    public Set<EventGuestOutfit> getEventGuestOutfits() {
+        return eventGuestOutfits;
+    }
+
+    public void setEventGuestOutfits(Set<EventGuestOutfit> eventGuestOutfits) {
+        this.eventGuestOutfits = eventGuestOutfits;
+    }
+
+    public Set<EventGuestOutfitItem> getEventGuestOutfitItems() {
+        return eventGuestOutfitItems;
+    }
+
+    public void setEventGuestOutfitItems(Set<EventGuestOutfitItem> eventGuestOutfitItems) {
+        this.eventGuestOutfitItems = eventGuestOutfitItems;
     }
 }

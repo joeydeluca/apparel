@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.jomik.apparelapp.domain.entities.Event;
 import com.jomik.apparelapp.domain.entities.EventGuest;
 import com.jomik.apparelapp.domain.entities.EventGuestOutfit;
+import com.jomik.apparelapp.domain.entities.EventGuestOutfitItem;
 import com.jomik.apparelapp.domain.entities.Item;
 import com.jomik.apparelapp.domain.entities.User;
 
@@ -21,6 +22,9 @@ public class DownloadSyncDto {
     private User user;
     private Set<Item> items = new HashSet<>();
     private Set<Event> events = new HashSet<>();
+    private Set<EventGuest> eventGuests = new HashSet<>();
+    private Set<EventGuestOutfit> eventGuestOutfits = new HashSet<>();
+    private Set<EventGuestOutfitItem> eventGuestOutfitItems = new HashSet<>();
 
     public Set<Item> getItems() {
         return items;
@@ -47,18 +51,26 @@ public class DownloadSyncDto {
     }
 
     public Set<EventGuest> getEventGuests() {
-        Set<EventGuest> eventGuests = new HashSet<>();
-        for(Event event : events) {
-            eventGuests.addAll(event.getEventGuestList());
-        }
         return eventGuests;
     }
 
+    public void setEventGuests(Set<EventGuest> eventGuests) {
+        this.eventGuests = eventGuests;
+    }
+
     public Set<EventGuestOutfit> getEventGuestOutfits() {
-        Set<EventGuestOutfit> eventGuestOutfits = new HashSet<>();
-        for(EventGuest eventGuest : getEventGuests()) {
-            eventGuestOutfits.addAll(eventGuest.getEventGuestOutfitList());
-        }
         return eventGuestOutfits;
+    }
+
+    public void setEventGuestOutfits(Set<EventGuestOutfit> eventGuestOutfits) {
+        this.eventGuestOutfits = eventGuestOutfits;
+    }
+
+    public Set<EventGuestOutfitItem> getEventGuestOutfitItems() {
+        return eventGuestOutfitItems;
+    }
+
+    public void setEventGuestOutfitItems(Set<EventGuestOutfitItem> eventGuestOutfitItems) {
+        this.eventGuestOutfitItems = eventGuestOutfitItems;
     }
 }

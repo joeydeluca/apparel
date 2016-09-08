@@ -25,9 +25,6 @@ public class EventGuest extends Entity {
     @JsonIgnore
     private ForeignCollection<EventGuestOutfit> eventGuestOutfits;
 
-    @JsonProperty("eventGuestOutfits")
-    private List<EventGuestOutfit> eventGuestOutfitList;
-
     public EventGuest() {
     }
 
@@ -53,14 +50,6 @@ public class EventGuest extends Entity {
 
     public void setEventGuestOutfits(ForeignCollection<EventGuestOutfit> eventGuestOutfits) {
         this.eventGuestOutfits = eventGuestOutfits;
-    }
-
-    public List<EventGuestOutfit> getEventGuestOutfitList() {
-        return eventGuestOutfitList;
-    }
-
-    public void setEventGuestOutfitList(List<EventGuestOutfit> eventGuestOutfitList) {
-        this.eventGuestOutfitList = eventGuestOutfitList;
     }
 
     @Override

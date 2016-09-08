@@ -4,7 +4,6 @@ import android.content.ContentValues;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
@@ -14,7 +13,6 @@ import com.jomik.apparelapp.infrastructure.providers.ApparelContract;
 import com.jomik.apparelapp.infrastructure.providers.SqlHelper;
 
 import java.util.Date;
-import java.util.List;
 
 /**
  * Created by Joe Deluca on 3/22/2016.
@@ -42,9 +40,6 @@ public class Event extends Entity {
     @ForeignCollectionField()
     @JsonIgnore
     private ForeignCollection<EventGuest> eventGuests;
-
-    @JsonProperty("eventGuests")
-    private List<EventGuest> eventGuestList;
 
     public Event() {
     }
@@ -111,14 +106,6 @@ public class Event extends Entity {
 
     public void setEventGuests(ForeignCollection<EventGuest> eventGuests) {
         this.eventGuests = eventGuests;
-    }
-
-    public List<EventGuest> getEventGuestList() {
-        return eventGuestList;
-    }
-
-    public void setEventGuestList(List<EventGuest> eventGuestList) {
-        this.eventGuestList = eventGuestList;
     }
 
     @Override

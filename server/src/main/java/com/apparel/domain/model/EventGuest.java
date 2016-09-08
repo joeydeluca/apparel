@@ -2,7 +2,10 @@ package com.apparel.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -20,7 +23,7 @@ public class EventGuest extends ApparelEntity {
     @JoinColumn(name="guestUuid")
     private User guest;
 
-    @OneToMany(mappedBy = "eventGuest", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "eventGuest")
     private Set<EventGuestOutfit> eventGuestOutfits = new HashSet<>();
 
     public Event getEvent() {

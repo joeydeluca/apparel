@@ -2,8 +2,7 @@ package com.apparel.controllers;
 
 import com.apparel.controllers.dtos.DownloadSyncDto;
 import com.apparel.controllers.dtos.UploadSyncDto;
-import com.apparel.domain.model.Event;
-import com.apparel.domain.model.Item;
+import com.apparel.domain.model.*;
 import com.apparel.domain.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -11,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Created by Joe Deluca on 8/24/2016.
@@ -25,6 +25,7 @@ public class SyncController {
     private final UserRepository userRepository;
     private final EventGuestRepository eventGuestRepository;
     private final EventGuestOutfitRepository eventGuestOutfitRepository;
+    private final EventGuestOutfitItemRepository eventGuestOutfitItemRepository;
 
     @Autowired
     public SyncController(final EventRepository eventRepository,
@@ -32,13 +33,15 @@ public class SyncController {
                           final PhotoRepository photoRepository,
                           final UserRepository userRepository,
                           final EventGuestRepository eventGuestRepository,
-                          final EventGuestOutfitRepository eventGuestOutfitRepository){
+                          final EventGuestOutfitRepository eventGuestOutfitRepository,
+                          final EventGuestOutfitItemRepository eventGuestOutfitItemRepository){
         this.eventRepository = eventRepository;
         this.itemRepository = itemRepository;
         this.photoRepository = photoRepository;
         this.userRepository = userRepository;
         this.eventGuestRepository = eventGuestRepository;
         this.eventGuestOutfitRepository = eventGuestOutfitRepository;
+        this.eventGuestOutfitItemRepository = eventGuestOutfitItemRepository;
     }
 
     @RequestMapping(
@@ -65,6 +68,15 @@ public class SyncController {
         events.addAll(eventRepository.findByEventGuestsGuestUuid(uuid));
         dto.setEvents(events);
 
+        Set<EventGuest> eventGuests = eventGuestRepository.findByEventUuidIn(events.stream().map(e -> e.getUuid()).collect(Collectors.toList()));
+        dto.setEventGuests(eventGuests);
+
+        Set<EventGuestOutfit> eventGuestOutfits = eventGuestOutfitRepository.findByEventGuestUuidIn(eventGuests.stream().map(e -> e.getUuid()).collect(Collectors.toList()));
+        dto.setEventGuestOutfits(eventGuestOutfits);
+
+        Set<EventGuestOutfitItem> eventGuestOutfitItems = eventGuestOutfitItemRepository.findByEventGuestOutfitUuidIn(eventGuestOutfits.stream().map(e -> e.getUuid()).collect(Collectors.toList()));
+        dto.setEventGuestOutfitItems(eventGuestOutfitItems);
+
         return ResponseEntity.ok(dto);
     }
 
@@ -84,7 +96,15 @@ public class SyncController {
         itemRepository.save(syncDto.getItems());
         eventRepository.save(syncDto.getEvents());
         eventGuestRepository.save(syncDto.getEventGuests());
-        eventGuestOutfitRepository.save(syncDto.getEventGuestOutfits());
+
+        Set<EventGuestOutfit> eventGuestOutfits = syncDto.getEventGuestOutfits();
+        if(eventGuestOutfits != null && !eventGuestOutfits.isEmpty()) {
+            // delete outfits and outfit items
+            eventGuestOutfitRepository.delete(eventGuestOutfits);
+            // add new set of outfit and outfit items
+            eventGuestOutfitRepository.save(syncDto.getEventGuestOutfits());
+
+        }
 
         return ResponseEntity.ok("{\"status\":\"OK\"}");
     }

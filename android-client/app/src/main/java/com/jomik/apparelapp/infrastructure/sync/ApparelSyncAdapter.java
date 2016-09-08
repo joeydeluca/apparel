@@ -215,8 +215,10 @@ public class ApparelSyncAdapter extends AbstractThreadedSyncAdapter {
             deleteBuilder.delete();
 
             // Create new outfit items
-            for(EventGuestOutfitItem eventGuestOutfitItem : eventGuestOutfit.getEventGuestOutfitItemList()) {
-                mHelper.getEventGuestOutfitItemDao().create(eventGuestOutfitItem);
+            for(EventGuestOutfitItem eventGuestOutfitItem : eventGuestOutfit.getEventGuestOutfitItems()) {
+                if(eventGuestOutfit.getUuid().equals(eventGuestOutfitItem.getEventGuestOutfit().getUuid())) {
+                    mHelper.getEventGuestOutfitItemDao().create(eventGuestOutfitItem);
+                }
             }
         }
     }
