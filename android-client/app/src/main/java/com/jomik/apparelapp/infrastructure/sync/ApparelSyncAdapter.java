@@ -244,8 +244,8 @@ public class ApparelSyncAdapter extends AbstractThreadedSyncAdapter {
                 RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file);
                 MultipartBody.Part body = MultipartBody.Part.createFormData("file", file.getName(), requestFile);
                 response = restService.upload(photo.getUuid(), body).execute();
-                if(response.isSuccessful()) Log.i(TAG, "Data upload successful");
-                else Log.e(TAG, "Data upload failed");
+                if(response.isSuccessful()) Log.i(TAG, "Photo upload successful");
+                else Log.e(TAG, "Photo upload failed");
             }
         }
     }

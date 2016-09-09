@@ -48,10 +48,12 @@ public class EventGuestOutfit extends Entity {
         this.description = description;
     }
 
+    @JsonIgnore
     public ForeignCollection<EventGuestOutfitItem> getEventGuestOutfitItems() {
         return eventGuestOutfitItems;
     }
 
+    @JsonIgnore
     public List<EventGuestOutfitItem> getEventGuestOutfitItemList() {
         List<EventGuestOutfitItem> eventGuestOutfitItemList = new ArrayList<>();
 

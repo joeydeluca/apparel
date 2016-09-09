@@ -2,7 +2,6 @@ package com.apparel.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -46,7 +45,6 @@ public class EventGuestOutfit extends ApparelEntity {
         return eventGuestOutfitItems;
     }
 
-    @JsonProperty
     public void setEventGuestOutfitItems(List<EventGuestOutfitItem> eventGuestOutfitItems) {
         this.eventGuestOutfitItems = eventGuestOutfitItems;
     }
