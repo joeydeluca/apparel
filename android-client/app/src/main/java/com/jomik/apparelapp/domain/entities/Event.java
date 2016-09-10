@@ -32,9 +32,9 @@ public class Event extends Entity {
     @JsonFormat(shape= JsonFormat.Shape.STRING, pattern=SqlHelper.dateFormatForDbPattern)
     private Date endDate;
 
-    @DatabaseField(columnName = "photo_uuid", foreign = true, foreignAutoRefresh = true)
+    @DatabaseField(columnName = "photo_uuid", foreign = true, foreignAutoRefresh = true, canBeNull = false)
     private Photo photo;
-    @DatabaseField(columnName = "owner_uuid", foreign = true, foreignAutoRefresh = true)
+    @DatabaseField(columnName = "owner_uuid", foreign = true, foreignAutoRefresh = true, canBeNull = false)
     private User owner;
 
     @ForeignCollectionField()

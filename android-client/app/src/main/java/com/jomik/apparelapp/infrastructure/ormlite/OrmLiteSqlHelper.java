@@ -40,8 +40,6 @@ public class OrmLiteSqlHelper extends OrmLiteSqliteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase database, ConnectionSource connectionSource) {
-        AccessToken.setCurrentAccessToken(null);
-
         try {
             TableUtils.createTable(connectionSource, Photo.class);
             TableUtils.createTable(connectionSource, User.class);
@@ -57,8 +55,6 @@ public class OrmLiteSqlHelper extends OrmLiteSqliteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase database, ConnectionSource connectionSource, int oldVersion, int newVersion) {
-        AccessToken.setCurrentAccessToken(null);
-
         try {
             TableUtils.dropTable(connectionSource, EventGuestOutfitItem.class, false);
             TableUtils.dropTable(connectionSource, EventGuestOutfit.class, false);

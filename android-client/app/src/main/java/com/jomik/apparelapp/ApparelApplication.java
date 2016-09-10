@@ -9,6 +9,7 @@ import android.app.Application;
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
 import com.facebook.drawee.backends.pipeline.Fresco;
+import com.jomik.apparelapp.infrastructure.ormlite.OrmLiteSqlHelper;
 
 public class ApparelApplication extends Application {
     @Override
@@ -19,5 +20,8 @@ public class ApparelApplication extends Application {
         FacebookSdk.sdkInitialize(getApplicationContext());
 
         AppEventsLogger.activateApp(this);
+
+        // Initiate Ormlite
+        new OrmLiteSqlHelper(getApplicationContext());
     }
 }

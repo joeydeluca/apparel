@@ -16,6 +16,7 @@ import com.facebook.login.widget.LoginButton;
 import com.jomik.apparelapp.R;
 import com.jomik.apparelapp.domain.entities.User;
 import com.jomik.apparelapp.infrastructure.ormlite.OrmLiteSqlHelper;
+import com.jomik.apparelapp.infrastructure.services.AuthenticationManager;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -55,8 +56,11 @@ public class FacebookLoginActivity extends AppCompatActivity {
                                         user = new User();
                                     }
                                     user.setName(object.getString("name"));
+                                    user.setUuid(object.getString("id"));
                                     user.setFacebookId(object.getString("id"));
                                     helper.getUserDao().createOrUpdate(user);
+
+                                    AuthenticationManager.setUser(user);
 
                                     Toast.makeText(FacebookLoginActivity.this, "Welcome " + object.getString("name"), Toast.LENGTH_LONG).show();
                                 } catch (JSONException | SQLException e) {
@@ -85,6 +89,8 @@ public class FacebookLoginActivity extends AppCompatActivity {
                 Toast.makeText(FacebookLoginActivity.this, "Login Failed", Toast.LENGTH_SHORT).show();
             }
         });
+
+
     }
 
     @Override

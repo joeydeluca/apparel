@@ -1,6 +1,5 @@
 package com.jomik.apparelapp.presentation.fragments;
 
-import android.content.ContentResolver;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -9,16 +8,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ListAdapter;
+import android.widget.ArrayAdapter;
 
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.jomik.apparelapp.R;
 import com.jomik.apparelapp.domain.entities.Item;
 import com.jomik.apparelapp.domain.entities.User;
 import com.jomik.apparelapp.infrastructure.ormlite.OrmLiteSqlHelper;
-import com.jomik.apparelapp.infrastructure.providers.ApparelContract;
 import com.jomik.apparelapp.infrastructure.services.AuthenticationManager;
 import com.jomik.apparelapp.presentation.activities.EditItemActivity;
+import com.jomik.apparelapp.presentation.activities.FacebookLoginActivity;
 import com.jomik.apparelapp.presentation.adapters.ItemsAdapter;
 
 import java.sql.SQLException;
@@ -30,7 +29,7 @@ import java.util.List;
  */
 public class ItemListFragment extends ListFragment implements AdapterView.OnItemClickListener {
 
-    private ListAdapter adapter;
+    private ArrayAdapter adapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -40,6 +39,12 @@ public class ItemListFragment extends ListFragment implements AdapterView.OnItem
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        if(AuthenticationManager.getAuthenticatedUser(getContext()) == null) {
+            Intent intent = new Intent(getActivity().getApplicationContext(), FacebookLoginActivity.class);
+            startActivity(intent);
+            getActivity().finish();
+        }
 
         View view = inflater.inflate(R.layout.fragment_item_list, container, false);
 
@@ -59,6 +64,19 @@ public class ItemListFragment extends ListFragment implements AdapterView.OnItem
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        setData();
+
+        getListView().setOnItemClickListener(this);
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position,long id) {
+        Intent intent = new Intent(getActivity().getApplicationContext(), EditItemActivity.class);
+        intent.putExtra("id", view.getTag().toString());
+        startActivity(intent);
+    }
+
+    private void setData() {
         List<Item> items = new ArrayList<>();
         OrmLiteSqlHelper helper = new OrmLiteSqlHelper(getContext());
         try {
@@ -68,23 +86,16 @@ public class ItemListFragment extends ListFragment implements AdapterView.OnItem
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        ;
 
         adapter = new ItemsAdapter(getContext(), items);
-
         setListAdapter(adapter);
-        getListView().setOnItemClickListener(this);
+        adapter.notifyDataSetChanged();
     }
 
     @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position,long id) {
-        Intent intent = new Intent(getActivity().getApplicationContext(), EditItemActivity.class);
-        intent.putExtra("id", view.getTag().toString());
-        startActivity(intent);
-
-        // TODO: TESTING !!!!
-        ContentResolver.requestSync(AuthenticationManager.getSyncAccount(getContext()), ApparelContract.AUTHORITY, Bundle.EMPTY);
-
+    public void onResume() {
+        super.onResume();
+        setData();
     }
 
 }

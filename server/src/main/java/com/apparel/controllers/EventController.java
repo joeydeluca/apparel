@@ -2,14 +2,20 @@ package com.apparel.controllers;
 
 import com.apparel.domain.model.Event;
 import com.apparel.domain.repository.EventRepository;
-import com.apparel.domain.repository.ItemRepository;
+import com.apparel.domain.specifications.EventSpecification;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.jpa.domain.Specifications;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -20,12 +26,10 @@ import java.util.List;
 public class EventController {
 
     private final EventRepository eventRepository;
-    private final ItemRepository itemRepository;
 
     @Autowired
-    public EventController(final EventRepository eventRepository, final ItemRepository itemRepository){
+    public EventController(final EventRepository eventRepository){
         this.eventRepository = eventRepository;
-        this.itemRepository = itemRepository;
     }
 
 
@@ -34,18 +38,31 @@ public class EventController {
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE
     )
-    public ResponseEntity<List<Event>> findEvents() {
-        List<Event> retEvents = new ArrayList<>();
+    public ResponseEntity<List<Event>> findEvents(@RequestParam("keyword") String keyword) {
 
-        List<Event> allEvent = eventRepository.findAll();
-        Date now = new Date();
-        for(Event event : allEvent) {
-            if(!event.isMarkedForDelete() && now.getTime() <= event.getEndDate().getTime()) {
-                retEvents.add(event);
-            }
+        List<Specification<Event>> specifications = new ArrayList<>();
+
+        specifications.add((EventSpecification.isNotDeleted()));
+
+        if(keyword != null && keyword.length() > 0) {
+            specifications.add((EventSpecification.containsTitle(keyword)));
         }
 
-        return ResponseEntity.ok(retEvents);
+        Specification<Event> result = specifications.get(0);
+        for (int i = 1; i < specifications.size(); i++) {
+            result = Specifications.where(result).and(specifications.get(i));
+        }
+
+        List<Event> events = eventRepository.findAll(result, getPageRequest()).getContent();
+
+        return ResponseEntity.ok(events);
     }
+
+    private PageRequest getPageRequest() {
+        return new PageRequest(0, 10, Sort.Direction.DESC, "start_date");
+    }
+
+
+
 
 }

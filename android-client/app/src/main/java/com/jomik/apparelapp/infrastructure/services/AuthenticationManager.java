@@ -20,32 +20,33 @@ import java.sql.SQLException;
  */
 public class AuthenticationManager {
 
-    private static User user;
+    private static User mUser;
 
     public static User getAuthenticatedUser(Context context) {
 
-        if(user == null) {
+        if(mUser == null) {
 
             AccessToken accessToken = AccessToken.getCurrentAccessToken();
             if (accessToken == null) {
                 Intent intent = new Intent(context, FacebookLoginActivity.class);
                 context.startActivity(intent);
+                return null;
             }
 
             OrmLiteSqlHelper helper  = new OrmLiteSqlHelper(context);
             try {
-                user = helper.getUserDao().queryBuilder().where().eq("facebook_id", accessToken.getUserId()).queryForFirst();
+                mUser = helper.getUserDao().queryBuilder().where().eq("facebook_id", accessToken.getUserId()).queryForFirst();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
         }
 
-        if(user == null) {
+        if(mUser == null) {
             Intent intent = new Intent(context, FacebookLoginActivity.class);
             context.startActivity(intent);
         }
 
-        return user;
+        return mUser;
     }
 
     public static Account getSyncAccount(Context context) {
@@ -53,8 +54,12 @@ public class AuthenticationManager {
     }
 
     public static void logout() {
-        user = null;
+        mUser = null;
         LoginManager.getInstance().logOut();
+    }
+
+    public static void setUser(User user) {
+        mUser = user;
     }
 
     private static Account createDummyAccount(Context context) {

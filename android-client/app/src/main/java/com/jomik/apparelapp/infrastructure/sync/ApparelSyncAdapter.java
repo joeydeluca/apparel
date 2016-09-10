@@ -64,7 +64,7 @@ public class ApparelSyncAdapter extends AbstractThreadedSyncAdapter {
 
     private void init(Context c) {
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://apparelapp.herokuapp.com")
+                .baseUrl(RestService.BASE_URL)
                 .addConverterFactory(JacksonConverterFactory.create())
                 .build();
         restService = retrofit.create(RestService.class);

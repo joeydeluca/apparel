@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -18,7 +19,7 @@ import com.jomik.apparelapp.presentation.fragments.ItemListFragment;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TabbedActivity extends BaseActivity {
+public class TabbedActivity extends AppCompatActivity {
 
     private TabLayout tabLayout;
     private ViewPager viewPager;
