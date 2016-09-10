@@ -33,10 +33,12 @@ public class ViewEventActivity extends AppCompatActivity {
         final TextView txtToolbarTitle = (TextView) findViewById(R.id.toolbar_title);
         final TextView btnDone = (TextView) findViewById(R.id.toolbar_done_button);
         final ImageView imgCancel = (ImageView) findViewById(R.id.toolbar_cancel_button);
+
         final Button btnJoin = (Button) findViewById(R.id.join_button);
         SimpleDraweeView eventImageView = (SimpleDraweeView) findViewById(R.id.my_image_view);
         SimpleDraweeView userImageView = (SimpleDraweeView) findViewById(R.id.imgUser);
 
+        final TextView txtAlreadyJoinedText = (TextView) findViewById(R.id.alreadyJoinedText);
         final TextView txtEventTitle = (TextView) findViewById(R.id.title);
         final TextView txtLocation = (TextView) findViewById(R.id.location);
         final TextView txtDescription = (TextView) findViewById(R.id.description);
@@ -69,9 +71,12 @@ public class ViewEventActivity extends AppCompatActivity {
         try {
             if(helper.getEventGuestDao().queryBuilder().where().eq("event_uuid", event.getUuid()).and().eq("guest_uuid", user.getUuid()).countOf() > 0) {
                 btnJoin.setVisibility(View.INVISIBLE);
+            } else {
+                txtAlreadyJoinedText.setVisibility(View.INVISIBLE);
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            txtAlreadyJoinedText.setVisibility(View.INVISIBLE);
         }
 
         /*btnDone.setOnClickListener(new View.OnClickListener() {
@@ -99,6 +104,7 @@ public class ViewEventActivity extends AppCompatActivity {
                 try {
                     helper.getEventGuestDao().create(eventGuest);
                     btnJoin.setVisibility(View.INVISIBLE);
+                    txtAlreadyJoinedText.setVisibility(View.VISIBLE);
 
                     // Save event in db
                     helper.getUserDao().createIfNotExists(finalEvent.getOwner());
@@ -109,6 +115,7 @@ public class ViewEventActivity extends AppCompatActivity {
                     ContentResolver.requestSync(AuthenticationManager.getSyncAccount(getApplicationContext()), ApparelContract.AUTHORITY, Bundle.EMPTY);
 
                     Toast.makeText(getApplicationContext(), "You have joined the event", Toast.LENGTH_LONG).show();
+
                 } catch (SQLException e) {
                     Toast.makeText(getApplicationContext(), "Something went wrong", Toast.LENGTH_LONG).show();
                     e.printStackTrace();

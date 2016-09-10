@@ -16,7 +16,7 @@ public class EventSpecification {
 
     public static Specification<Event> containsTitle(String keyword) {
         return (root, query, cb) -> {
-            return cb.equal(cb.trim(cb.lower(root.get("title"))), keyword.toLowerCase().trim());
+            return cb.like(cb.trim(cb.lower(root.get("title"))), keyword.toLowerCase().trim());
         };
     }
 }
