@@ -34,11 +34,11 @@ public class EventController {
 
 
     @RequestMapping(
-            value = "/",
+            value = "",
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE
     )
-    public ResponseEntity<List<Event>> findEvents(@RequestParam("keyword") String keyword) {
+    public ResponseEntity<List<Event>> findEvents(@RequestParam(name  = "keyword", required = false) String keyword) {
 
         List<Specification<Event>> specifications = new ArrayList<>();
 
@@ -55,11 +55,13 @@ public class EventController {
 
         List<Event> events = eventRepository.findAll(result, getPageRequest()).getContent();
 
+        System.out.println("Events found: " + events.size());
+
         return ResponseEntity.ok(events);
     }
 
     private PageRequest getPageRequest() {
-        return new PageRequest(0, 10, Sort.Direction.DESC, "start_date");
+        return new PageRequest(0, 10, Sort.Direction.DESC, "startDate");
     }
 
 

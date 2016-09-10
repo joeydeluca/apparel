@@ -10,7 +10,7 @@ public class EventSpecification {
 
     public static Specification<Event> isNotDeleted() {
         return (root, query, cb) -> {
-            return cb.equal(cb.trim(cb.lower(root.get("marked_for_delete"))), false);
+            return cb.equal(root.get("markedForDelete"), false);
         };
     }
 
