@@ -2,57 +2,131 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:fresco="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF">
+    android:padding="10dp">
 
-    <include layout="@layout/item_edit_toolbar"/>
-
-    <ScrollView
+    <android.support.v7.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fillViewport="false"
-        android:outlineProvider="background">
+        android:id="@+id/cv"
+
+        >
 
         <LinearLayout
-            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:orientation="vertical"
+            >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:layout_weight="1">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <com.facebook.drawee.view.SimpleDraweeView
+                        android:id="@+id/imgUser"
+                        android:layout_width="50dp"
+                        android:layout_height="50dip"
+                        android:layout_marginRight="20dp"
+                        fresco:roundedCornerRadius="10dp"
+                        android:layout_marginBottom="10dp"
+                        fresco:placeholderImage="@drawable/camera"
+                        />
+
+                    <TextView
+                        android:id="@+id/txtOwner"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:textSize="13dp"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="right"
+                    >
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/btnMenu"
+                        android:padding="5dp"
+                        android:src="@drawable/ic_more_vert_black_24dp"
+                        android:background="?attr/selectableItemBackground"
+                        android:gravity="left"/>
+                </LinearLayout>
+
+
+
+
+
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_gravity="center"
+                android:background="@color/dividerColorDark"/>
 
             <com.facebook.drawee.view.SimpleDraweeView
                 android:id="@+id/my_image_view"
-                android:layout_width="100dip"
-                android:layout_height="100dip"
-                android:layout_gravity="center"
-                fresco:roundingBorderWidth="2dp"
-                fresco:roundingBorderColor="#BF3136"
-                android:padding="2dp"
-                android:layout_margin="5dp"
-                fresco:placeholderImage="@drawable/camera"
-                />
+                android:layout_width="match_parent"
+                android:layout_height="200dip"
+                android:layout_marginTop="10dp"
+                android:elevation="2dp"
+                fresco:placeholderImage="@drawable/pic"
+                android:src="@android:drawable/ic_menu_preferences"/>
 
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="20dp"
+                android:gravity="center"/>
+
+            <TextView
+                android:id="@+id/location"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="15dp"
+                android:gravity="center"/>
+
+            <TextView
+                android:id="@+id/description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="15dp"
+                android:gravity="left"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_gravity="center"
+                android:background="@color/dividerColorDark"/>
 
             <LinearLayout
-                android:orientation="horizontal"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <ImageView
-                    android:src="@android:drawable/ic_menu_sort_alphabetically"
-                    android:scaleType="center"
-                    android:layout_gravity="center_vertical|left"
-                    android:layout_height="match_parent"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"/>
+                android:layout_height="match_parent">
 
                 <TextView
-                    android:id="@+id/title"
-                    android:gravity="left"
-                    android:layout_marginTop="15dp"
-                    android:layout_width="0dp"
-                    android:layout_weight="4"
-                    android:layout_height="wrap_content" />
+                    android:id="@+id/date"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="15dp"
+                    android:gravity="center"
+                    android:layout_marginTop="10dp"/>
 
             </LinearLayout>
 
@@ -62,7 +136,8 @@
                 android:layout_height="wrap_content"
                 android:text="Join Event"/>
 
+
         </LinearLayout>
 
-    </ScrollView>
+    </android.support.v7.widget.CardView>
 </LinearLayout>

@@ -53,12 +53,7 @@ public class EventsRvAdapter extends RecyclerView.Adapter<EventsRvAdapter.EventV
         holder.location.setText(event.getLocation());
         holder.description.setText(event.getDescription());
         holder.ownerText.setText("Created by " + event.getOwner().getName());
-
-        String displayDate = SqlHelper.dateFormatForDisplay.format(event.getStartDate());
-        if(event.getEndDate() != null && !event.getEndDate().equals(event.getStartDate())) {
-            displayDate = displayDate + " - " + event.getEndDate();
-        }
-        holder.date.setText(displayDate);
+        holder.date.setText(SqlHelper.getDisplayDateFromEvent(event));
 
         ImageHelper.setImageUri(holder.eventPhoto, event.getPhoto().getPhotoPath());
         ImageHelper.setFacebookProfileImageUri(holder.profilePhoto, event.getOwner().getFacebookId());

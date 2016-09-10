@@ -80,11 +80,14 @@ public class EventSearchActivity extends AppCompatActivity {
                 throw new IOException(message);
             }
 
+            events = response.body();
+
             Log.i(TAG, "Events found: " + events.size());
 
             EventBus.getDefault().post(new EventSearchComplete(events));
 
         } catch (IOException e) {
+            dialog.hide();
             Log.e(TAG, "Could not reach server.", e);
             e.printStackTrace();
             Toast.makeText(EventSearchActivity.this, "Could not reach server. Please try again in a few minutes.", Toast.LENGTH_LONG).show();

@@ -170,4 +170,13 @@ public class SqlHelper {
         entity.setVersion(SqlHelper.getInt(cursor, ApparelContract.CommonColumns.VERSION, prefix));
     }*/
 
+    public static String getDisplayDateFromEvent(Event event) {
+        String displayDate = SqlHelper.dateFormatForDisplay.format(event.getStartDate());
+        if(event.getEndDate() != null && !event.getEndDate().equals(event.getStartDate())) {
+            displayDate = displayDate + " - " + SqlHelper.dateFormatForDisplay.format(event.getEndDate());
+        }
+
+        return displayDate;
+    }
+
 }
