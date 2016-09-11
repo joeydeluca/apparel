@@ -77,8 +77,6 @@ public class EventListFragment extends Fragment {
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
     public void onMessage(FindUserEventsStart findUserEventsStart) throws ParseException, SQLException {
 
-        User user = AuthenticationManager.getAuthenticatedUser(getContext());
-
         OrmLiteSqlHelper helper  = new OrmLiteSqlHelper(getContext());
         List<Event> events = helper.getEventDao().queryBuilder().where().eq("marked_for_delete", false).query();
 

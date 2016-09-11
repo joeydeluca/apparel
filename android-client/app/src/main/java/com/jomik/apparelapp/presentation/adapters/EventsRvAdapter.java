@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.jomik.apparelapp.R;
 import com.jomik.apparelapp.domain.entities.Event;
+import com.jomik.apparelapp.domain.entities.EventGuest;
 import com.jomik.apparelapp.infrastructure.providers.SqlHelper;
 import com.jomik.apparelapp.infrastructure.services.AuthenticationManager;
 import com.jomik.apparelapp.infrastructure.services.ImageHelper;
@@ -60,11 +61,22 @@ public class EventsRvAdapter extends RecyclerView.Adapter<EventsRvAdapter.EventV
 
         final PopupMenu popup = new PopupMenu(context, holder.btnMenu);
 
-        if(events.get(i).getOwner().getUuid().equals(AuthenticationManager.getAuthenticatedUser(context).getUuid())) {
+        if(event.getOwner().getUuid().equals(AuthenticationManager.getAuthenticatedUser(context).getUuid())) {
             popup.getMenu().add(1, R.id.menu_manage, 1, "Manage");
             popup.getMenu().add(1, R.id.menu_delete, 10, "Delete");
         }
-        popup.getMenu().add(1, R.id.menu_leave, 2, "Leave");
+
+        EventGuest myEventGuest = null;
+        for(EventGuest eventGuest : event.getEventGuests()) {
+            if(AuthenticationManager.getAuthenticatedUser(context).getUuid().equals(eventGuest.getGuest().getUuid())) {
+                myEventGuest = eventGuest;
+                break;
+            }
+        }
+
+        if(myEventGuest != null) {
+            popup.getMenu().add(1, R.id.menu_leave, 2, "Leave");
+        }
 
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override

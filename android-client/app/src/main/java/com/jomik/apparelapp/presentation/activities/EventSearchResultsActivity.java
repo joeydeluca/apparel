@@ -22,6 +22,7 @@ import java.util.List;
 public class EventSearchResultsActivity extends ListActivity implements AdapterView.OnItemClickListener {
 
     ArrayAdapter adapter;
+    TextView txtNoResults;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +32,8 @@ public class EventSearchResultsActivity extends ListActivity implements AdapterV
         final TextView txtToolbarTitle = (TextView) findViewById(R.id.toolbar_title);
         final TextView txtToolbarDone = (TextView) findViewById(R.id.toolbar_done_button);
         final ImageView imgToolbarCancel = (ImageView) findViewById(R.id.toolbar_cancel_button);
+        txtNoResults = (TextView) findViewById(R.id.txtNoResults);
+
         txtToolbarDone.setVisibility(View.INVISIBLE);
         txtToolbarTitle.setText("Search Results");
         imgToolbarCancel.setOnClickListener(new View.OnClickListener() {
@@ -45,6 +48,12 @@ public class EventSearchResultsActivity extends ListActivity implements AdapterV
 
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void onMessage(List<Event> events) {
+        if(events == null || events.size() == 0) {
+            txtNoResults.setVisibility(View.VISIBLE);
+        } else {
+            txtNoResults.setVisibility(View.INVISIBLE);
+        }
+
         adapter = new EventsAdapter(getApplicationContext(), events);
         setListAdapter(adapter);
     }

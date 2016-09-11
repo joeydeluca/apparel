@@ -3,7 +3,6 @@ package com.jomik.apparelapp.infrastructure.ormlite;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.facebook.AccessToken;
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.support.ConnectionSource;
