@@ -17,12 +17,14 @@ import com.facebook.drawee.view.SimpleDraweeView;
 import com.jomik.apparelapp.R;
 import com.jomik.apparelapp.domain.entities.Event;
 import com.jomik.apparelapp.domain.entities.EventGuest;
+import com.jomik.apparelapp.infrastructure.ormlite.OrmLiteSqlHelper;
 import com.jomik.apparelapp.infrastructure.providers.SqlHelper;
 import com.jomik.apparelapp.infrastructure.services.AuthenticationManager;
 import com.jomik.apparelapp.infrastructure.services.ImageHelper;
 import com.jomik.apparelapp.presentation.activities.EditEventActivity;
 import com.jomik.apparelapp.presentation.activities.ViewEventOutfitsActivity;
 
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -78,6 +80,9 @@ public class EventsRvAdapter extends RecyclerView.Adapter<EventsRvAdapter.EventV
             popup.getMenu().add(1, R.id.menu_leave, 2, "Leave");
         }
 
+        final OrmLiteSqlHelper helper = new OrmLiteSqlHelper(context);
+
+        final EventGuest finalMyEventGuest = myEventGuest;
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
@@ -88,21 +93,40 @@ public class EventsRvAdapter extends RecyclerView.Adapter<EventsRvAdapter.EventV
                         context.startActivity(intent);
                         break;
                     case R.id.menu_leave:
-                        if (!event.getOwner().getUuid().equals(AuthenticationManager.getAuthenticatedUser(context).getUuid())) {
-                            events.remove(event);
-                            notifyItemRemoved(i);
+                        finalMyEventGuest.setMarkedForDelete(true);
+
+                        try {
+                            helper.getEventGuestDao().update(finalMyEventGuest);
+
+                            // Remove event from screen only if current user is not the owner
+                            if (!event.getOwner().getUuid().equals(AuthenticationManager.getAuthenticatedUser(context).getUuid())) {
+                                events.remove(event);
+                                notifyItemRemoved(i);
+                            }
+
+                            Toast.makeText(context, "You have left the event", Toast.LENGTH_LONG).show();
+
+                        } catch (SQLException e) {
+                            e.printStackTrace();
                         }
-                        // TODO
-                        //events.get(i).getAttendees().remove(AuthenticationManager.getAuthenticatedUser(context));
-                        //eventsRepository.save(events.get(i));
-                        Toast.makeText(context, "You have left the event", Toast.LENGTH_LONG).show();
+
                         break;
                     case R.id.menu_delete:
                         // TODO: Are you sure prompt
-                        /*context.getContentResolver().delete(ContentUris.withAppendedId(ApparelContract.Events.CONTENT_URI, event.getUuid()), null, null);
-                        events.remove(event);
-                        notifyItemRemoved(i);
-                        Toast.makeText(context, "Event deleted", Toast.LENGTH_LONG).show();*/
+
+                        event.setMarkedForDelete(true);
+
+                        try {
+                            helper.getEventDao().update(event);
+
+                            events.remove(event);
+                            notifyItemRemoved(i);
+                            Toast.makeText(context, "Event deleted", Toast.LENGTH_LONG).show();
+
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        }
+
                         break;
                 }
 
