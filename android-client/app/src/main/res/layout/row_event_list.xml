@@ -12,8 +12,9 @@
             android:id="@+id/my_image_view"
             android:layout_width="100dip"
             android:layout_height="100dip"
+            android:background="@color/dividerColorDark"
             android:layout_marginRight="20dp"
-            fresco:placeholderImage="@drawable/camera"
+            fresco:placeholderImage="@android:drawable/ic_menu_gallery"
             />
 
     <LinearLayout

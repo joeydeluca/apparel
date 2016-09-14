@@ -43,6 +43,7 @@
                 android:layout_weight="1"/>
 
             <TextView
+                android:id="@+id/lblEventDetails"
                 android:gravity="left"
                 android:textColor="#B1AFAE"
                 android:layout_marginTop="15dp"
@@ -89,6 +90,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/lblLocation"
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -124,6 +126,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/lblDate"
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">

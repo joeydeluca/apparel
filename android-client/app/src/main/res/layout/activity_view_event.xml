@@ -64,10 +64,11 @@
             <com.facebook.drawee.view.SimpleDraweeView
                 android:id="@+id/my_image_view"
                 android:layout_width="match_parent"
+                android:background="@color/dividerColorDark"
                 android:layout_height="200dip"
                 android:layout_marginTop="10dp"
                 android:elevation="2dp"
-                fresco:placeholderImage="@drawable/pic"
+                fresco:placeholderImage="@android:drawable/ic_menu_gallery"
                 android:src="@android:drawable/ic_menu_preferences"/>
 
             <TextView
@@ -129,7 +130,6 @@
 
                 <TextView
                     android:id="@+id/alreadyJoinedText"
-                    android:text="You have joined this event"
                     android:textSize="18dp"
                     android:gravity="center"
                     android:layout_width="match_parent"

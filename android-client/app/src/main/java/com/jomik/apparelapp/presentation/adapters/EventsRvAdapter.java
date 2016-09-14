@@ -17,6 +17,7 @@ import com.facebook.drawee.view.SimpleDraweeView;
 import com.jomik.apparelapp.R;
 import com.jomik.apparelapp.domain.entities.Event;
 import com.jomik.apparelapp.domain.entities.EventGuest;
+import com.jomik.apparelapp.domain.entities.EventType;
 import com.jomik.apparelapp.infrastructure.ormlite.OrmLiteSqlHelper;
 import com.jomik.apparelapp.infrastructure.providers.SqlHelper;
 import com.jomik.apparelapp.infrastructure.services.AuthenticationManager;
@@ -34,9 +35,11 @@ public class EventsRvAdapter extends RecyclerView.Adapter<EventsRvAdapter.EventV
 
     private final List<Event> events;
     private Context context;
+    private EventType mEventType;
 
-    public EventsRvAdapter(List<Event> events) {
+    public EventsRvAdapter(List<Event> events, EventType eventType) {
         this.events = events;
+        this.mEventType = eventType;
     }
 
 
@@ -53,12 +56,21 @@ public class EventsRvAdapter extends RecyclerView.Adapter<EventsRvAdapter.EventV
         final Event event = events.get(i);
 
         holder.title.setText(event.getTitle());
-        holder.location.setText(event.getLocation());
         holder.description.setText(event.getDescription());
         holder.ownerText.setText("Created by " + event.getOwner().getName());
-        holder.date.setText(SqlHelper.getDisplayDateFromEvent(event));
+        if(EventType.EVENT == mEventType) {
+            holder.date.setText(SqlHelper.getDisplayDateFromEvent(event));
+            holder.location.setText(event.getLocation());
+        } else {
+            holder.location.setVisibility(View.GONE);
+        }
 
-        ImageHelper.setImageUri(holder.eventPhoto, event.getPhoto().getPhotoPath());
+        if(event.getPhoto() != null) {
+            ImageHelper.setImageUri(holder.eventPhoto, event.getPhoto().getPhotoPath());
+        } else {
+            holder.eventPhoto.setVisibility(View.GONE);
+        }
+
         ImageHelper.setFacebookProfileImageUri(holder.profilePhoto, event.getOwner().getFacebookId());
 
         final PopupMenu popup = new PopupMenu(context, holder.btnMenu);
@@ -70,7 +82,8 @@ public class EventsRvAdapter extends RecyclerView.Adapter<EventsRvAdapter.EventV
 
         EventGuest myEventGuest = null;
         for(EventGuest eventGuest : event.getEventGuests()) {
-            if(AuthenticationManager.getAuthenticatedUser(context).getUuid().equals(eventGuest.getGuest().getUuid())) {
+            if(!eventGuest.isMarkedForDelete() &&
+                    AuthenticationManager.getAuthenticatedUser(context).getUuid().equals(eventGuest.getGuest().getUuid())) {
                 myEventGuest = eventGuest;
                 break;
             }
@@ -104,6 +117,9 @@ public class EventsRvAdapter extends RecyclerView.Adapter<EventsRvAdapter.EventV
                                 notifyItemRemoved(i);
                             }
 
+                            // Remove link from menu
+                            popup.getMenu().removeItem(R.id.menu_leave);
+
                             Toast.makeText(context, "You have left the event", Toast.LENGTH_LONG).show();
 
                         } catch (SQLException e) {
@@ -121,7 +137,7 @@ public class EventsRvAdapter extends RecyclerView.Adapter<EventsRvAdapter.EventV
 
                             events.remove(event);
                             notifyItemRemoved(i);
-                            Toast.makeText(context, "Event deleted", Toast.LENGTH_LONG).show();
+                            Toast.makeText(context, "Deleted", Toast.LENGTH_LONG).show();
 
                         } catch (SQLException e) {
                             e.printStackTrace();

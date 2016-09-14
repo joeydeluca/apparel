@@ -31,8 +31,10 @@ public class Event extends Entity {
     @DatabaseField(columnName="end_date", dataType = DataType.DATE_STRING, format = SqlHelper.dateFormatForDbPattern)
     @JsonFormat(shape= JsonFormat.Shape.STRING, pattern=SqlHelper.dateFormatForDbPattern)
     private Date endDate;
+    @DatabaseField(columnName="event_type")
+    private EventType eventType;
 
-    @DatabaseField(columnName = "photo_uuid", foreign = true, foreignAutoRefresh = true, canBeNull = false)
+    @DatabaseField(columnName = "photo_uuid", foreign = true, foreignAutoRefresh = true)
     private Photo photo;
     @DatabaseField(columnName = "owner_uuid", foreign = true, foreignAutoRefresh = true, canBeNull = false)
     private User owner;
@@ -106,6 +108,14 @@ public class Event extends Entity {
 
     public void setEventGuests(ForeignCollection<EventGuest> eventGuests) {
         this.eventGuests = eventGuests;
+    }
+
+    public EventType getEventType() {
+        return eventType;
+    }
+
+    public void setEventType(EventType eventType) {
+        this.eventType = eventType;
     }
 
     @Override

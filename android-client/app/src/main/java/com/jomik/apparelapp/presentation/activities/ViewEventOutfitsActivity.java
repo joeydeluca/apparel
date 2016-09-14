@@ -104,7 +104,7 @@ public class ViewEventOutfitsActivity extends AppCompatActivity {
 
             outfits = outfitQb.join(eventGuestQb.join(eventQb)).query();
 
-            myEventGuest = helper.getEventGuestDao().queryBuilder().where().eq("event_uuid", eventId).and().eq("guest_uuid", AuthenticationManager.getAuthenticatedUser(this).getUuid()).queryForFirst();
+            myEventGuest = helper.getEventGuestDao().queryBuilder().where().eq("event_uuid", eventId).and().eq("guest_uuid", AuthenticationManager.getAuthenticatedUser(this).getUuid()).and().eq("marked_for_delete",false).queryForFirst();
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -124,7 +124,7 @@ public class ViewEventOutfitsActivity extends AppCompatActivity {
         LinearLayoutManager llm = new LinearLayoutManager(getApplicationContext());
         rv.setLayoutManager(llm);
 
-        EventOutfitsRvAdapter adapter = new EventOutfitsRvAdapter(outfits);
+        EventOutfitsRvAdapter adapter = new EventOutfitsRvAdapter(outfits, this);
         rv.setAdapter(adapter);
 
         if(myEventGuest != null) {
@@ -137,6 +137,7 @@ public class ViewEventOutfitsActivity extends AppCompatActivity {
                     startActivity(
                             OutfitSelectionActivity.getIntent(getApplicationContext(), eventId, finalMyEventGuestUuid, datePage.getTargetDate(), datePage.getEventStartDate(), datePage.getEventEndDate(), mySelectedItems, finalMyOutfitDescription, finalMyEventGuest)
                     );
+                    finish();
                 }
             });
             addButton.setVisibility(View.VISIBLE);
@@ -185,7 +186,8 @@ public class ViewEventOutfitsActivity extends AppCompatActivity {
                 calendar.set(Calendar.MILLISECOND, 0);
                 Date selectedDate = calendar.getTime();
 
-                if(selectedDate.before(datePage.getEventStartDate()) || selectedDate.after(datePage.getEventEndDate())) {
+                if(datePage.getEventStartDate() != null && datePage.getEventEndDate() != null &&
+                        (selectedDate.before(datePage.getEventStartDate()) || selectedDate.after(datePage.getEventEndDate()))) {
                     Toast.makeText(getApplicationContext(), "Selected date is outside event date", Toast.LENGTH_SHORT).show();
                 } else {
                     setData(eventId, new DatePage(datePage.getEventStartDate(), datePage.getEventEndDate(), selectedDate));
@@ -193,8 +195,12 @@ public class ViewEventOutfitsActivity extends AppCompatActivity {
             }
         }, newCalendar.get(Calendar.YEAR), newCalendar.get(Calendar.MONTH), newCalendar.get(Calendar.DAY_OF_MONTH));
 
-        datePickerDialog.getDatePicker().setMinDate(datePage.eventStartDate.getTime());
-        datePickerDialog.getDatePicker().setMaxDate(datePage.eventEndDate.getTime());
+        if(datePage.eventStartDate != null) {
+            datePickerDialog.getDatePicker().setMinDate(datePage.eventStartDate.getTime());
+        }
+        if(datePage.eventEndDate != null) {
+            datePickerDialog.getDatePicker().setMaxDate(datePage.eventEndDate.getTime());
+        }
 
         return datePickerDialog;
     }
@@ -231,7 +237,11 @@ public class ViewEventOutfitsActivity extends AppCompatActivity {
             calendar.set(Calendar.MILLISECOND, 0);
             Date today = calendar.getTime();
 
-            if((today.equals(eventStartDate) || today.before(eventEndDate)) &&
+
+            if(
+                    eventStartDate == null ||
+                    eventEndDate == null ||
+                    (today.equals(eventStartDate) || today.before(eventEndDate)) &&
                     (today.equals(eventEndDate) || today.after(eventStartDate))) {
                 this.targetDate = today;
             } else {
@@ -240,7 +250,7 @@ public class ViewEventOutfitsActivity extends AppCompatActivity {
         }
 
         private void setPreviousDate() {
-            if(targetDate.after(eventStartDate)) {
+            if(eventStartDate == null || targetDate.after(eventStartDate)) {
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(targetDate);
                 calendar.add(Calendar.DAY_OF_YEAR, -1);
@@ -249,7 +259,7 @@ public class ViewEventOutfitsActivity extends AppCompatActivity {
         }
 
         private void setNextDate() {
-            if(targetDate.before(eventEndDate)) {
+            if(eventEndDate == null || targetDate.before(eventEndDate)) {
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(targetDate);
                 calendar.add(Calendar.DAY_OF_YEAR, 1);

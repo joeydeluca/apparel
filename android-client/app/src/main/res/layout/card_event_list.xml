@@ -85,13 +85,15 @@
                 android:layout_height="200dip"
                 android:layout_marginTop="10dp"
                 android:elevation="2dp"
-                fresco:placeholderImage="@drawable/leonardo_logo"
+                android:background="@color/dividerColorDark"
+                fresco:placeholderImage="@android:drawable/ic_menu_gallery"
                 android:src="@android:drawable/ic_menu_preferences"/>
 
             <TextView
                 android:id="@+id/title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
                 android:textSize="20dp"
                 android:gravity="center"/>
 

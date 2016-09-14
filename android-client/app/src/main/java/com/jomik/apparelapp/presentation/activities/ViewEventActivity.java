@@ -14,6 +14,7 @@ import com.facebook.drawee.view.SimpleDraweeView;
 import com.jomik.apparelapp.R;
 import com.jomik.apparelapp.domain.entities.Event;
 import com.jomik.apparelapp.domain.entities.EventGuest;
+import com.jomik.apparelapp.domain.entities.EventType;
 import com.jomik.apparelapp.domain.entities.User;
 import com.jomik.apparelapp.infrastructure.ormlite.OrmLiteSqlHelper;
 import com.jomik.apparelapp.infrastructure.providers.ApparelContract;
@@ -45,22 +46,39 @@ public class ViewEventActivity extends AppCompatActivity {
         final TextView txtDate = (TextView) findViewById(R.id.date);
         final TextView txtOwner = (TextView) findViewById(R.id.txtOwner);
 
-
         //txtToolbarTitle.setText("View Event");
 
         // Populate fields if editing
         Intent intent = getIntent();
         final Event event = (Event) intent.getSerializableExtra("event");
 
+        final String eventTypeLabel = EventType.EVENT == event.getEventType() ? "event" : "circle";
+
+        txtAlreadyJoinedText.setText(String.format("You have already joined this %s", eventTypeLabel));
+
+        if(event.getLocation() != null) {
+            txtLocation.setText(event.getLocation());
+        } else {
+            txtLocation.setVisibility(View.GONE);
+        }
+
+        if(event.getStartDate() != null && event.getEndDate() != null) {
+            txtDate.setText(SqlHelper.getDisplayDateFromEvent(event));
+        } else {
+            txtDate.setVisibility(View.GONE);
+        }
+
         txtEventTitle.setText(event.getTitle());
-        txtLocation.setText(event.getLocation());
+
         txtDescription.setText(event.getDescription());
         txtOwner.setText("Created by " + event.getOwner().getName());
-        txtDate.setText(SqlHelper.getDisplayDateFromEvent(event));
 
         if(event.getPhoto() != null) {
             ImageHelper.setImageUri(eventImageView, event.getPhoto().getPhotoPath());
+        } else {
+            eventImageView.setVisibility(View.GONE);
         }
+
         if(event.getOwner() != null) {
             ImageHelper.setFacebookProfileImageUri(userImageView, event.getOwner().getFacebookId());
         }
@@ -69,7 +87,7 @@ public class ViewEventActivity extends AppCompatActivity {
 
         final OrmLiteSqlHelper helper = new OrmLiteSqlHelper(getApplicationContext());
         try {
-            if(helper.getEventGuestDao().queryBuilder().where().eq("event_uuid", event.getUuid()).and().eq("guest_uuid", user.getUuid()).countOf() > 0) {
+            if(helper.getEventGuestDao().queryBuilder().where().eq("event_uuid", event.getUuid()).and().eq("guest_uuid", user.getUuid()).and().eq("marked_for_delete",false).countOf() > 0) {
                 btnJoin.setVisibility(View.INVISIBLE);
             } else {
                 txtAlreadyJoinedText.setVisibility(View.INVISIBLE);
@@ -107,14 +125,16 @@ public class ViewEventActivity extends AppCompatActivity {
                     txtAlreadyJoinedText.setVisibility(View.VISIBLE);
 
                     // Save event in db
+                    if (finalEvent.getPhoto() != null) {
+                        helper.getPhotoDao().createIfNotExists(finalEvent.getPhoto());
+                    }
                     helper.getUserDao().createIfNotExists(finalEvent.getOwner());
-                    helper.getPhotoDao().createIfNotExists(finalEvent.getPhoto());
                     helper.getEventDao().createIfNotExists(finalEvent);
 
                     // Trigger sync - so we download the new event data
                     ContentResolver.requestSync(AuthenticationManager.getSyncAccount(getApplicationContext()), ApparelContract.AUTHORITY, Bundle.EMPTY);
 
-                    Toast.makeText(getApplicationContext(), "You have joined the event", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), String.format("You have joined the %s", eventTypeLabel), Toast.LENGTH_LONG).show();
 
                 } catch (SQLException e) {
                     Toast.makeText(getApplicationContext(), "Something went wrong", Toast.LENGTH_LONG).show();

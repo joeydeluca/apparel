@@ -64,6 +64,11 @@
             android:readPermission="com.jomik.apparel.READ"
             android:writePermission="com.jomik.apparel.WRITE" />
 
+        <provider
+            android:authorities="com.facebook.app.FacebookContentProvider593826874118061"
+            android:name="com.facebook.FacebookContentProvider"
+            android:exported="true" />
+
         <service
             android:name=".infrastructure.sync.ApparelSyncService"
             android:enabled="true"

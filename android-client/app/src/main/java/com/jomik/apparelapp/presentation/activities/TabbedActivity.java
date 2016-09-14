@@ -13,6 +13,7 @@ import android.view.MenuItem;
 
 import com.jomik.apparelapp.R;
 import com.jomik.apparelapp.infrastructure.services.AuthenticationManager;
+import com.jomik.apparelapp.presentation.fragments.CircleListFragment;
 import com.jomik.apparelapp.presentation.fragments.EventListFragment;
 import com.jomik.apparelapp.presentation.fragments.ItemListFragment;
 
@@ -48,6 +49,7 @@ public class TabbedActivity extends AppCompatActivity {
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(new ItemListFragment(), "Wardrobe");
+        adapter.addFragment(new CircleListFragment(), "Circles");
         adapter.addFragment(new EventListFragment(), "Events");
         viewPager.setAdapter(adapter);
     }

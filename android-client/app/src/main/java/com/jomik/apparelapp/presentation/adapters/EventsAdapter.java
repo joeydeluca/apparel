@@ -41,8 +41,10 @@ public class EventsAdapter extends ArrayAdapter<Event> {
         textView = (TextView) rowView.findViewById(R.id.location);
         textView.setText(event.getLocation());
 
-        SimpleDraweeView draweeView = (SimpleDraweeView) rowView.findViewById(R.id.my_image_view);
-        ImageHelper.setImageUri(draweeView, event.getPhoto().getPhotoPathSmall());
+        if(event.getPhoto() != null) {
+            SimpleDraweeView draweeView = (SimpleDraweeView) rowView.findViewById(R.id.my_image_view);
+            ImageHelper.setImageUri(draweeView, event.getPhoto().getPhotoPathSmall());
+        }
 
         rowView.setTag(events.get(position));
 

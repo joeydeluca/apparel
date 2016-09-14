@@ -8,11 +8,13 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.jomik.apparelapp.R;
 import com.jomik.apparelapp.domain.entities.Event;
+import com.jomik.apparelapp.domain.entities.EventType;
 import com.jomik.apparelapp.infrastructure.events.EventSearchComplete;
 import com.jomik.apparelapp.infrastructure.events.EventSearchStart;
 import com.jomik.apparelapp.infrastructure.rest.RestService;
@@ -36,26 +38,41 @@ public class EventSearchActivity extends AppCompatActivity {
 
     ProgressDialog dialog;
     EditText txtKeyword;
+    EventType mEventType;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_search);
 
+        mEventType = (EventType) getIntent().getSerializableExtra("eventType");
+
+        final TextView btnDone = (TextView) findViewById(R.id.toolbar_done_button);
+        btnDone.setVisibility(View.GONE);
+        final ImageView imgCancel = (ImageView) findViewById(R.id.toolbar_cancel_button);
         final TextView txtToolbarTitle = (TextView) findViewById(R.id.toolbar_title);
         txtKeyword = (EditText) findViewById(R.id.keyword);
         final Button btnSearch = (Button) findViewById(R.id.btn_search);
+        final TextView lblTitle = (TextView) findViewById(R.id.lblTitle);
+        lblTitle.setText(String.format("Search %s by keyword", EventType.EVENT == mEventType ? "events" : "circles"));
 
-        txtToolbarTitle.setText("Find an event");
+        txtToolbarTitle.setText("Find " + (EventType.EVENT == mEventType ? "an event" : "a circle"));
 
         btnSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 dialog = ProgressDialog.show(EventSearchActivity.this, "",
-                "Searching...", true);
+                        "Searching...", true);
                 dialog.show();
 
-                EventBus.getDefault().post(new EventSearchStart("joeyiscool"));
+                EventBus.getDefault().post(new EventSearchStart());
+            }
+        });
+
+        imgCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
             }
         });
     }
@@ -71,7 +88,7 @@ public class EventSearchActivity extends AppCompatActivity {
 
         List<Event> events = null;
         try {
-            Response<List<Event>> response = restService.searchEvents(txtKeyword.getText().toString()).execute();
+            Response<List<Event>> response = restService.searchEvents(txtKeyword.getText().toString(), mEventType.name()).execute();
             if(!response.isSuccessful())  {
                 String message = "Response not successful. Code: " + response.code() + ".";
                 if(response.errorBody() != null) {

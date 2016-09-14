@@ -33,5 +33,5 @@ public interface RestService {
     Call<ResponseBody> upload(@Path("uuid") String uuid, @Part MultipartBody.Part file);
 
     @GET("events")
-    Call<List<Event>> searchEvents(@Query("keyword") String keyword);
+    Call<List<Event>> searchEvents(@Query("keyword") String keyword, @Query("event_type") String eventType);
 }

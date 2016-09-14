@@ -20,6 +20,7 @@ public class Event extends ApparelEntity {
     private String title;
     private String location;
     private String description;
+    private String eventType;
     @JsonFormat(shape= JsonFormat.Shape.STRING, pattern=DATE_FORMAT_PATTERN)
     private Date startDate;
     @JsonFormat(shape=JsonFormat.Shape.STRING, pattern=DATE_FORMAT_PATTERN)
@@ -75,6 +76,14 @@ public class Event extends ApparelEntity {
 
     public void setEndDate(Date endDate) {
         this.endDate = endDate;
+    }
+
+    public String getEventType() {
+        return eventType;
+    }
+
+    public void setEventType(String eventType) {
+        this.eventType = eventType;
     }
 
     public User getOwner() {

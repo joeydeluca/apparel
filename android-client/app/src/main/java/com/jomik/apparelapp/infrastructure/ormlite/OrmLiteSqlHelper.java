@@ -23,7 +23,7 @@ import java.sql.SQLException;
  */
 public class OrmLiteSqlHelper extends OrmLiteSqliteOpenHelper {
     private static final String NAME = DbSchema.DB_NAME;
-    private static final int VERSION = 39;
+    private static final int VERSION = 42;
 
     private Dao<Photo, String> mPhotoDao = null;
     private Dao<User, String> mUserDao = null;
@@ -35,6 +35,7 @@ public class OrmLiteSqlHelper extends OrmLiteSqliteOpenHelper {
 
     public OrmLiteSqlHelper(Context context) {
         super(context, NAME, null, VERSION);
+        this.setWriteAheadLoggingEnabled(true);
     }
 
     @Override

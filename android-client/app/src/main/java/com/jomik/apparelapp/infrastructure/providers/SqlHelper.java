@@ -1,20 +1,13 @@
 package com.jomik.apparelapp.infrastructure.providers;
 
-import android.content.ContentProviderClient;
 import android.database.Cursor;
-import android.os.RemoteException;
 
-import com.jomik.apparelapp.domain.entities.Entity;
 import com.jomik.apparelapp.domain.entities.Event;
-import com.jomik.apparelapp.domain.entities.Item;
-import com.jomik.apparelapp.domain.entities.Photo;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 /**
  * Created by Joe Deluca on 8/4/2016.

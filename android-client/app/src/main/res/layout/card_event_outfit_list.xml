@@ -113,36 +113,6 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content">
 
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:padding="2dp"
-                    android:gravity="center"
-                    android:id="@+id/btn_find_event"
-                    android:background="?attr/selectableItemBackground"
-                    android:orientation="horizontal">
-
-                    <ImageView
-                        android:layout_width="25dp"
-                        android:layout_height="fill_parent"
-                        android:src="@drawable/ic_search"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="fill_parent"
-                        android:lines="1"
-                        android:gravity="center_vertical"
-                        android:textSize="13dp"
-                        android:text="Like" />
-
-                </LinearLayout>
-
-                <View
-                    android:layout_width="1dp"
-                    android:layout_height="30dp"
-                    android:layout_gravity="center"
-                    android:background="@color/dividerColor"/>
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -156,9 +126,10 @@
                     <ImageView
                         android:layout_width="25dp"
                         android:layout_height="fill_parent"
-                        android:src="@drawable/ic_add"/>
+                        android:src="@android:drawable/ic_menu_share"/>
 
                     <TextView
+                        android:id="@+id/btnShare"
                         android:layout_width="wrap_content"
                         android:layout_height="fill_parent"
                         android:lines="1"

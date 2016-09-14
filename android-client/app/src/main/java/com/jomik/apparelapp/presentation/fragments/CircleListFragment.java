@@ -1,8 +1,8 @@
 package com.jomik.apparelapp.presentation.fragments;
 
 import com.jomik.apparelapp.domain.entities.EventType;
-import com.jomik.apparelapp.infrastructure.events.FindUserEventsComplete;
-import com.jomik.apparelapp.infrastructure.events.FindUserEventsStart;
+import com.jomik.apparelapp.infrastructure.events.FindUserCirclesComplete;
+import com.jomik.apparelapp.infrastructure.events.FindUserCirclesStart;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -14,22 +14,27 @@ import java.text.ParseException;
 /**
  * Created by Joe Deluca on 4/10/2016.
  */
-public class EventListFragment extends GroupListFragment {
+public class CircleListFragment extends GroupListFragment {
 
     @Override
     protected EventType getEventType() {
-        return EventType.EVENT;
+        return EventType.CIRCLE;
+    }
+
+    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    public void onMessage(FindUserCirclesStart findUserEventsStart) throws ParseException, SQLException {
+        EventBus.getDefault().post(new FindUserCirclesComplete(onFindUserEventsStart()));
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onMessage(FindUserEventsComplete userEvent) {
+    public void onMessage(FindUserCirclesComplete userEvent) {
         onDataloadComplete(userEvent.getEvents());
     }
 
     @Override
     public void onResume() {
         EventBus.getDefault().register(this);
-        EventBus.getDefault().post(new FindUserEventsStart());
+        EventBus.getDefault().post(new FindUserCirclesStart());
 
         super.onResume();
     }
@@ -40,9 +45,4 @@ public class EventListFragment extends GroupListFragment {
         super.onPause();
     }
 
-
-    @Subscribe(threadMode = ThreadMode.BACKGROUND)
-    public void onMessage(FindUserEventsStart findUserEventsStart) throws ParseException, SQLException {
-        EventBus.getDefault().post(new FindUserEventsComplete(onFindUserEventsStart()));
-    }
 }

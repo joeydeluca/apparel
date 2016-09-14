@@ -38,11 +38,14 @@ public class EventController {
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE
     )
-    public ResponseEntity<List<Event>> findEvents(@RequestParam(name  = "keyword", required = false) String keyword) {
+    public ResponseEntity<List<Event>> findEvents(
+            @RequestParam(name  = "keyword", required = false) String keyword,
+            @RequestParam(name  = "event_type", required = true) String eventType) {
 
         List<Specification<Event>> specifications = new ArrayList<>();
 
         specifications.add((EventSpecification.isNotDeleted()));
+        specifications.add((EventSpecification.hasEventType(eventType)));
 
         if(keyword != null && keyword.length() > 0) {
             specifications.add((EventSpecification.containsTitle(keyword)));
