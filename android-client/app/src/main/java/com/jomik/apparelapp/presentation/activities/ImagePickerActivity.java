@@ -76,10 +76,10 @@ public abstract class ImagePickerActivity extends AppCompatActivity {
         UCrop uCrop =  UCrop.of(selectedImageUri, Uri.fromFile(file));
 
         // TODO: make this abstract
-        if (this instanceof EditEventActivity) {
+        if (this instanceof EditItemActivity) {
             uCrop.withAspectRatio(9, 16);
         }
-        else if (this instanceof EditItemActivity) {
+        else if (this instanceof EditEventActivity) {
             uCrop.withAspectRatio(4, 3);
         }
 
