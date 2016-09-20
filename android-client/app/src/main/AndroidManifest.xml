@@ -54,6 +54,10 @@
         <activity
             android:name=".presentation.activities.ImagePickerActivity"
             android:label="Image Picker"/>
+        <activity
+            android:name="com.yalantis.ucrop.UCropActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
 
         <provider
             android:name=".infrastructure.providers.ApparelProvider"

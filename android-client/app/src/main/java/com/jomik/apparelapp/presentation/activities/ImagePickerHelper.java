@@ -1,6 +1,5 @@
 package com.jomik.apparelapp.presentation.activities;
 
-import android.app.Activity;
 import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -92,7 +91,6 @@ public class ImagePickerHelper {
     }
 
     /**
-     * Get the URI of the selected image from {@link #getPickImageChooserIntent()}.<br/>
      * Will return the correct URI for camera and gallery image.
      *
      * @param data the returned data of the activity result
