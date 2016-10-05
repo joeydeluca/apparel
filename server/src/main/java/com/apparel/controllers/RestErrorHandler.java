@@ -18,7 +18,8 @@ public class RestErrorHandler {
     @ExceptionHandler(
             {
                     NoResultException.class,
-                    NoSuchElementException.class
+                    NoSuchElementException.class,
+                    IllegalArgumentException.class
             }
     )
     @ResponseStatus(HttpStatus.NOT_FOUND)
