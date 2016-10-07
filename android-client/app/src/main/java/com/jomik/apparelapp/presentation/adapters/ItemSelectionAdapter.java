@@ -53,7 +53,7 @@ public class ItemSelectionAdapter extends BaseAdapter {
 
             Item item = items[position];
             SimpleDraweeView draweeView = (SimpleDraweeView) gridView.findViewById(R.id.grid_item_image);
-            ImageHelper.setImageUri(draweeView, item. getPhoto().getPhotoPath());
+            ImageHelper.setImageUri(draweeView, item. getPhoto());
 
             if(selectedItems.contains(item)) {
                 draweeView.setBackgroundResource(R.drawable.com_facebook_button_like_icon_selected);

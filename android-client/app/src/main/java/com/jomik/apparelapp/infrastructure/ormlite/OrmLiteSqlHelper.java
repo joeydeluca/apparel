@@ -35,7 +35,7 @@ public class OrmLiteSqlHelper extends OrmLiteSqliteOpenHelper {
 
     public OrmLiteSqlHelper(Context context) {
         super(context, NAME, null, VERSION);
-        this.setWriteAheadLoggingEnabled(true);
+        //this.setWriteAheadLoggingEnabled(true);
     }
 
     @Override

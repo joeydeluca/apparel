@@ -66,7 +66,7 @@ public class EventsRvAdapter extends RecyclerView.Adapter<EventsRvAdapter.EventV
         }
 
         if(event.getPhoto() != null) {
-            ImageHelper.setImageUri(holder.eventPhoto, event.getPhoto().getPhotoPath());
+            ImageHelper.setImageUri(holder.eventPhoto, event.getPhoto());
         } else {
             holder.eventPhoto.setVisibility(View.GONE);
         }

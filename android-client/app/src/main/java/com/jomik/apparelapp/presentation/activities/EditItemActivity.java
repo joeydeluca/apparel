@@ -64,7 +64,7 @@ public class EditItemActivity extends ImagePickerActivity {
                 txtItemDescription.setText(item.getDescription());
                 spnType.setSelection(item.getItemCategory().ordinal());
                 if(item.getPhoto() != null && chosenImageUri == null) {
-                    ImageHelper.setImageUri(simpleDraweeView, item.getPhoto().getPhotoPath());
+                    ImageHelper.setImageUri(simpleDraweeView, item.getPhoto());
                 }
             } else {
                 item = new Item();

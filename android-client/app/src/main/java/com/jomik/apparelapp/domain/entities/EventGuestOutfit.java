@@ -73,7 +73,7 @@ public class EventGuestOutfit extends Entity {
     public List<Item> getItems() {
         List<Item> items = new ArrayList<>();
         for(EventGuestOutfitItem eventGuestOutfitItem : eventGuestOutfitItems) {
-            if(!eventGuestOutfitItem.getItem().isMarkedForDelete()) {
+            if(eventGuestOutfitItem.getItem() != null && !eventGuestOutfitItem.getItem().isMarkedForDelete()) {
                 items.add(eventGuestOutfitItem.getItem());
             }
         }

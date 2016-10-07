@@ -1,3 +1,4 @@
+/*
 package com.jomik.apparelapp.presentation.adapters;
 
 import android.content.ContentUris;
@@ -21,9 +22,11 @@ import com.jomik.apparelapp.infrastructure.providers.DbSchema;
 import com.jomik.apparelapp.infrastructure.providers.SqlHelper;
 import com.jomik.apparelapp.infrastructure.services.ImageHelper;
 
+*/
 /**
  * Created by Joe Deluca on 4/7/2016.
- */
+ *//*
+
 public class ItemsCursorAdapter extends CursorAdapter {
 
     public ItemsCursorAdapter(Context context, Cursor c, int flags) {
@@ -88,3 +91,4 @@ public class ItemsCursorAdapter extends CursorAdapter {
         view.setTag(id);
     }
 }
+*/

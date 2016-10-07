@@ -51,7 +51,7 @@ public class ItemsAdapter extends ArrayAdapter<Item> {
 
         String photoPath = item.getPhoto().getPhotoPath();
         if(photoPath != null) {
-            ImageHelper.setImageUri(draweeView, photoPath);
+            ImageHelper.setImageUri(draweeView, item.getPhoto());
         }
 
         ImageView btnMenu = (ImageView) view.findViewById(R.id.btnMenu);

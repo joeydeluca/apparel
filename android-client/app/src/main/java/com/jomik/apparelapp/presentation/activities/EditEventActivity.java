@@ -95,7 +95,7 @@ public class EditEventActivity extends ImagePickerActivity implements View.OnCli
                     txtToDate.setText(SqlHelper.dateFormatForDisplay.format(event.getEndDate()));
                 }
                 if(event.getPhoto() != null && chosenImageUri == null) {
-                    ImageHelper.setImageUri(simpleDraweeView, event.getPhoto().getPhotoPath());
+                    ImageHelper.setImageUri(simpleDraweeView, event.getPhoto());
                 }
             } else {
                 event = new Event();

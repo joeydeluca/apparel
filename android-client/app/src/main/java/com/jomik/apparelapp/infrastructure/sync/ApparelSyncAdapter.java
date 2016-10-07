@@ -223,6 +223,7 @@ public class ApparelSyncAdapter extends AbstractThreadedSyncAdapter {
             // Create new outfit items
             for(EventGuestOutfitItem eventGuestOutfitItem : eventGuestOutfitItems) {
                 if(eventGuestOutfit.getUuid().equals(eventGuestOutfitItem.getEventGuestOutfit().getUuid())) {
+                    mHelper.getItemDao().createIfNotExists(eventGuestOutfitItem.getItem());
                     mHelper.getEventGuestOutfitItemDao().create(eventGuestOutfitItem);
                 }
             }

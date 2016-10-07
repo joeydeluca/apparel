@@ -74,7 +74,7 @@ public class ViewEventActivity extends AppCompatActivity {
         txtOwner.setText("Created by " + event.getOwner().getName());
 
         if(event.getPhoto() != null) {
-            ImageHelper.setImageUri(eventImageView, event.getPhoto().getPhotoPath());
+            ImageHelper.setImageUri(eventImageView, event.getPhoto());
         } else {
             eventImageView.setVisibility(View.GONE);
         }

@@ -37,7 +37,7 @@ public class ItemImageRvAdapter extends RecyclerView.Adapter<ItemImageRvAdapter.
     @Override
     public void onBindViewHolder(ItemImageViewHolder holder, final int i) {
         Item item = items.get(i);
-        ImageHelper.setImageUri(holder.image, item.getPhoto().getPhotoPathSmall());
+        ImageHelper.setImageUri(holder.image, item.getPhoto());
     }
 
     @Override
