@@ -2,6 +2,8 @@ package com.apparel.controllers;
 
 import com.apparel.domain.model.Photo;
 import com.apparel.domain.repository.PhotoRepository;
+import com.apparel.infrastructure.Logger;
+import com.apparel.infrastructure.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +17,8 @@ import java.net.URISyntaxException;
  */
 @RestController
 public class PhotoController {
+
+    private final Logger logger = LoggerFactory.getLogger(PhotoController.class);
 
     PhotoRepository photoRepository;
 
@@ -39,7 +43,19 @@ public class PhotoController {
     @RequestMapping(method = RequestMethod.POST, value = "/photos/{uuid}")
     public ResponseEntity<Void> handleFileUpload(@PathVariable("uuid") String uuid, @RequestParam("file") MultipartFile file) throws IOException {
 
+        if(file == null) {
+            logger.error("file not uploaded. photo_uuid=" + uuid);
+            throw new IllegalArgumentException();
+        }
+
         Photo photo = photoRepository.findOne(uuid);
+
+        if(photo == null) {
+            logger.error("No photo found for uuid " + uuid);
+            throw new IllegalArgumentException();
+        }
+
+
         photo.setThumbnail(file.getBytes());
         photoRepository.save(photo);
 
