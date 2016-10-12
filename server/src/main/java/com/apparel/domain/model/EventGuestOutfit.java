@@ -20,7 +20,7 @@ public class EventGuestOutfit extends ApparelEntity {
     @JoinColumn(name = "guestUuid")
     private EventGuest eventGuest;
 
-    @OneToMany(mappedBy = "eventGuestOutfit", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "eventGuestOutfit", cascade = CascadeType.ALL, orphanRemoval = true)
     //@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @JsonIgnore
     private List<EventGuestOutfitItem> eventGuestOutfitItems;
