@@ -14,6 +14,8 @@ import java.io.File;
 public class ImageHelper {
 
     public static void setImageUri(SimpleDraweeView simpleDraweeView, Photo photo) {
+        if(photo == null) return;
+
         if(photo.getPhotoPath() != null) {
             File file = new File(photo.getPhotoPath());
             if(file.exists()) {

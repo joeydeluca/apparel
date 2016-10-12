@@ -78,6 +78,9 @@ public class ApparelSyncAdapter extends AbstractThreadedSyncAdapter {
 
         try {
             User user = AuthenticationManager.getAuthenticatedUser(getContext());
+            if(user == null) {
+                throw new Exception("Cannot find logged in user");
+            }
 
             // get data from server
             Response<DownloadSyncDto> response = restService.getUserData(user.getFacebookId()).execute();
@@ -98,6 +101,7 @@ public class ApparelSyncAdapter extends AbstractThreadedSyncAdapter {
             // Items
             List<Item> existingLocalItems = mHelper.getItemDao().queryForAll();
             Set<Item> existingRemoteItems = downloadSyncDto.getItems();
+            existingRemoteItems.addAll(getItemsFromEventsGuestOutfitItems(downloadSyncDto.getEventGuestOutfitItems()));
             Set<Item> newLocalItems = getNewLocalEntities(existingLocalItems, existingRemoteItems);
             Set<Item> newRemoteItems = getNewRemoteEntities(existingLocalItems, existingRemoteItems);
             mergeEntitiesWithDuplicateUuids(existingLocalItems, existingRemoteItems, newLocalItems, newRemoteItems);
@@ -121,22 +125,25 @@ public class ApparelSyncAdapter extends AbstractThreadedSyncAdapter {
             Set<EventGuestOutfit> existingRemoteEventGuestOutfits = downloadSyncDto.getEventGuestOutfits();
             Set<EventGuestOutfit> newLocalEventGuestOutfits = getNewLocalEntities(existingLocalEventGuestOutfits, existingRemoteEventGuestOutfits);
             Set<EventGuestOutfit> newRemoteEventGuestOutfits = getNewRemoteEntities(existingLocalEventGuestOutfits, existingRemoteEventGuestOutfits);
-            mergeEntitiesWithDuplicateUuids(existingLocalEventGuests, existingRemoteEventGuestOutfits, newLocalEventGuestOutfits, newRemoteEventGuestOutfits);
+            mergeEntitiesWithDuplicateUuids(existingLocalEventGuestOutfits, existingRemoteEventGuestOutfits, newLocalEventGuestOutfits, newRemoteEventGuestOutfits);
 
             // Photos
-            List<Photo> existingLocalPhotos = new ArrayList<>();
-            existingLocalPhotos.addAll(getPhotosFromItems(existingLocalItems));
-            existingLocalPhotos.addAll(getPhotosFromEvents(existingLocalEvents));
-
+            List<Photo> existingLocalPhotos = mHelper.getPhotoDao().queryForAll();
             Set<Photo> existingRemotePhotos = new HashSet<>();
             existingRemotePhotos.addAll(getPhotosFromItems(existingRemoteItems));
             existingRemotePhotos.addAll(getPhotosFromEvents(existingRemoteEvents));
-
+            existingRemotePhotos.addAll(getPhotosFromEventsGuestOutfitItems(downloadSyncDto.getEventGuestOutfitItems()));
             Set<Photo> newLocalPhotos = getNewLocalEntities(existingLocalPhotos, existingRemotePhotos);
             Set<Photo> newRemotePhotos = getNewRemoteEntities(existingLocalPhotos, existingRemotePhotos);
             mergeEntitiesWithDuplicateUuids(existingLocalPhotos, existingRemotePhotos, newLocalPhotos, newRemotePhotos);
 
+            // Guests
+            List<User> existingLocalGuests = mHelper.getUserDao().queryForAll();
+            Set<User> existingRemoteGuests = getRemoteGuests(newLocalEvents, newLocalEventGuests);
+            Set<User> newLocalGuests = getNewLocalEntities(existingLocalGuests, existingRemoteGuests);
+
             // Save to local db
+            saveToDb(mHelper.getUserDao(), newLocalGuests);
             saveToDb(mHelper.getPhotoDao(), newLocalPhotos);
             saveToDb(mHelper.getItemDao(), newLocalItems);
             saveToDb(mHelper.getEventDao(), newLocalEvents);
@@ -212,6 +219,7 @@ public class ApparelSyncAdapter extends AbstractThreadedSyncAdapter {
     private void saveEventGuestOutfitsToDb(Set<EventGuestOutfit> eventGuestOutfits, Set<EventGuestOutfitItem> eventGuestOutfitItems) throws SQLException {
         for(EventGuestOutfit eventGuestOutfit : eventGuestOutfits) {
             Log.i(TAG, "Saving " + eventGuestOutfit.getClass().getSimpleName() + " uuid: " + eventGuestOutfit.getUuid());
+
             // Save outfit
             mHelper.getEventGuestOutfitDao().createOrUpdate(eventGuestOutfit);
 
@@ -261,6 +269,26 @@ public class ApparelSyncAdapter extends AbstractThreadedSyncAdapter {
         return photos;
     }
 
+    private Set<Item> getItemsFromEventsGuestOutfitItems(Collection<EventGuestOutfitItem> eventGuestOutfitItems) {
+        Set<Item> items = new HashSet<>();
+        for(EventGuestOutfitItem eventGuestOutfitItem : eventGuestOutfitItems) {
+            if(eventGuestOutfitItem.getItem().getPhoto() != null) {
+                items.add(eventGuestOutfitItem.getItem());
+            }
+        }
+        return items;
+    }
+
+    private List<Photo> getPhotosFromEventsGuestOutfitItems(Collection<EventGuestOutfitItem> eventGuestOutfitItems) {
+        List<Photo> photos = new ArrayList<>();
+        for(EventGuestOutfitItem eventGuestOutfitItem : eventGuestOutfitItems) {
+            if(eventGuestOutfitItem.getItem().getPhoto() != null) {
+                photos.add(eventGuestOutfitItem.getItem().getPhoto());
+            }
+        }
+        return photos;
+    }
+
     private List<Photo> getPhotosFromEvents(Collection<Event> events) {
         List<Photo> photos = new ArrayList<>();
         for(Event event : events) {
@@ -269,5 +297,17 @@ public class ApparelSyncAdapter extends AbstractThreadedSyncAdapter {
             }
         }
         return photos;
+    }
+
+    private Set<User> getRemoteGuests(Set<Event> newLocalEvents, Set<EventGuest> newLocalEventGuests) {
+        Set<User> existingRemoteGuests = new HashSet<>();
+        for(Event event : newLocalEvents) {
+            existingRemoteGuests.add(event.getOwner());
+        }
+        for(EventGuest eventGuest : newLocalEventGuests) {
+            existingRemoteGuests.add(eventGuest.getGuest());
+        }
+
+        return existingRemoteGuests;
     }
 }

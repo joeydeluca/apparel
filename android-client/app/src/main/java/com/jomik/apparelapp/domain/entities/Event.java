@@ -2,8 +2,9 @@ package com.jomik.apparelapp.domain.entities;
 
 import android.content.ContentValues;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
@@ -11,6 +12,8 @@ import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 import com.jomik.apparelapp.infrastructure.providers.ApparelContract;
 import com.jomik.apparelapp.infrastructure.providers.SqlHelper;
+import com.jomik.apparelapp.infrastructure.common.DateDeserializer;
+import com.jomik.apparelapp.infrastructure.common.DateSerializer;
 
 import java.util.Date;
 
@@ -26,10 +29,12 @@ public class Event extends Entity {
     @DatabaseField(columnName="description")
     private String description;
     @DatabaseField(columnName="start_date", dataType = DataType.DATE_STRING, format = SqlHelper.dateFormatForDbPattern)
-    @JsonFormat(shape= JsonFormat.Shape.STRING, pattern=SqlHelper.dateFormatForDbPattern)
+    @JsonDeserialize(using = DateDeserializer.class)
+    @JsonSerialize(using = DateSerializer.class)
     private Date startDate;
     @DatabaseField(columnName="end_date", dataType = DataType.DATE_STRING, format = SqlHelper.dateFormatForDbPattern)
-    @JsonFormat(shape= JsonFormat.Shape.STRING, pattern=SqlHelper.dateFormatForDbPattern)
+    @JsonDeserialize(using = DateDeserializer.class)
+    @JsonSerialize(using = DateSerializer.class)
     private Date endDate;
     @DatabaseField(columnName="event_type")
     private EventType eventType;

@@ -2,8 +2,9 @@ package com.jomik.apparelapp.domain.entities;
 
 import android.content.ContentValues;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
@@ -11,6 +12,8 @@ import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 import com.jomik.apparelapp.infrastructure.providers.ApparelContract;
 import com.jomik.apparelapp.infrastructure.providers.SqlHelper;
+import com.jomik.apparelapp.infrastructure.common.DateDeserializer;
+import com.jomik.apparelapp.infrastructure.common.DateSerializer;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -21,7 +24,8 @@ import java.util.List;
  */
 @DatabaseTable(tableName="event_guest_outfits")
 public class EventGuestOutfit extends Entity {
-    @JsonFormat(shape= JsonFormat.Shape.STRING, pattern = SqlHelper.dateFormatForDbPattern)
+    @JsonDeserialize(using = DateDeserializer.class)
+    @JsonSerialize(using = DateSerializer.class)
     @DatabaseField(columnName="event_date", dataType = DataType.DATE_STRING, format = SqlHelper.dateFormatForDbPattern)
     private Date date;
     @DatabaseField(columnName="description")
