@@ -105,15 +105,14 @@ public class SyncController {
         eventRepository.save(syncDto.getEvents());
         eventGuestRepository.save(syncDto.getEventGuests());
 
-        Set<EventGuestOutfit> eventGuestOutfits = syncDto.getEventGuestOutfits();
-        if(eventGuestOutfits != null && !eventGuestOutfits.isEmpty()) {
-            // delete outfits and outfit items
-            eventGuestOutfitRepository.delete(eventGuestOutfits);
-            // add new set of outfit
+        if(syncDto.getEventGuestOutfits() != null && !syncDto.getEventGuestOutfits().isEmpty()) {
             eventGuestOutfitRepository.save(syncDto.getEventGuestOutfits());
         }
 
-        eventGuestOutfitItemRepository.save(syncDto.getEventGuestOutfitItems());
+        if(syncDto.getEventGuestOutfitItems() != null && !syncDto.getEventGuestOutfitItems().isEmpty()) {
+            eventGuestOutfitItemRepository.deleteByEventGuestOutfitUuidIn(syncDto.getEventGuestOutfits().stream().map(i -> i.getUuid()).collect(Collectors.toList()));
+            eventGuestOutfitItemRepository.save(syncDto.getEventGuestOutfitItems());
+        }
 
         return ResponseEntity.ok("{\"status\":\"OK\"}");
     }

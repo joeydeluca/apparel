@@ -3,7 +3,10 @@ package com.apparel.domain.model;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import java.util.Date;
 import java.util.List;
 
@@ -20,8 +23,7 @@ public class EventGuestOutfit extends ApparelEntity {
     @JoinColumn(name = "guestUuid")
     private EventGuest eventGuest;
 
-    @OneToMany(mappedBy = "eventGuestOutfit", cascade = CascadeType.ALL, orphanRemoval = true)
-    //@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @OneToMany(mappedBy = "eventGuestOutfit")
     @JsonIgnore
     private List<EventGuestOutfitItem> eventGuestOutfitItems;
 
