@@ -54,6 +54,9 @@ public class ViewEventOutfitsActivity extends AppCompatActivity {
             }
         });
 
+        final TextView btnDone = (TextView) findViewById(R.id.toolbar_done_button);
+        btnDone.setVisibility(View.INVISIBLE);
+
         addButton = (FloatingActionButton) findViewById(R.id.addButton);
 
         txtDate = (TextView) findViewById(R.id.date);

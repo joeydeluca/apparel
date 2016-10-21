@@ -92,15 +92,24 @@ public class EditItemActivity extends ImagePickerActivity {
 
                 // Save image record
                 if(chosenImageUri != null) {
-                    Photo photo = newItem.getPhoto();
-                    if (photo == null) {
-                        photo = new Photo();
+                    if(newItem.getPhoto() != null) {
+                        Photo existingPhoto = newItem.getPhoto();
+                        existingPhoto.setMarkedForDelete(true);
+                        existingPhoto.incrementVersion();
+                        try {
+                            helper.getPhotoDao().update(existingPhoto);
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        }
+                        // TODO: delete existing photo from drive
                     }
+
+                    Photo photo = new Photo();
                     photo.setPhotoPath(chosenImageUri.getPath());
                     photo.setPhotoPathSmall(chosenImageUri.getPath());
                     photo.incrementVersion();
                     try {
-                        helper.getPhotoDao().createOrUpdate(photo);
+                        helper.getPhotoDao().create(photo);
                     } catch (SQLException e) {
                         e.printStackTrace();
                     }

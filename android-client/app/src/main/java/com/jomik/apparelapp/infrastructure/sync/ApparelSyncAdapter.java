@@ -250,6 +250,8 @@ public class ApparelSyncAdapter extends AbstractThreadedSyncAdapter {
             for(Photo photo : syncDto.getPhotos()) {
                 Log.i(TAG, "Uploading photo " + photo.getUuid());
                 File file = new File(photo.getPhotoPath());
+                if(!file.exists()) continue;
+
                 RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file);
                 MultipartBody.Part body = MultipartBody.Part.createFormData("file", file.getName(), requestFile);
                 response = restService.upload(photo.getUuid(), body).execute();

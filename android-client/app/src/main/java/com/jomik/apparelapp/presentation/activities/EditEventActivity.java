@@ -144,15 +144,24 @@ public class EditEventActivity extends ImagePickerActivity implements View.OnCli
 
                 // Save image record
                 if(chosenImageUri != null) {
-                    Photo photo = newEvent.getPhoto();
-                    if (photo == null) {
-                        photo = new Photo();
+                    if(newEvent.getPhoto() != null) {
+                        Photo existingPhoto = newEvent.getPhoto();
+                        existingPhoto.setMarkedForDelete(true);
+                        existingPhoto.incrementVersion();
+                        try {
+                            helper.getPhotoDao().update(existingPhoto);
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        }
+                        // TODO: delete existing photo from drive
                     }
+
+                    Photo photo = new Photo();
                     photo.setPhotoPath(chosenImageUri.getPath());
                     photo.setPhotoPathSmall(chosenImageUri.getPath());
                     photo.incrementVersion();
                     try {
-                        helper.getPhotoDao().createOrUpdate(photo);
+                        helper.getPhotoDao().create(photo);
                     } catch (SQLException e) {
                         e.printStackTrace();
                     }
