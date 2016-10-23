@@ -14,5 +14,6 @@ import java.util.Set;
 @Repository
 public interface EventGuestOutfitRepository extends JpaRepository<EventGuestOutfit, String> {
     Set<EventGuestOutfit> findByEventGuestUuidIn(List<String> EventGuestUuids);
+    Set<EventGuestOutfit> findByEventGuestEventUuid(String eventUuid);
 }
 

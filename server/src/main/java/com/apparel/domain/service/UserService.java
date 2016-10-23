@@ -10,9 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.NoResultException;
 import java.util.Collection;
 
-/**
- * Created by Mick on 4/16/2016.
- */
 @Service
 @Transactional
 public class UserService implements IUserService {

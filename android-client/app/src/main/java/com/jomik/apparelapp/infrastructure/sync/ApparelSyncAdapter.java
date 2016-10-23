@@ -121,7 +121,7 @@ public class ApparelSyncAdapter extends AbstractThreadedSyncAdapter {
             Set<EventGuest> newLocalEventGuests = getNewLocalEntities(existingLocalEventGuests, existingRemoteEventGuests);
             Set<EventGuest> newRemoteEventGuests = getNewRemoteEntities(existingLocalEventGuests, existingRemoteEventGuests);
             mergeEntitiesWithDuplicateUuids(existingLocalEventGuests, existingRemoteEventGuests, newLocalEventGuests, newRemoteEventGuests);
-            newRemoteEventGuests = ensureEventIsValidForEventGuest(newRemoteEventGuests, validEvents);
+            newRemoteEventGuests = filterRecordsThatIOwn(newRemoteEventGuests, user.getUuid());
 
             // Event Guest Outfits
             List<EventGuestOutfit> existingLocalEventGuestOutfits = getOwningEventGuestOutfitsFromDb(user.getUuid());
@@ -180,10 +180,10 @@ public class ApparelSyncAdapter extends AbstractThreadedSyncAdapter {
     }
 
     // Ensure that the associated events are valid
-    private Set<EventGuest> ensureEventIsValidForEventGuest(Set<EventGuest> eventGuests, Set<Event> validEvents) {
+    private Set<EventGuest> filterRecordsThatIOwn(Set<EventGuest> eventGuests, String userUuid) {
         Set<EventGuest> validEventGuests = new HashSet<>();
         for(EventGuest eventGuest : eventGuests) {
-            if(validEvents.contains(eventGuest.getEvent())) {
+            if(userUuid.equals(eventGuest.getGuest().getUuid())) {
                 validEventGuests.add(eventGuest);
             }
         }

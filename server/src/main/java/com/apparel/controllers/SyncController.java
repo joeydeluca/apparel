@@ -4,6 +4,8 @@ import com.apparel.controllers.dtos.DownloadSyncDto;
 import com.apparel.controllers.dtos.UploadSyncDto;
 import com.apparel.domain.model.*;
 import com.apparel.domain.repository.*;
+import com.apparel.infrastructure.Logger;
+import com.apparel.infrastructure.LoggerFactory;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +23,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/users")
 public class SyncController {
 
-
+    private final Logger logger = LoggerFactory.getLogger(SyncController.class);
 
     private final EventRepository eventRepository;
     private final ItemRepository itemRepository;
@@ -105,16 +107,31 @@ public class SyncController {
 
         }
 
-
         if(syncDto.getUser() != null) {
             userRepository.save(syncDto.getUser());
         }
+
         itemRepository.save(syncDto.getItems());
         eventRepository.save(syncDto.getEvents());
-        eventGuestRepository.save(syncDto.getEventGuests());
+
+        for(EventGuest eventGuest : syncDto.getEventGuests()) {
+            try {
+                eventGuestRepository.save(eventGuest);
+            } catch(Exception e) {
+                logger.error("error saving eventGuest " + eventGuest.getUuid());
+            }
+        }
+
 
         if(syncDto.getEventGuestOutfits() != null && !syncDto.getEventGuestOutfits().isEmpty()) {
-            eventGuestOutfitRepository.save(syncDto.getEventGuestOutfits());
+            for(EventGuestOutfit eventGuestOutfit : syncDto.getEventGuestOutfits()) {
+                try {
+                    eventGuestOutfitRepository.save(syncDto.getEventGuestOutfits());
+                } catch(Exception e) {
+                    logger.error("error saving EventGuestOutfit " + eventGuestOutfit.getUuid());
+                }
+            }
+
         }
 
         if(syncDto.getEventGuestOutfitItems() != null && !syncDto.getEventGuestOutfitItems().isEmpty()) {

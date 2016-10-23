@@ -5,11 +5,13 @@ import com.apparel.domain.model.EventGuest;
 import com.apparel.domain.model.EventGuestOutfit;
 import com.apparel.domain.model.EventGuestOutfitItem;
 import com.apparel.domain.repository.*;
+import com.apparel.domain.service.ImageCompareService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.*;
@@ -30,6 +32,9 @@ public class TestController {
     private final EventGuestOutfitItemRepository eventGuestOutfitItemRepository;
 
     @Autowired
+    private ImageCompareService imageCompareService;
+
+    @Autowired
     public TestController(final EventRepository eventRepository,
                           final ItemRepository itemRepository,
                           final PhotoRepository photoRepository,
@@ -44,6 +49,21 @@ public class TestController {
         this.eventGuestRepository = eventGuestRepository;
         this.eventGuestOutfitRepository = eventGuestOutfitRepository;
         this.eventGuestOutfitItemRepository = eventGuestOutfitItemRepository;
+    }
+
+    @RequestMapping(
+            value = "/compare",
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_UTF8_VALUE
+    )
+    public ResponseEntity<Void> testCompare(
+            @RequestParam(name  = "uuid") String eventGuestOutfitUuid) {
+
+        EventGuestOutfit eventGuestOutfit =  eventGuestOutfitRepository.getOne(eventGuestOutfitUuid);
+
+        imageCompareService.compareOutfits(eventGuestOutfit);
+
+        return ResponseEntity.ok().build();
     }
 
     @RequestMapping(
