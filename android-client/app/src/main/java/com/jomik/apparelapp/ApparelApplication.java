@@ -17,7 +17,7 @@ import com.jomik.apparelapp.infrastructure.services.AuthenticationManager;
 public class ApparelApplication extends Application {
 
     public static final long SECONDS_PER_MINUTE = 60L;
-    public static final long SYNC_INTERVAL_IN_MINUTES = 30L;
+    public static final long SYNC_INTERVAL_IN_MINUTES = 15L;
     public static final long SYNC_INTERVAL = SYNC_INTERVAL_IN_MINUTES * SECONDS_PER_MINUTE;
 
 

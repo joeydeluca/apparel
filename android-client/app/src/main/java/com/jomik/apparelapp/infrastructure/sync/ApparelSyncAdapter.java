@@ -11,6 +11,7 @@ import android.util.Log;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.DeleteBuilder;
+import com.j256.ormlite.stmt.QueryBuilder;
 import com.jomik.apparelapp.domain.entities.Entity;
 import com.jomik.apparelapp.domain.entities.Event;
 import com.jomik.apparelapp.domain.entities.EventGuest;
@@ -99,7 +100,7 @@ public class ApparelSyncAdapter extends AbstractThreadedSyncAdapter {
             }
 
             // Items
-            List<Item> existingLocalItems = mHelper.getItemDao().queryForAll();
+            List<Item> existingLocalItems = getOwningItemsFromDb(user.getUuid());
             Set<Item> existingRemoteItems = downloadSyncDto.getItems();
             existingRemoteItems.addAll(getItemsFromEventsGuestOutfitItems(downloadSyncDto.getEventGuestOutfitItems()));
             Set<Item> newLocalItems = getNewLocalEntities(existingLocalItems, existingRemoteItems);
@@ -107,28 +108,32 @@ public class ApparelSyncAdapter extends AbstractThreadedSyncAdapter {
             mergeEntitiesWithDuplicateUuids(existingLocalItems, existingRemoteItems, newLocalItems, newRemoteItems);
 
             // Events
-            List<Event> existingLocalEvents = mHelper.getEventDao().queryForAll();
+            List<Event> existingLocalEvents = getOwningEventsFromDb(user.getUuid());
             Set<Event> existingRemoteEvents = downloadSyncDto.getEvents();
             Set<Event> newLocalEvents = getNewLocalEntities(existingLocalEvents, existingRemoteEvents);
             Set<Event> newRemoteEvents = getNewRemoteEntities(existingLocalEvents, existingRemoteEvents);
             mergeEntitiesWithDuplicateUuids(existingLocalEvents, existingRemoteEvents, newLocalEvents, newRemoteEvents);
+            Set<Event> validEvents = getValidEvents(existingRemoteEvents, newRemoteEvents);
 
             // Event Guests
-            List<EventGuest> existingLocalEventGuests = mHelper.getEventGuestDao().queryForAll();
+            List<EventGuest> existingLocalEventGuests = getOwningEventGuestsFromDb(user.getUuid());
             Set<EventGuest> existingRemoteEventGuests = downloadSyncDto.getEventGuests();
             Set<EventGuest> newLocalEventGuests = getNewLocalEntities(existingLocalEventGuests, existingRemoteEventGuests);
             Set<EventGuest> newRemoteEventGuests = getNewRemoteEntities(existingLocalEventGuests, existingRemoteEventGuests);
             mergeEntitiesWithDuplicateUuids(existingLocalEventGuests, existingRemoteEventGuests, newLocalEventGuests, newRemoteEventGuests);
+            newRemoteEventGuests = ensureEventIsValidForEventGuest(newRemoteEventGuests, validEvents);
 
             // Event Guest Outfits
-            List<EventGuestOutfit> existingLocalEventGuestOutfits = mHelper.getEventGuestOutfitDao().queryForAll();
+            List<EventGuestOutfit> existingLocalEventGuestOutfits = getOwningEventGuestOutfitsFromDb(user.getUuid());
             Set<EventGuestOutfit> existingRemoteEventGuestOutfits = downloadSyncDto.getEventGuestOutfits();
             Set<EventGuestOutfit> newLocalEventGuestOutfits = getNewLocalEntities(existingLocalEventGuestOutfits, existingRemoteEventGuestOutfits);
             Set<EventGuestOutfit> newRemoteEventGuestOutfits = getNewRemoteEntities(existingLocalEventGuestOutfits, existingRemoteEventGuestOutfits);
             mergeEntitiesWithDuplicateUuids(existingLocalEventGuestOutfits, existingRemoteEventGuestOutfits, newLocalEventGuestOutfits, newRemoteEventGuestOutfits);
+            newRemoteEventGuestOutfits = ensureEventIsValidForEventGuestOutfit(newRemoteEventGuestOutfits, validEvents);
+
 
             // Photos
-            List<Photo> existingLocalPhotos = mHelper.getPhotoDao().queryForAll();
+            List<Photo> existingLocalPhotos = getLocalPhotos(existingLocalItems, existingLocalEvents);
             Set<Photo> existingRemotePhotos = new HashSet<>();
             existingRemotePhotos.addAll(getPhotosFromItems(existingRemoteItems));
             existingRemotePhotos.addAll(getPhotosFromEvents(existingRemoteEvents));
@@ -138,7 +143,7 @@ public class ApparelSyncAdapter extends AbstractThreadedSyncAdapter {
             mergeEntitiesWithDuplicateUuids(existingLocalPhotos, existingRemotePhotos, newLocalPhotos, newRemotePhotos);
 
             // Guests
-            List<User> existingLocalGuests = mHelper.getUserDao().queryForAll();
+            List<User> existingLocalGuests = mHelper.getUserDao().queryBuilder().where().eq("uuid", user.getUuid()).query();
             Set<User> existingRemoteGuests = getRemoteGuests(newLocalEvents, newLocalEventGuests);
             Set<User> newLocalGuests = getNewLocalEntities(existingLocalGuests, existingRemoteGuests);
 
@@ -165,6 +170,81 @@ public class ApparelSyncAdapter extends AbstractThreadedSyncAdapter {
         }
 
         Log.i(TAG, "End Sync Adapter");
+    }
+
+    // Get events that are already on the server or about to be added to the server
+    private Set<Event> getValidEvents(Set<Event> existingRemoteEvents, Set<Event> newRemoteEvents) {
+        Set<Event> validEvents = existingRemoteEvents;
+        validEvents.addAll(newRemoteEvents);
+        return validEvents;
+    }
+
+    // Ensure that the associated events are valid
+    private Set<EventGuest> ensureEventIsValidForEventGuest(Set<EventGuest> eventGuests, Set<Event> validEvents) {
+        Set<EventGuest> validEventGuests = new HashSet<>();
+        for(EventGuest eventGuest : eventGuests) {
+            if(validEvents.contains(eventGuest.getEvent())) {
+                validEventGuests.add(eventGuest);
+            }
+        }
+
+        return validEventGuests;
+    }
+
+    // Ensure that the associated events are valid
+    private Set<EventGuestOutfit> ensureEventIsValidForEventGuestOutfit(Set<EventGuestOutfit> eventGuestOutfits, Set<Event> validEvents) {
+        Set<EventGuestOutfit> validEventGuestOutfits = new HashSet<>();
+        for(EventGuestOutfit eventGuestOutfit : eventGuestOutfits) {
+            if(validEvents.contains(eventGuestOutfit.getEventGuest().getEvent())) {
+                validEventGuestOutfits.add(eventGuestOutfit);
+            }
+        }
+
+        return validEventGuestOutfits;
+    }
+
+    private List<Photo> getLocalPhotos(List<Item> existingLocalItems, List<Event> existingLocalEvents) {
+        Set<Photo> photos = new HashSet<>();
+        for(Item item : existingLocalItems) {
+            if(item.getPhoto() != null) {
+                photos.add(item.getPhoto());
+            }
+        }
+
+        for(Event event : existingLocalEvents) {
+            if(event.getPhoto() != null) {
+                photos.add(event.getPhoto());
+            }
+        }
+
+        return new ArrayList<>(photos);
+    }
+
+    private List<EventGuest> getOwningEventGuestsFromDb(String userUuid) throws SQLException {
+        QueryBuilder<User, String> userQb = mHelper.getUserDao().queryBuilder();
+        userQb.where().eq("uuid", userUuid);
+        return mHelper.getEventGuestDao().queryBuilder().join(userQb).query();
+    }
+
+    private List<Item> getOwningItemsFromDb(String userUuid) throws SQLException {
+        QueryBuilder<User, String> userQb = mHelper.getUserDao().queryBuilder();
+        userQb.where().eq("uuid", userUuid);
+        return mHelper.getItemDao().queryBuilder().join(userQb).query();
+    }
+
+    private List<Event> getOwningEventsFromDb(String userUuid) throws SQLException {
+        QueryBuilder<User, String> userQb = mHelper.getUserDao().queryBuilder();
+        userQb.where().eq("uuid", userUuid);
+        return mHelper.getEventDao().queryBuilder().join(userQb).query();
+    }
+
+    private List<EventGuestOutfit> getOwningEventGuestOutfitsFromDb(String userUuid) throws SQLException {
+        QueryBuilder<User, String> userQb = mHelper.getUserDao().queryBuilder();
+        userQb.where().eq("uuid", userUuid);
+
+        QueryBuilder<EventGuest, String> eventGuestQb = mHelper.getEventGuestDao().queryBuilder();
+
+        return mHelper.getEventGuestOutfitDao().queryBuilder().join(eventGuestQb.join(userQb)).query();
     }
 
     private <T> Set<T> getNewRemoteEntities(List<T> existingLocalEntities, Set<T> existingRemoteEntities) {

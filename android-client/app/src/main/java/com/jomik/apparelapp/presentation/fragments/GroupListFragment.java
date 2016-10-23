@@ -10,17 +10,24 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
+import com.j256.ormlite.stmt.QueryBuilder;
 import com.jomik.apparelapp.R;
 import com.jomik.apparelapp.domain.entities.Event;
+import com.jomik.apparelapp.domain.entities.EventGuest;
 import com.jomik.apparelapp.domain.entities.EventType;
+import com.jomik.apparelapp.domain.entities.User;
 import com.jomik.apparelapp.infrastructure.ormlite.OrmLiteSqlHelper;
+import com.jomik.apparelapp.infrastructure.services.AuthenticationManager;
 import com.jomik.apparelapp.presentation.activities.EditEventActivity;
 import com.jomik.apparelapp.presentation.activities.EventSearchActivity;
 import com.jomik.apparelapp.presentation.adapters.EventsRvAdapter;
 
 import java.sql.SQLException;
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.TreeSet;
 
 /**
  * Created by Joe Deluca on 4/10/2016.
@@ -57,11 +64,40 @@ public abstract class GroupListFragment extends Fragment {
     }
 
     public List<Event> onFindUserEventsStart() throws ParseException, SQLException {
+        List<Event> eventsIOwn = new ArrayList<>();
+        List<Event> eventsIHaveJoined = new ArrayList<>();
+
         OrmLiteSqlHelper helper  = new OrmLiteSqlHelper(getContext());
-        return helper.getEventDao().queryBuilder().where()
+
+        // Get all events where i own OR i am a guest of
+        QueryBuilder<Event, String> eventQb = helper.getEventDao().queryBuilder();
+        eventQb.where()
                 .eq("marked_for_delete", false)
                 .and()
                 .eq("event_type", getEventType()).query();
+
+        QueryBuilder<EventGuest, String> eventGuestQb = helper.getEventGuestDao().queryBuilder();
+        eventGuestQb.where().eq("marked_for_delete", false);
+
+        QueryBuilder<User, String> userQb = helper.getUserDao().queryBuilder();
+        userQb.where().eq("uuid", AuthenticationManager.getAuthenticatedUser(getContext()).getUuid());
+
+        eventsIHaveJoined = eventQb.join(eventGuestQb.join(userQb)).query();
+
+        eventQb = helper.getEventDao().queryBuilder();
+        eventQb.where()
+                .eq("marked_for_delete", false)
+                .and()
+                .eq("event_type", getEventType()).query();
+
+        eventsIOwn = eventQb.join(userQb).query();
+
+        // remove duplicates
+        LinkedHashSet set = new LinkedHashSet();
+        set.addAll(eventsIOwn);
+        set.addAll(eventsIHaveJoined);
+
+        return new ArrayList<>(set);
     }
 
     protected void onDataloadComplete(List<Event> events) {

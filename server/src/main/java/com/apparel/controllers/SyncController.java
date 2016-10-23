@@ -21,6 +21,8 @@ import java.util.stream.Collectors;
 @RequestMapping("/users")
 public class SyncController {
 
+
+
     private final EventRepository eventRepository;
     private final ItemRepository itemRepository;
     private final PhotoRepository photoRepository;
@@ -96,8 +98,14 @@ public class SyncController {
         }
 
         // Save
-        photoRepository.save(syncDto.getPhotos());
-        photoRepository.flush();
+        try {
+            photoRepository.save(syncDto.getPhotos());
+            photoRepository.flush();
+        } catch(Exception e) {
+
+        }
+
+
         if(syncDto.getUser() != null) {
             userRepository.save(syncDto.getUser());
         }
